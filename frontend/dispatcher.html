@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dispatcher Dashboard - QuickDrop</title>
+    <style>
+        /* --- Global Reset & Fonts --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            /* We use vh (viewport height) to make the app full-screen */
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Header / Top Navigation --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ffffff;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #ddd;
+            flex-shrink: 0; /* Prevents header from shrinking */
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #0d6efd; /* Blue from presentation theme */
+        }
+
+        header nav ul {
+            list-style: none;
+            display: flex;
+        }
+
+        header nav li {
+            margin-left: 2rem;
+        }
+
+        header nav a {
+            text-decoration: none;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile span {
+            margin-right: 0.75rem;
+            font-weight: 600;
+        }
+
+        .profile-icon {
+            font-size: 1.5rem;
+        }
+
+        /* --- Main Dashboard Layout --- */
+        .dashboard-container {
+            display: flex;
+            flex-grow: 1; /* Makes this container fill the remaining height */
+            overflow: hidden; /* Prevents browser-level scrolling */
+        }
+
+        /* --- 1. Map Container (Left Side) --- */
+        .map-container {
+            flex-grow: 1; /* Allows the map to take all available space */
+            padding: 1.5rem;
+            display: flex;
+        }
+
+        .map-placeholder {
+            width: 100%;
+            height: 100%;
+            background-color: #e9ecef;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #adb5bd;
+            font-weight: 600;
+        }
+
+        /* --- 2. Sidebar (Right Side) --- */
+        .sidebar {
+            width: 400px;
+            flex-shrink: 0; /* Prevents sidebar from shrinking */
+            background-color: #ffffff;
+            border-left: 1px solid #ddd;
+            padding: 1.5rem;
+            /* Makes the sidebar scrollable if content overflows */
+            overflow-y: auto;
+        }
+
+        /* --- Sidebar: Stats Cards --- */
+        .stats-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            color: #0d6efd;
+        }
+
+        .stat-card p {
+            font-size: 0.9rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        /* --- Sidebar: List Containers (Pending & Active) --- */
+        .list-container {
+            margin-bottom: 2rem;
+        }
+
+        .list-container h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 0.5rem;
+        }
+
+        /* --- Sidebar: Individual List Items --- */
+        .list-item {
+            background-color: #fdfdfd;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .list-item p {
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .list-item strong {
+            color: #333;
+        }
+
+        .list-item .status {
+            font-weight: 600;
+            color: #fd7e14; /* Orange for 'in progress' */
+        }
+        
+        .list-item .status.en-route {
+            color: #0d6efd; /* Blue for 'en-route' */
+        }
+
+        .assign-button {
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .assign-button:hover {
+            background-color: #0b5ed7;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">QuickDrop</div>
+        <nav>
+            <ul>
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="#">Deliveries</a></li>
+                <li><a href="#">Couriers</a></li>
+                <li><a href="#">Users</a></li>
+            </ul>
+        </nav>
+        <div class="profile">
+            <span>Admin</span>
+            <div class="profile-icon">👤</div>
+        </div>
+    </header>
+
+    <main class="dashboard-container">
+
+        <section class="map-container">
+            <div class="map-placeholder">
+                Live Map Placeholder
+            </div>
+        </section>
+
+        <aside class="sidebar">
+
+            <section class="stats-container">
+                <div class="stat-card">
+                    <h3>12</h3>
+                    <p>Pending Orders</p>
+                </div>
+                <div class="stat-card">
+                    <h3>42</h3>
+                    <p>Active Couriers</p>
+                </div>
+                <div class="stat-card">
+                    <h3>157</h3>
+                    <p>Total Deliveries</p>
+                </div>
+            </section>
+
+            <section class="list-container">
+                <h2>Pending Deliveries</h2>
+
+                <div class="list-item">
+                    <p><strong>Order:</strong> #1024</p>
+                    <p><strong>From:</strong> 123 Main St (Store)</p>
+                    <p><strong>To:</strong> 456 Oak Ave</p>
+                    <button class="assign-button">Assign to Courier</button>
+                </div>
+
+                <div class="list-item">
+                    <p><strong>Order:</strong> #1023</p>
+                    <p><strong>From:</strong> 789 Pine Ln (Store)</p>
+                    <p><strong>To:</strong> 321 Elm Blvd</p>
+                    <button class="assign-button">Assign to Courier</button>
+                </div>
+            </section>
+
+            <section class="list-container">
+                <h2>Active Deliveries</h2>
+
+                <div class="list-item">
+                    <p><strong>Order:</strong> #1021</p>
+                    <p><strong>Courier:</strong> David L.</p>
+                    <p><strong>Status:</strong> <span class="status en-route">En route to dropoff</span></p>
+                </div>
+                
+                <div class="list-item">
+                    <p><strong>Order:</strong> #1020</p>
+                    <p><strong>Courier:</strong> Sarah K.</p>
+                    <p><strong>Status:</strong> <span class="status">En route to pickup</span></p>
+                </div>
+
+                <div class="list-item">
+                    <p><strong>Order:</strong> #1019</p>
+                    <p><strong>Courier:</strong> Mike R.</p>
+                    <p><strong>Status:</strong> <span class="status en-route">En route to dropoff</span></p>
+                </div>
+
+            </section>
+
+        </aside>
+
+    </main>
+
+</body>
+</html>
