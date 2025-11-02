@@ -39,7 +39,7 @@ Fast, reliable, and secure parcel delivery for Kigali by connecting customers wi
 - **Auth**: Standards-based credential storage (bcrypt/argon2), session/JWT strategy (TBD by final spec).
 
 **Tooling Justification**
-- **Backend Framework**: FastAPI
+- **Backend Framework**: Flask
   - Pros: Very fast dev velocity, type hints, automatic OpenAPI docs, great async support.
   - Alternatives: Django REST Framework (slower to prototype, heavier), Express/NestJS (JS/TS ecosystem; less native geospatial focus for Python stack).
 - **Task Processing**: Celery + Redis
@@ -68,7 +68,6 @@ Fast, reliable, and secure parcel delivery for Kigali by connecting customers wi
 - GiST index on `RIDER.current_position` and `DELIVERY_ORDER.pickup_point`/`dropoff_point`.
 - B-Tree indexes on `DELIVERY_ORDER.status`, `created_at`, and foreign keys.
 - Partial indexes for common status queries (e.g., active orders).
-- Optional BRIN indexes for large time-series tables like `LOCATION_PING`.
 
 **Migrations**
 - Recommended: Alembic (Python) for versioned schema changes and repeatable deployments.
