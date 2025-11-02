@@ -4,7 +4,7 @@ Fast, reliable, and secure parcel delivery for Kigali by connecting customers wi
 
 ---
 
-### 1) Project Overview
+### 1. Project Overview
 
 **Problem**: Many people in Kigali struggle to transport items quickly and safely across the city.
 
@@ -18,7 +18,7 @@ Fast, reliable, and secure parcel delivery for Kigali by connecting customers wi
 
 ---
 
-### 2) Implemented Features & Tool Justification
+### 2. Implemented Features & Tool Justification
 
 **Current Status (Prototype)**
 - Authentication (prototype)
@@ -56,7 +56,7 @@ Fast, reliable, and secure parcel delivery for Kigali by connecting customers wi
 
 ---
 
-### 3) Database and Data Management
+### 3. Database and Data Management
 
 **Storage & Retrieval Strategies**
 - Spatial data stored in PostGIS `geography` columns; derived `geohash` for fast coarse filtering.
@@ -91,7 +91,7 @@ Fast, reliable, and secure parcel delivery for Kigali by connecting customers wi
 
 ---
 
-### 5) Code Quality and Testing
+### 5. Code Quality and Testing
 
 **Standards**
 - Python: type hints, `black` + `isort` + `flake8`/`ruff`, `mypy` for type checking.
@@ -99,7 +99,7 @@ Fast, reliable, and secure parcel delivery for Kigali by connecting customers wi
 
 ---
 
-### 6) Technical Challenges and Solutions
+### 6. Technical Challenges and Solutions
 
 1. **Accurate, low-latency nearby rider lookup**
    - Solution: Geohash prefix prefilter + `ST_DWithin` refinement + GiST indexes; cache results.
@@ -115,7 +115,7 @@ Fast, reliable, and secure parcel delivery for Kigali by connecting customers wi
 
 ---
 
-### 7) Feedback Integration
+### 7. Feedback Integration
 
 - Adopted Vanilla JS frontend per requirement to reduce complexity and ease onboarding.
 - Added Docker for environment parity and faster setup.
@@ -123,7 +123,7 @@ Fast, reliable, and secure parcel delivery for Kigali by connecting customers wi
 
 ---
 
-### 8) Next Technical Steps
+### 8. Next Technical Steps
 
 **Milestones**
 - M1: Implement auth and basic order flows (create/assign/track).
@@ -134,7 +134,7 @@ Fast, reliable, and secure parcel delivery for Kigali by connecting customers wi
 
 ---
 
-### 9) Teamwork & Project Management Report
+### 9. Teamwork & Project Management Report
 
 **Project Management Tools**
 - GitHub Projects for task tracking, collaboration, and progress monitoring.
@@ -147,5 +147,5 @@ Fast, reliable, and secure parcel delivery for Kigali by connecting customers wi
 - Figma designs: add sharable viewer link
 - Database schema: link to ERD or SQL migration docs
 - Frontend implementation: link to deployment or static preview
-- Backend/API:
+- Backend/API: (To Be Done)
 
