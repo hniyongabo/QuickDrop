@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickDrop - Under an Hour Drone Delivery</title>
+    <style>
+        /* --- Global Reset & Fonts --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* --- Utility: Container --- */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* --- 1. Header Navigation --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        [cite_start]/* Using the brand name from the presentation [cite: 1] */
+        .logo {
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: #0d6efd; /* Blue from presentation theme */
+            text-decoration: none;
+        }
+
+        header nav {
+            display: flex;
+            align-items: center;
+        }
+
+        header nav .nav-link {
+            text-decoration: none;
+            color: #555;
+            font-weight: 600;
+            margin-left: 2rem;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-left: 2rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+        
+        /* "Sign In" Button */
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+            border-color: #ddd;
+        }
+        .btn-secondary:hover {
+            background-color: #e2e2e2;
+        }
+        
+        /* "Sign Up" Button */
+        .btn-primary {
+            background-color: #0d6efd;
+            color: #ffffff;
+        }
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+        }
+
+        /* --- 2. Hero Section --- */
+        .hero {
+            text-align: center;
+            padding: 6rem 1rem;
+            background-color: #f8f9fa;
+        }
+        
+        [cite_start]/* Tagline from the presentation [cite: 2, 5] */
+        .hero h1 {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            color: #222;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: #6c757d;
+            max-width: 700px;
+            margin: 1.5rem auto 2.5rem;
+        }
+        
+        .hero .btn-primary {
+            font-size: 1.1rem;
+            padding: 1rem 2.5rem;
+        }
+
+        /* --- 3. Features Section ("How it Works") --- */
+        .features {
+            padding: 5rem 0;
+            text-align: center;
+        }
+        
+        .features h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .features-grid {
+            display: flex;
+            justify-content: space-around;
+            gap: 2rem;
+            margin-top: 3.5rem;
+        }
+        
+        .feature-card {
+            flex: 1;
+            padding: 2.5rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 1px solid #eee;
+        }
+        
+        .feature-card .icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: #0d6efd;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .feature-card p {
+            color: #555;
+        }
+        
+        /* --- 4. Problem/Solution Section --- */
+        .problem-solution {
+            padding: 4rem 0;
+            display: flex;
+            gap: 3rem;
+            align-items: center;
+        }
+        
+        .problem-solution .text-content {
+            flex: 1;
+        }
+        
+        .problem-solution .image-placeholder {
+            flex: 1;
+            height: 350px;
+            background-color: #e9ecef;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #adb5bd;
+            font-weight: 600;
+        }
+        
+        .problem-solution h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #0d6efd;
+        }
+        
+        .problem-solution h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #fd7e14;
+        }
+        
+        .problem-solution p {
+            font-size: 1.1rem;
+            color: #444;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- 5. Footer --- */
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            border-top: 1px solid #eee;
+            margin-top: 4rem;
+            color: #6c757d;
+        }
+
+        /* --- Responsive (Mobile) --- */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            header nav {
+                flex-direction: column;
+                gap: 1rem;
+                width: 100%;
+            }
+
+            .cta-buttons {
+                margin-left: 0;
+                width: 100%;
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .hero {
+                padding: 4rem 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .features-grid {
+                flex-direction: column;
+            }
+            
+            .problem-solution {
+                flex-direction: column-reverse;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="container">
+        <a href="#" class="logo">QuickDrop</a> <nav>
+            <a href="#" class="nav-link">How It Works</a>
+            <a href="#" class="nav-link">For Business</a>
+            <a href="#" class="nav-link">Pricing</a>
+            
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-secondary">Sign In</a>
+                <a href="#" class="btn btn-primary">Sign Up</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>"Your Package, in the Air and at Your Door in Under an Hour"</h1> <p>
+                    [cite_start]Tired of traffic and unpredictable delays? [cite: 14] [cite_start]QuickDrop offers fast, secure, and reliable [cite: 18] [cite_start]drone-based delivery for both businesses and individuals. [cite: 21]
+                </p>
+                <a href="#" class="btn btn-primary">Get Started Now</a>
+            </div>
+        </section>
+        
+        <section class="features">
+            <div class="container">
+                <h2>Fast, Simple, Secure</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="icon">📱</div>
+                        <h3>1. Create Your Order</h3>
+                        <p>Use our simple app to set your pickup and dropoff locations.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🛰️</div>
+                        <h3>2. Track in Real-Time</h3>
+                        [cite_start]<p>Effortlessly manage packages with real-time updates and tracking. [cite: 159]</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📦</div>
+                        <h3>3. Receive in Minutes</h3>
+                        <p>Our drone-based system bypasses traffic to deliver your package safely.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="problem-solution">
+            <div class="container" style="display: flex; gap: 3rem; align-items: center; flex-wrap: wrap;">
+                <div class="text-content" style="flex: 1; min-width: 300px;">
+                    <h3>The Problem</h3>
+                    <h2>Crowded Cities, Wasted Time</h2>
+                    <p>
+                        [cite_start]In today's busy cities, getting a package delivered quickly is not always easy. [cite: 13] [cite_start]Roads are crowded, schedules are unpredictable, and these delays waste time and reduce trust. [cite: 14, 15]
+                    </p>
+                    
+                    <h3>Our Solution</h3>
+                    <h2>A Smarter Way to Deliver</h2>
+                    <p>
+                        [cite_start]Wardiere Inc. provides a modern solution by introducing drone-based delivery. [cite: 18] [cite_start]We combine technology and convenience [cite: 8] [cite_start]to bring packages to people in less than an hour. [cite: 8]
+                    </p>
+                </div>
+                <div class="image-placeholder" style="flex: 1; min-width: 300px;">
+                    (Image of a drone flying over a city)
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; [cite_start]2025 Wardiere Inc. All rights reserved. [cite: 7]</p>
+        </div>
+    </footer>
+
+</body>
+</html>
