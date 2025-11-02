@@ -1,1 +1,0 @@
-//  this is a js file for responsiveness and interactivity
