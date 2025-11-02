@@ -39,9 +39,11 @@ Fast, reliable, and secure parcel delivery for Kigali by connecting customers wi
 - **Auth**: Standards-based credential storage (bcrypt/argon2), session/JWT strategy (TBD by final spec).
 
 **Tooling Justification**
-- **Backend Framework**: Flask
-  - Pros: Very fast dev velocity, type hints, automatic OpenAPI docs, great async support.
-  - Alternatives: Django REST Framework (slower to prototype, heavier), Express/NestJS (JS/TS ecosystem; less native geospatial focus for Python stack).
+
+- **Backend Framework**: Node JS
+  - Pros: Very fast development, strong async support, type hints with TypeScript, automatic OpenAPI docs, large ecosystem, easy integration with modern frontends.
+  - Alternatives: Express.js (lightweight, flexible), NestJS (structured, TypeScript-friendly, enterprise-grade).
+
 - **Task Processing**: Celery + Redis
   - Pros: Mature ecosystem, retries, scheduling, wide community support.
   - Alternatives: RQ/Huey (lighter features), Kafka (overkill for current scale).
