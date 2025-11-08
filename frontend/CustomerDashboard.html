@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard - QuickDrop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <a href="#" class="logo">QuickDrop</a>
+        
+        <nav class="main-nav" id="mainNav">
+            <ul>
+                <li><a href="#" class="nav-link active">My Deliveries</a></li>
+                
+                <li><a href="#" class="btn btn-primary" id="openModalBtnDesktop">Create New Delivery</a></li>
+                
+                <li class="profile-menu">
+                    <a href="#" class="profile-toggle" id="profileToggle">Profile ▼</a>
+                    <ul class="dropdown-menu" id="profileDropdown">
+                        <li><a href="#">Settings</a></li>
+                        <li><a href="login.html">Sign Out</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+    </header>
+
+    <main class="container">
+
+        <div class="dashboard-header">
+            <h1>Welcome, Raj!</h1>
+        </div>
+
+        <section class="content-section active-deliveries">
+            <h2>Active Deliveries</h2>
+            <div class="deliveries-grid">
+                
+                <a href="TrackOrder.html" class="order-card">
+                    <h4>Order #1021</h4>
+                    <p class="status">En route to pickup</p>
+                    <p class="eta">Arrives in 5 minutes</p>
+                </a>
+                
+                <a href="TrackOrder.html" class="order-card">
+                    <h4>Order #1022</h4>
+                    <p class="status">Waiting for courier</p>
+                    <p class="eta">Courier will be assigned shortly</p>
+                </a>
+                
+            </div>
+        </section>
+        
+        <section class="content-section past-deliveries">
+            <h2>Past Deliveries</h2>
+            <div class="list-container">
+                
+                <a href="#" class="past-order-item">
+                    <div class="past-order-info">
+                        <p class="item-name">Package from Wardiere Store</p>
+                        <p class="item-date">Oct 30, 2025</p>
+                    </div>
+                    <span class="past-order-price">$12.50</span>
+                </a>
+                
+                <a href="#" class="past-order-item">
+                    <div class="past-order-info">
+                        <p class="item-name">Documents to 123 Main St</p>
+                        <p class="item-date">Oct 28, 2025</p>
+                    </div>
+                    <span class="past-order-price">$9.00</span>
+                </a>
+
+                <a href="#" class="past-order-item">
+                    <div class="past-order-info">
+                        <p class="item-name">Groceries from City Market</p>
+                        <p class="item-date">Oct 27, 2025</p>
+                    </div>
+                    <span class="past-order-price">$15.20</span>
+                </a>
+            </div>
+        </section>
+            
+    </main>
+
+    <button class="fab" id="openModalBtnMobile" aria-label="Create New Delivery">+</button>
+
+    <div class="modal-overlay" id="deliveryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>New Delivery Details</h2>
+                <button class="modal-close" id="closeModalBtn">&times;</button>
+            </div>
+            
+            <form id="parcelForm" class="modal-form">
+                
+                <div class="form-group">
+                    <label for="pickup">Pickup Location</label>
+                    <input type="text" id="pickup" name="pickup" placeholder="Enter pickup address" required>
+                </div>
+                <div class="form-group">
+                    <label for="delivery">Delivery Location</label>
+                    <input type="text" id="delivery" name="delivery" placeholder="Enter delivery address" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="parcelType">Parcel Type</label>
+                    <select id="parcelType" name="parcelType" required>
+                        <option value="">Select type</option>
+                        <option value="document">Document</option>
+                        <option value="package">Package</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="fragile">Fragile</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="weight">Weight (kg)</label>
+                    <input type="number" id="weight" name="weight" step="0.1" min="0.1" placeholder="e.g. 2.5" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="senderName">Sender Name</label>
+                    <input type="text" id="senderName" name="senderName" value="Raj" required>
+                </div>
+                <div class="form-group">
+                    <label for="senderPhone">Sender Phone</label>
+                    <input type="tel" id="senderPhone" name="senderPhone" placeholder="+250 788 123 456" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="receiverName">Receiver Name</label>
+                    <input type="text" id="receiverName" name="receiverName" placeholder="Receiver's full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="receiverPhone">Receiver Phone</label>
+                    <input type="tel" id="receiverPhone" name="receiverPhone" placeholder="+250 788..." required>
+                </div>
+
+                <button type="submit" class="modal-submit-btn">Request Booking</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
