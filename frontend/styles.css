@@ -759,9 +759,7 @@ footer {
     color: #fd7e14;
 }
 
-/* ========================================
-   Track Order Page
-   ======================================== */
+/* Track Order Page */
 .tracking-layout {
     display: flex;
     gap: 2rem;
@@ -862,9 +860,7 @@ footer {
     font-weight: 500;
 }
 
-/* ========================================
-   Courier Live Task Page
-   ======================================== */
+/* Courier Live Task Page */
 body.full-height {
     height: 100vh;
     display: flex;
