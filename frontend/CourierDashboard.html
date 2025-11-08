@@ -3,243 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Courier App - QuickDrop</title>
-    <style>
-        /* --- Global Reset & Fonts --- */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #e9e9e9; /* Light grey to frame the app */
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            height: 100vh;
-        }
-
-        /* --- App Container (Simulates a Phone) --- */
-        .app-container {
-            width: 100%;
-            max-width: 420px;
-            height: 100vh;
-            background-color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        /* --- 1. App Header --- */
-        .app-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 1.25rem;
-            border-bottom: 1px solid #f0f0f0;
-            background-color: #f8f9fa;
-            flex-shrink: 0;
-        }
-        
-        .header-title h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-        
-        /* Online/Offline Toggle */
-        .status-toggle {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
-        }
-        
-        .status-toggle .dot {
-            width: 12px;
-            height: 12px;
-            background-color: #28a745; /* Green */
-            border-radius: 50%;
-        }
-        
-        /* --- 2. Main Scrollable Content --- */
-        .app-content {
-            flex-grow: 1; /* Fills all available space */
-            overflow-y: auto; /* Makes only this section scrollable */
-            padding: 1.25rem;
-            background-color: #f4f7f6; /* A slightly different bg for content */
-        }
-
-        /* --- Section Styling --- */
-        .content-section {
-            margin-bottom: 1.5rem;
-        }
-        
-        .content-section h2 {
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-        }
-
-        /* --- Current Task Card --- */
-        .current-task-card {
-            background-color: #ffffff;
-            border-radius: 12px;
-            border: 1px solid #ddd;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            padding: 1.5rem;
-        }
-        
-        .task-address {
-            margin-bottom: 1.5rem;
-            border-left: 4px solid #0d6efd;
-            padding-left: 1rem;
-        }
-        
-        .task-address.dropoff {
-             border-left-color: #fd7e14; /* Orange */
-        }
-        
-        .task-address p {
-            font-size: 0.9rem;
-            color: #6c757d;
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-        }
-        
-        .task-address h3 {
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-        
-        .task-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        
-        .action-button {
-            display: block;
-            background-color: #0d6efd;
-            color: white;
-            border: none;
-            padding: 1.25rem;
-            border-radius: 12px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 1.1rem;
-            font-weight: 600;
-            text-align: center;
-            text-decoration: none;
-        }
-        
-        .action-button.secondary {
-            background-color: #6c757d; /* Grey for secondary action */
-        }
-
-        /* --- Upcoming Tasks List --- */
-        .task-list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            background-color: #ffffff;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            margin-bottom: 0.75rem;
-        }
-
-        .task-list-info .locations {
-            font-weight: 600;
-        }
-        .task-list-info .id {
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-        
-        .task-list-status {
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-
-
-        /* --- 3. Bottom Navigation Bar --- */
-        .bottom-nav {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 1rem 0.5rem;
-            border-top: 1px solid #f0f0f0;
-            background-color: #ffffff;
-            flex-shrink: 0;
-        }
-        
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.25rem;
-            text-decoration: none;
-            color: #6c757d;
-        }
-        
-        .nav-item.active {
-            color: #0d6efd;
-        }
-        
-        .nav-item .icon {
-            font-size: 1.5rem;
-        }
-        
-        .nav-item .label {
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-    </style>
+    <title>My Tasks - QuickDrop</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="app-container">
-
-        <header class="app-header">
-            <div class="header-title">
-                <h1>Your Tasks</h1>
-            </div>
-            <div class="status-toggle">
-                <span class="dot"></span>
-                <span>Online</span>
-            </div>
-        </header>
-
-        <main class="app-content">
-
-            <section class="content-section current-task">
-                <h2>Current Task (Order #1021)</h2>
+    <header>
+        <a href="#" class="logo">QuickDrop</a>
+        
+        <nav class="main-nav" id="mainNav">
+            <ul>
+                <li><a href="#" class="nav-link active">My Tasks</a></li>
+                <li><a href="CourierEarnings.html" class="nav-link">Earnings</a></li>
                 
-                <div class="current-task-card">
-                    <div class="task-address pickup">
-                        <p>PICK UP FROM</p>
-                        <h3>Wardiere Store (123 Main St)</h3>
+                <li>
+                    <div class="status-toggle">
+                        <span class="dot"></span>
+                        <span>Online</span>
                     </div>
-                    
-                    <div class="task-address dropoff">
-                        <p>DELIVER TO</p>
-                        <h3>Raj P. (456 Oak Ave)</h3>
-                    </div>
+                </li>
+                
+                <li class="profile-menu">
+                    <a href="#" class="profile-toggle" id="profileToggle">Profile ▼</a>
+                    <ul class="dropdown-menu" id="profileDropdown">
+                        <li><a href="#">Settings</a></li>
+                        <li><a href="login.html">Sign Out</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+    </header>
 
-                    <div class="task-actions">
-                        <a href="#" class="action-button">Navigate to Pickup</a>
-                        <a href="#" class="action-button secondary">Confirm Pickup</a>
-                        </div>
-                </div>
-            </section>
+    <main class="container">
+
+        <div class="dashboard-header">
+            <h1>Your Tasks</h1>
+        </div>
+
+        <section class="content-section current-task">
+            <h2>Current Task</h2>
             
-            <section class="content-section upcoming-tasks">
-                <h2>Upcoming</h2>
+            <div class="current-task-card">
+                <div class="task-address pickup">
+                    <p>PICK UP FROM</p>
+                    <h3>Wardiere Store (123 Main St)</h3>
+                </div>
+                
+                <div class="task-address dropoff">
+                    <p>DELIVER TO</p>
+                    <h3>Raj P. (456 Oak Ave)</h3>
+                </div>
+
+                <div class="task-actions">
+                    <a href="CourierLiveTask.html" class="btn btn-primary">Navigate to Pickup</a>
+                    <a href="#" class="btn btn-secondary">Confirm Pickup</a>
+                </div>
+            </div>
+            
+            </section>
+        
+        <section class="content-section upcoming-tasks">
+            <h2>Upcoming Queue</h2>
+            <div class="list-container">
                 
                 <div class="task-list-item">
                     <div class="task-list-info">
@@ -257,26 +88,11 @@
                     <span class="task-list-status">Pending</span>
                 </div>
 
-            </section>
+            </div>
+        </section>
             
-        </main>
+    </main>
 
-        <nav class="bottom-nav">
-            <a href="#" class="nav-item active">
-                <span class="icon">📋</span>
-                <span class="label">Tasks</span>
-            </a>
-            <a href="#" class="nav-item">
-                <span class="icon">💰</span>
-                <span class="label">Earnings</span>
-            </a>
-            <a href="#" class="nav-item">
-                <span class="icon">👤</span>
-                <span class="label">Profile</span>
-            </a>
-        </nav>
-        
-    </div>
-
+    <script src="script.js"></script>
 </body>
 </html>
