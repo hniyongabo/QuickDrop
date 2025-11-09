@@ -122,11 +122,17 @@
                         <option value="other">Other</option>
                     </select>
                 </div>
+                 <div class="form-group" id="otherDetailsGroup" style="display: none;">
+                    <label for="otherDetails">Details of Parcel (Required for 'Other' type)</label>
+                    <textarea id="otherDetails" name="otherDetails" rows="3" placeholder="e.g., Small box of customized mugs, needs careful handling."></textarea>
+                </div>
+
                 <div class="form-group">
                     <label for="weight">Weight (kg)</label>
                     <input type="number" id="weight" name="weight" step="0.1" min="0.1" placeholder="e.g. 2.5" required>
                 </div>
 
+               
                 <div class="form-group">
                     <label for="senderName">Sender Name</label>
                     <input type="text" id="senderName" name="senderName" value="Raj" required>

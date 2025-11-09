@@ -1,4 +1,4 @@
-//  this is a js file for responsiveness and interactivity
+//  this is a js file for responsiveness and interactivity
 // Mobile menu toggle functionality
 (function() {
     const menuToggle = document.getElementById('menuToggle');
@@ -66,6 +66,13 @@
     const openModalBtnMobile = document.getElementById('openModalBtnMobile');
     const closeModalBtn = document.getElementById('closeModalBtn');
     const deliveryModal = document.getElementById('deliveryModal');
+    const parcelForm = document.getElementById('parcelForm'); // Moved up for scope
+
+    // Elements for 'Other' details functionality (NEW)
+    const parcelTypeSelect = document.getElementById('parcelType');
+    const otherDetailsGroup = document.getElementById('otherDetailsGroup');
+    const otherDetailsTextarea = document.getElementById('otherDetails');
+
 
     function openModal(event) {
         if (event) {
@@ -73,6 +80,8 @@
         }
         if (deliveryModal) {
             deliveryModal.classList.add('active');
+            // Ensure the correct state is set when modal opens (NEW)
+            toggleOtherDetails(); 
         }
     }
 
@@ -81,6 +90,31 @@
             deliveryModal.classList.remove('active');
         }
     }
+    
+    // --- NEW: Toggle Visibility of 'Other Details' ---
+    function toggleOtherDetails() {
+        if (!parcelTypeSelect || !otherDetailsGroup || !otherDetailsTextarea) return;
+
+        if (parcelTypeSelect.value === 'other') {
+            otherDetailsGroup.style.display = 'block';
+            otherDetailsTextarea.setAttribute('required', 'required');
+        } else {
+            otherDetailsGroup.style.display = 'none';
+            otherDetailsTextarea.removeAttribute('required');
+            // Optional: Clear the value when hidden to ensure clean data submission
+            otherDetailsTextarea.value = ''; 
+        }
+    }
+
+    // Attach listener for 'Parcel Type' change (NEW)
+    if (parcelTypeSelect) {
+        parcelTypeSelect.addEventListener('change', toggleOtherDetails);
+    }
+    
+    // Run on content load to set initial state (e.g., if page cached) (NEW)
+    document.addEventListener('DOMContentLoaded', toggleOtherDetails); 
+    // --------------------------------------------------
+
 
     if (openModalBtnDesktop) {
         openModalBtnDesktop.addEventListener('click', openModal);
@@ -104,7 +138,6 @@
     }
 
     // Form submission handler
-    const parcelForm = document.getElementById('parcelForm');
     if (parcelForm) {
         parcelForm.addEventListener('submit', function(event) {
             event.preventDefault();
