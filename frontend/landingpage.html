@@ -5,102 +5,205 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QuickDrop - Personalized Delivery in Rwanda</title>
     <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    </head>
 
-    <header class="container">
-        <a href="#" class="logo">QuickDrop</a>
-        
-        <nav id="mainNav">
-            <a href="#how-it-works" class="nav-link">How It Works</a>
-            <a href="#pricing" class="nav-link">Pricing</a>
-            <a href="#contact" class="nav-link">Contact</a>
-            
-            <div class="cta-buttons">
-                <a href="login.html" class="btn btn-secondary">Sign In</a>
-                <a href="signup.html" class="btn btn-primary">Sign Up</a>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-brand">
+                    <a href="landingpage.html" class="logo">QuickDrop</a>
+                </div>
+                
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#track">Track</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
             </div>
         </nav>
-        
-        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </button>
+        <button id="darkModeToggle" class="dark-toggle">🌙</button>
     </header>
 
     <main>
-        <section class="hero">
+        <section id="home" class="hero">
             <div class="container">
-                <h1>Bridging the Gap in Non-Food Delivery in Rwanda</h1>
-                <p>
-                    A specialized platform for safe, trackable, and timely delivery of
-                    documents, apparel, electronics, and more.
-                </p>
-                <a href="signup.html" class="btn btn-primary">Get Started Today</a>
+                <div class="hero-content">
+                    <h2 class="hero-title">Fast &amp; Reliable Parcel Delivery Across Rwanda</h2>
+                    <p class="hero-subtitle">Connect senders and receivers seamlessly. Your parcels delivered safely and on time.</p>
+                    <a href="SignUp.html" class="btn btn-primary">Get Started Today</a>
+                </div>
             </div>
         </section>
         
-        <section class="features" id="how-it-works">
+        <section id="track" class="track-section">
             <div class="container">
-                <h2>Simple, Trackable, and Secure</h2>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <span class="icon">[ 1. Order ]</span>
-                        <h3>1. Create Your Order</h3>
-                        <p>Customers submit pickup, drop-off, and item details right in the app.</p>
+                <h2 class="section-title">Track Your Parcel</h2>
+                <p class="track-description">Senders and receivers can track deliveries in real-time</p>
+                
+                <div class="track-form">
+                    <input type="text" id="trackingNumber" placeholder="Enter order number (e.g., #1021)" class="track-input">
+                    <button type="button" id="trackBtn" class="btn btn-secondary">Track</button>
+                </div>
+                
+                <div id="trackingResult" class="tracking-result" style="display: none;">
+                    <div class="tracking-result-content">
+                        
+                        <h3 class="tracking-status">
+                            Status: In Transit
+                        </h3>
+                        
+                        <div class="tracking-info-item">
+                            <strong>Origin:</strong> Kigali Region
+                        </div>
+                        <div class="tracking-info-item">
+                            <strong>Destination:</strong> Northern Province
+                        </div>
+                        
+                        <div class="tracking-footer">
+                            Last updated: <span id="lastUpdate">11/8/2025, 12:28:05 PM</span>
+                        </div>
+                        
+                        <div class="tracking-action">
+                            <a href="login.html?redirect=trackorder-1021" class="btn btn-primary btn-block">View Live Map & Full Details</a>
+                        </div>
+                        
                     </div>
-                    <div class="feature-card">
-                        <span class="icon">[ 2. Track ]</span>
-                        <h3>2. Track in Real-Time</h3>
-                        <p>Our GPS-based parcel tracking gives you transparency and reassurance.</p>
+                </div>
+                
+            </div>
+        </section>
+
+        <section id="how-it-works" class="how-it-works">
+            <div class="container">
+                <h2 class="section-title">How It Works</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h3>Book Delivery</h3>
+                        <p>Fill out the form with pickup and delivery details, parcel information, and contact details.</p>
                     </div>
-                    <div class="feature-card">
-                        <span class="icon">[ 3. Receive ]</span>
-                        <h3>3. Secure & Timely Delivery</h3>
-                        <p>Receive your non-food items safely, on schedule, with secure payment options.</p>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h3>Get Quote</h3>
+                        <p>Receive an instant quote based on distance, weight, and parcel type.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h3>We Pick Up</h3>
+                        <p>Our courier arrives at your pickup location at the scheduled time.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <h3>Track &amp; Deliver</h3>
+                        <p>Track your parcel in real-time until it's safely delivered to the recipient.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="problem-solution">
+        <section class="features">
             <div class="container">
-                <div class="text-content">
-                    <h3>The Problem</h3>
-                    <h2>The 85% Food-Delivery Gap</h2>
-                    <p>
-                        Most delivery apps in Kigali focus on food. This leaves a major gap for non-food goods,
-                        forcing businesses and customers to rely on informal, untrackable, and inconsistent methods[cite: 19].
-                    </p>
-                    
-                    <h3>Our Solution</h3>
-                    <h2>A Dedicated Non-Food Platform</h2>
-                    <p>
-                        QuickDrop is a specialized online platform providing safe, trackable, and
-                        timely delivery for non-food goods[cite: 20]. We offer real-time tracking,
-                        secure mobile money payments, and a reliable courier network[cite: 53].
-                    </p>
-                </div>
-                <div class="image-placeholder">
-                    (Image of courier delivering package)
+                <h2 class="section-title">Why Choose QuickDrop?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🚚</div>
+                        <h3>Fast Delivery</h3>
+                        <p>Same-day and next-day delivery options available across Rwanda.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📍</div>
+                        <h3>Nationwide Coverage</h3>
+                        <p>We deliver to all districts and cities in Rwanda.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💰</div>
+                        <h3>Affordable Prices</h3>
+                        <p>Competitive pricing with transparent quotes, no hidden fees.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📱</div>
+                        <h3>Real-Time Tracking</h3>
+                        <p>Track your parcel from pickup to delivery with live updates.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h3>Secure &amp; Insured</h3>
+                        <p>Your parcels are safe and insured during transit.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">👥</div>
+                        <h3>24/7 Support</h3>
+                        <p>Round-the-clock customer support for all your queries.</p>
+                    </div>
                 </div>
             </div>
         </section>
-        
-        <section id="pricing" style="padding: 4rem 0; text-align: center; background-color: #f8f9fa;">
-             <h2>Pricing (Placeholder)</h2>
+
+        <section id="pricing" class="pricing">
+            <div class="container">
+                <h2 class="section-title">Simple Pricing</h2>
+                <div class="pricing-info">
+                    <p>Our pricing is based on distance and weight. Use our quote calculator above to get an instant price estimate.</p>
+                    <div class="pricing-table">
+                        <div class="pricing-item">
+                            <h4>Documents</h4>
+                            <p>Starting from 2,000 RWF</p>
+                        </div>
+                        <div class="pricing-item">
+                            <h4>Packages (up to 5kg)</h4>
+                            <p>Starting from 3,500 RWF</p>
+                        </div>
+                        <div class="pricing-item">
+                            <h4>Packages (5-10kg)</h4>
+                            <p>Starting from 5,000 RWF</p>
+                        </div>
+                        <div class="pricing-item">
+                            <h4>Large Items (10kg+)</h4>
+                            <p>Custom pricing</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
-        
-        <section id="contact" style="padding: 4rem 0; text-align: center;">
-             <h2>Contact (Placeholder)</h2>
+
+        <section id="contact" class="contact">
+            <div class="container">
+                <h2 class="section-title">Contact Us</h2>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <h3>Phone</h3>
+                        <p>+250 788 123 456</p>
+                    </div>
+                    <div class="contact-item">
+                        <h3>Email</h3>
+                        <p>info@quickdrop.rw</p>
+                    </div>
+                    <div class="contact-item">
+                        <h3>Address</h3>
+                        <p>Kigali, Rwanda</p>
+                    </div>
+                </div>
+            </div>
         </section>
 
     </main>
 
-    <footer>
+    <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 QuickDrop. All rights reserved.</p>
+            <p>© 2024 QuickDrop. All rights reserved.</p>
         </div>
     </footer>
 

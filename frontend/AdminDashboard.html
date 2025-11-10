@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - QuickDrop</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
     <header>
-        <a href="#" class="logo">QuickDrop</a>
+        <a href="landingpage.html" class="logo">QuickDrop</a>
         
         <nav class="main-nav" id="mainNav">
             <ul>
@@ -48,33 +49,42 @@
                 
                 <section class="stats-container">
                     <div class="stat-card">
-                        <h3>12</h3>
-                        <p>Pending Orders</p>
+                        <h3>1,247</h3>
+                        <p>Total Deliveries</p>
                     </div>
                     <div class="stat-card">
-                        <h3>8</h3>
-                        <p>Active Couriers</p>
+                        <h3>856</h3>
+                        <p>Active Users</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>1,189</h3>
+                        <p>Successful Deliveries</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>4.7/5</h3>
+                        <p>Customer Satisfaction</p>
                     </div>
                 </section>
 
-                <nav class.tab-nav">
-                    <button class="tab-link active" data-tab="pending">Pending</button>
+                <nav class="tab-nav">
+                    <button class="tab-link active" data-tab="analytics">Analytics</button>
                     <button class="tab-link" data-tab="active">Active</button>
                     <button class="tab-link" data-tab="couriers">Couriers</button>
+                    <button class="tab-link" data-tab="alerts">Alerts</button>
                 </nav>
                 
-                <section id="tab-pending" class="tab-content active">
-                    <div class="list-item">
-                        <p><strong>Order:</strong> #1024</p>
-                        <p><strong>From:</strong> 123 Main St</p>
-                        <p><strong>To:</strong> 456 Oak Ave</p>
-                        <button class="btn btn-primary">Assign to Courier</button>
+                <section id="tab-analytics" class="tab-content active">
+                    <div class="analytics-section">
+                        <h3>Delivery Statistics</h3>
+                        <canvas id="deliveriesChart" class="analytics-chart"></canvas>
                     </div>
-                    <div class="list-item">
-                        <p><strong>Order:</strong> #1023</p>
-                        <p><strong>From:</strong> 789 Pine Ln</p>
-                        <p><strong>To:</strong> 321 Elm Blvd</p>
-                        <button class="btn btn-primary">Assign to Courier</button>
+                    <div class="analytics-section">
+                        <h3>User Growth</h3>
+                        <canvas id="usersChart" class="analytics-chart"></canvas>
+                    </div>
+                    <div class="analytics-section">
+                        <h3>Delivery Status Distribution</h3>
+                        <canvas id="statusChart" class="analytics-chart"></canvas>
                     </div>
                 </section>
                 
@@ -99,13 +109,31 @@
                     </div>
                     <div class="list-item">
                         <p><strong>Name:</strong> Sarah K.</p>
-                        <p><strong>Status:</strong> <span class="status" style="color: #28a745;">Online</span></p>
+                        <p><strong>Status:</strong> <span class="status status-online">Online</span></p>
                         <p><strong>Total Deliveries:</strong> 22</p>
                     </div>
                     <div class="list-item">
                         <p><strong>Name:</strong> Mike R.</p>
-                        <p><strong>Status:</strong> <span class="status" style="color: #6c757d;">Offline</span></p>
+                        <p><strong>Status:</strong> <span class="status status-offline">Offline</span></p>
                         <p><strong>Total Deliveries:</strong> 8</p>
+                    </div>
+                </section>
+                
+                <section id="tab-alerts" class="tab-content">
+                    <div id="noDriverAlert" class="alert-item hidden">
+                        <div class="alert-header">
+                            <span class="alert-icon">⚠️</span>
+                            <strong>No Available Drivers</strong>
+                        </div>
+                        <p>There are currently no available drivers/bikes online. Please step in to handle pending deliveries.</p>
+                        <p class="alert-pending"><strong>Pending Orders:</strong> 3</p>
+                    </div>
+                    <div id="normalStatus" class="alert-item normal">
+                        <div class="alert-header">
+                            <span class="alert-icon">✓</span>
+                            <strong>System Status: Normal</strong>
+                        </div>
+                        <p>All systems operational. Drivers available.</p>
                     </div>
                 </section>
                 </div>
