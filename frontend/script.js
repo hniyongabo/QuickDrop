@@ -1,17 +1,27 @@
-//  this is a js file for responsiveness and interactivity
+//  this is a js file for responsiveness and interactivity
 // Mobile menu toggle functionality
 (function() {
-    const menuToggle = document.getElementById('menuToggle');
-    const mainNav = document.getElementById('mainNav');
+    const menuToggle = document.querySelector('.menuToggle');
+    const mainNav = document.querySelector('.main-nav');
+    const navMenu = document.querySelector('.nav-menu');
 
     if (menuToggle && mainNav) {
-        menuToggle.addEventListener('click', function() {
+        menuToggle.addEventListener('click', () => {
             mainNav.classList.toggle('active');
+        });
+    }
+
+    // Landing page navbar toggle
+    const menuToggleLanding = document.querySelector('.menu-toggle-landing');
+
+    if (menuToggleLanding && navMenu) {
+        menuToggleLanding.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
         });
     }
 })();
 
-// Profile dropdown toggle
+// Profile Dropdown Toggle
 (function() {
     const profileToggle = document.getElementById('profileToggle');
     const profileDropdown = document.getElementById('profileDropdown');
@@ -31,7 +41,8 @@
     }
 })();
 
-// Tab switching (for dashboards with tabs)
+
+// Tab Switching
 (function() {
     const tabLinks = document.querySelectorAll('.tab-link');
     const tabContents = document.querySelectorAll('.tab-content');
@@ -42,25 +53,21 @@
                 const tabId = link.getAttribute('data-tab');
 
                 // Remove active class from all tabs
-                tabLinks.forEach(function(item) {
-                    item.classList.remove('active');
-                });
+                tabLinks.forEach(item => item.classList.remove('active'));
                 link.classList.add('active');
 
                 // Show/hide tab content
                 tabContents.forEach(function(content) {
-                    if (content.id === 'tab-' + tabId) {
-                        content.classList.add('active');
-                    } else {
-                        content.classList.remove('active');
-                    }
+                    content.classList.toggle('active', content.id === 'tab-' + tabId);
                 });
             });
         });
     }
 })();
 
-// Modal functionality (for delivery creation modal)
+// =====================
+// Modal Functionality
+// =====================
 (function() {
     const openModalBtnDesktop = document.getElementById('openModalBtnDesktop');
     const openModalBtnMobile = document.getElementById('openModalBtnMobile');
@@ -80,15 +87,11 @@
         }
         if (deliveryModal) {
             deliveryModal.classList.add('active');
-            // Ensure the correct state is set when modal opens (NEW)
-            toggleOtherDetails(); 
         }
     }
 
     function closeModal() {
-        if (deliveryModal) {
-            deliveryModal.classList.remove('active');
-        }
+        if (deliveryModal) deliveryModal.classList.remove('active');
     }
     
     // --- NEW: Toggle Visibility of 'Other Details' ---
@@ -116,39 +119,27 @@
     // --------------------------------------------------
 
 
-    if (openModalBtnDesktop) {
-        openModalBtnDesktop.addEventListener('click', openModal);
-    }
-
-    if (openModalBtnMobile) {
-        openModalBtnMobile.addEventListener('click', openModal);
-    }
-
-    if (closeModalBtn) {
-        closeModalBtn.addEventListener('click', closeModal);
-    }
+    if (openModalBtnDesktop) openModalBtnDesktop.addEventListener('click', openModal);
+    if (openModalBtnMobile) openModalBtnMobile.addEventListener('click', openModal);
+    if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
 
     if (deliveryModal) {
-        // Close modal when clicking overlay
         deliveryModal.addEventListener('click', function(event) {
-            if (event.target === deliveryModal) {
-                closeModal();
-            }
+            if (event.target === deliveryModal) closeModal();
         });
     }
 
     // Form submission handler
+    const parcelForm = document.getElementById('parcelForm');
     if (parcelForm) {
         parcelForm.addEventListener('submit', function(event) {
             event.preventDefault();
-            
             const formData = new FormData(parcelForm);
             console.log('Form Submitted!');
             for (let [key, value] of formData.entries()) {
-                console.log(key, ':', value);
+                console.log(`${key}: ${value}`);
             }
-            
-            // TODO: Send request to backend
+
             alert('Booking request sent!');
             closeModal();
         });
