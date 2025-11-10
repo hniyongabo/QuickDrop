@@ -2,7 +2,7 @@
 
 A Flask-based REST API backend for QuickDrop using PostgreSQL database, following MVC architecture.
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 backend/
@@ -32,14 +32,14 @@ backend/
 └── .env.example                  # Environment variables template
 ```
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Python 3.8 or higher
 - PostgreSQL 12 or higher
 - pip (Python package manager)
 - Virtual environment (recommended)
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 ### 1. Clone the Repository
 
@@ -113,7 +113,7 @@ flask db migrate -m "Initial migration with User model"
 flask db upgrade
 ```
 
-## 🏃 Running the Application
+## Running the Application
 
 ### Development Mode
 
@@ -142,13 +142,13 @@ export FLASK_ENV=production
 python run.py
 ```
 
-## 📚 API Documentation
+## API Documentation
 
 Once the application is running, access the Swagger UI documentation at:
 
 **http://localhost:5000/apidocs**
 
-## 🔑 API Endpoints
+## API Endpoints
 
 ### Health Check
 - `GET /health` - Check if API is running
@@ -166,7 +166,7 @@ Once the application is running, access the Swagger UI documentation at:
 - `PUT /api/v1/users/<user_id>` - Update user
 - `DELETE /api/v1/users/<user_id>` - Delete user (soft delete)
 
-## 🧪 Testing the API
+## Testing the API
 
 ### Using cURL
 
@@ -228,7 +228,7 @@ curl -X PUT http://localhost:5000/api/v1/users/1 \
    - Select "Bearer Token"
    - Paste your access token
 
-## 📝 Database Migrations
+## Database Migrations
 
 ### Create New Migration
 ```bash
@@ -256,7 +256,7 @@ Configure log level in `.env`:
 LOG_LEVEL=DEBUG  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 ```
 
-## 🛠️ Troubleshooting
+## Troubleshooting
 
 ### Port Already in Use
 ```bash
@@ -278,7 +278,7 @@ kill -9 <PID>
 pip install -r requirements.txt --force-reinstall
 ```
 
-## 🔐 Security Notes
+## Security Notes
 
 - Never commit `.env` file to version control
 - Change default SECRET_KEY and JWT_SECRET_KEY in production
@@ -286,7 +286,7 @@ pip install -r requirements.txt --force-reinstall
 - Enable HTTPS in production
 - Implement rate limiting for production
 
-## 📦 Adding New Modules
+## Adding New Modules
 
 To add a new module (e.g., `orders`):
 
@@ -302,17 +302,17 @@ touch app/modules/orders/{__init__.py,models.py,services.py,controllers.py,route
 5. Define routes in `routes.py`
 6. Register blueprint in `app/__init__.py`
 
-## 👥 User Roles
+## User Roles
 
 - `user` - Regular user
 - `driver` - Delivery driver
 - `admin` - Administrator
 
-## 📧 Support
+## Support
 
 For issues or questions, contact the QuickDrop development team.
 
-## 📄 License
+## License
 
 Copyright © 2025 QuickDrop Team
 
