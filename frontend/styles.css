@@ -60,13 +60,6 @@ header {
     list-style: none;
     gap: 1.5rem;
 }
-
-.main-nav .nav-link {
-    text-decoration: none;
-    color: #555;
-    font-weight: 600;
-}
-
 .main-nav .nav-link.active {
     color: #0d6efd;
 }
@@ -973,13 +966,20 @@ body.full-height {
 }
 
 .modal-form .form-group input,
-.modal-form .form-group select {
+.modal-form .form-group select,
+.modal-form .form-group textarea {
     width: 100%;
     padding: 0.85rem;
     border: 1px solid #ccc;
     border-radius: 8px;
     font-size: 1rem;
     font-family: inherit;
+}
+.modal-form .form-group textarea {
+    /* Ensure sufficient height for placeholder text */
+    min-height: 80px; 
+    resize: vertical; /* Allow users to resize vertically */
+    line-height: 1.4;
 }
 
 .modal-submit-btn {
