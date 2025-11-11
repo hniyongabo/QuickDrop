@@ -1,26 +1,24 @@
 //  this is a js file for responsiveness and interactivity
 // Mobile menu toggle functionality
+
+
 (function() {
-    const menuToggle = document.querySelector('.menuToggle');
-    const mainNav = document.querySelector('.main-nav');
-    const navMenu = document.querySelector('.nav-menu');
+    // Select the landing page button and menu using their IDs
+    const menuToggle = document.getElementById('menuToggle');
+    const navMenu = document.getElementById('navMenu');
 
-    if (menuToggle && mainNav) {
+    // Check if both elements were found
+    if (menuToggle && navMenu) {
+        // Add the click event listener
         menuToggle.addEventListener('click', () => {
-            mainNav.classList.toggle('active');
-        });
-    }
-
-    // Landing page navbar toggle
-    const menuToggleLanding = document.querySelector('.menu-toggle-landing');
-
-    if (menuToggleLanding && navMenu) {
-        menuToggleLanding.addEventListener('click', () => {
+            // Toggle the .active class on the menu itself
             navMenu.classList.toggle('active');
         });
     }
-})();
 
+    // --- Keep the rest of your JS code below ---
+
+})();
 // Profile Dropdown Toggle
 (function() {
     const profileToggle = document.getElementById('profileToggle');
@@ -130,7 +128,7 @@
     }
 
     // Form submission handler
-    const parcelForm = document.getElementById('parcelForm');
+    
     if (parcelForm) {
         parcelForm.addEventListener('submit', function(event) {
             event.preventDefault();
