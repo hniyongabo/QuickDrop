@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
     </head>
 
 <body>
@@ -27,8 +28,6 @@
                     <li><a href="#contact">Contact</a></li>
                 </ul>
                 
-                
-
                 <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
                     <span class="bar"></span>
                     <span class="bar"></span>
@@ -36,7 +35,8 @@
                 </button>
             </div>
         </nav>
-        </header>
+        <button id="darkModeToggle" class="dark-toggle">🌙</button>
+    </header>
 
     <main>
         <section id="home" class="hero">
@@ -119,35 +119,26 @@
             <div class="container">
                 <h2 class="section-title">Why Choose QuickDrop?</h2>
                 <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">🚚</div>
-                        <h3>Fast Delivery</h3>
-                        <p>Same-day and next-day delivery options available across Rwanda.</p>
+                    <!-- Image-style tiles: keep three, remove Nationwide, Affordable, Secure -->
+                    <div class="feature-card image-feature" style="background-image: url('https://furtherafrica.com/content-files/uploads/2021/05/rowan-freeman-clYlmCaQbzY-unsplash-scaled-e1621989512143.jpg');">
+                        <div class="feature-text">
+                            <h3>Fast Delivery</h3>
+                            <p>Same-day and next-day delivery options available across Rwanda.</p>
+                        </div>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">📍</div>
-                        <h3>Nationwide Coverage</h3>
-                        <p>We deliver to all districts and cities in Rwanda.</p>
+
+                    <div class="feature-card image-feature" style="background-image: url('https://images.unsplash.com/photo-1508780709619-79562169bc64?auto=format&fit=crop&w=1200&q=60');">
+                        <div class="feature-text">
+                            <h3>Real-Time Tracking</h3>
+                            <p>Monitor your parcel from pickup to delivery with live location updates.</p>
+                        </div>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">💰</div>
-                        <h3>Affordable Prices</h3>
-                        <p>Competitive pricing with transparent quotes, no hidden fees.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">📱</div>
-                        <h3>Real-Time Tracking</h3>
-                        <p>Track your parcel from pickup to delivery with live updates.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">🔒</div>
-                        <h3>Secure &amp; Insured</h3>
-                        <p>Your parcels are safe and insured during transit.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">👥</div>
-                        <h3>24/7 Support</h3>
-                        <p>Round-the-clock customer support for all your queries.</p>
+
+                    <div class="feature-card image-feature" style="background-image: url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1200&q=60');">
+                        <div class="feature-text">
+                            <h3>24/7 Support</h3>
+                            <p>Round-the-clock customer support to help with any delivery questions.</p>
+                        </div>
                     </div>
                 </div>
             </div>

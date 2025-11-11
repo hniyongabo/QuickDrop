@@ -143,3 +143,59 @@
         });
     }
 })();
+
+// Reveal first feature card text when it scrolls into view
+(function() {
+    document.addEventListener('DOMContentLoaded', function() {
+        const card = document.querySelector('.feature-card.first-feature');
+        if (!card) return;
+        const text = card.querySelector('.feature-text');
+        if (!text) return;
+
+        if ('IntersectionObserver' in window) {
+            // ONLY trigger when the entire card is visible
+            const obs = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    // require full visibility (threshold: 1.0)
+                    if (entry.isIntersecting && entry.intersectionRatio >= 1) {
+                        text.classList.add('in-view');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 1.0, rootMargin: '0px' });
+
+            obs.observe(card);
+        } else {
+            // Fallback: immediately show if IntersectionObserver not supported
+            text.classList.add('in-view');
+        }
+    });
+})();
+
+// Reveal image-feature cards when they are fully in view
+(function() {
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.feature-card.image-feature');
+        if (!cards || cards.length === 0) return;
+
+        if ('IntersectionObserver' in window) {
+            const obs = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && entry.intersectionRatio >= 1) {
+                        const text = entry.target.querySelector('.feature-text');
+                        if (text) text.classList.add('in-view');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 1.0, rootMargin: '0px' });
+
+            cards.forEach(card => obs.observe(card));
+        } else {
+            // Fallback: reveal all immediately
+            cards.forEach(card => {
+                const text = card.querySelector('.feature-text');
+                if (text) text.classList.add('in-view');
+            });
+        }
+    });
+})();
