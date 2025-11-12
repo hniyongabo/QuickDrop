@@ -4,6 +4,8 @@
 CREATE SCHEMA IF NOT EXISTS quickdrop;
 SET search_path TO quickdrop;
 
+CREATE TYPE quickdrop.user_role AS ENUM ('CUSTOMER', 'DISPATCHER', 'ADMIN');
+
 -- Drop tables in dependency order (for re-runs during dev)
 DO $$
 BEGIN
@@ -40,7 +42,7 @@ END$$;
 CREATE TABLE quickdrop."user" (
     user_id         SERIAL PRIMARY KEY,
     username        VARCHAR(150) NOT NULL UNIQUE,
-    role            VARCHAR(50)  NOT NULL, -- e.g., sender, courier, dispatcher, admin
+    role            quickdrop.user_role NOT NULL,
     address         VARCHAR(150), -- textual, optional (canonical addresses are in address table)
     email           VARCHAR(150) NOT NULL UNIQUE,
     phone_number    VARCHAR(25)  NOT NULL UNIQUE,

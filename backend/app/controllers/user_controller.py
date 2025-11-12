@@ -4,7 +4,7 @@ Handle HTTP requests and responses for user endpoints
 """
 from flask import request, current_app
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity
-from app.modules.user.services import UserService
+from app.services.user_service import UserService
 from app.common.utils import success_response, error_response
 from app.common.decorators import handle_exceptions, log_request
 

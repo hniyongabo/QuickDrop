@@ -4,7 +4,7 @@ Define URL patterns for user endpoints
 """
 from flask import Blueprint
 from flask_jwt_extended import jwt_required
-from app.modules.user.controllers import UserController
+from app.controllers.user_controller import UserController
 
 # Create blueprint
 user_bp = Blueprint('user', __name__)

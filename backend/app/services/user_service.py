@@ -4,7 +4,7 @@ Business logic for user operations
 """
 from flask import current_app
 from app import db
-from app.modules.user.models import User
+from app.models.user_model import User
 from app.common.validators import validate_user_data
 from sqlalchemy.exc import IntegrityError
 
