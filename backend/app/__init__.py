@@ -90,10 +90,10 @@ def create_app(config_name='development'):
 
     # Import models to ensure they're registered with SQLAlchemy
     with app.app_context():
-        from app.modules.user.models import User
+        from app.models.user_model import User
 
     # Register blueprints
-    from app.modules.user.routes import user_bp
+    from app.routes.user_route import user_bp
     app.register_blueprint(user_bp, url_prefix='/api/v1/users')
 
     # Error handlers

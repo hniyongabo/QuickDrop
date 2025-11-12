@@ -5,10 +5,10 @@ SET search_path TO quickdrop;
 -- Users
 INSERT INTO "user"(username, role, address, email, phone_number)
 VALUES
- ('habeeb', 'sender', 'KG 123 St', 'habeeb@example.com', '+250700000001'),
- ('harmony', 'sender', 'KN 10 Ave', 'harmony@example.com', '+250700000002'),
- ('raj', 'dispatcher', 'KN 5 Rd', 'raj@example.com', '+250700000003'),
- ('crispin', 'courier', 'KK 12 St', 'crispin@example.com', '+250700000004');
+ ('habeeb', 'DISPATCHER', 'KG 123 St', 'habeeb@example.com', '+250700000001'),
+ ('harmony', 'ADMIN', 'KN 10 Ave', 'harmony@example.com', '+250700000002'),
+ ('raj', 'CUSTOMER', 'KN 5 Rd', 'raj@example.com', '+250700000003'),
+ ('crispin', 'DISPATCHER', 'KK 12 St', 'crispin@example.com', '+250700000004');
 
 -- Addresses
 INSERT INTO address(user_id, district, city, longitude, latitude)

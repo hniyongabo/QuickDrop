@@ -5,6 +5,7 @@ __pycache__/
 *.so
 .Python
 env/
+.venv
 venv/
 ENV/
 build/
@@ -28,8 +29,6 @@ instance/
 .webassets-cache
 
 # Environment variables
-.env
-.env.local
 
 # Database
 *.db
@@ -56,3 +55,5 @@ htmlcov/
 
 # Migrations
 migrations/versions/*.pyc
+config.bat
+node_modules
