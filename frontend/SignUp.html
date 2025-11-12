@@ -4,89 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - QuickDrop</title>
-    
-    <style>
-        /* General Layout (Assuming you have this in styles.css) */
-        body { font-family: sans-serif; background-color: #f4f4f4; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .auth-container { width: 100%; max-width: 400px; padding: 20px; }
-        .auth-card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .logo { font-size: 24px; font-weight: bold; color: #007bff; text-align: center; display: block; margin-bottom: 20px; text-decoration: none; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input[type="text"], input[type="email"], input[type="tel"], input[type="password"], input[type="number"], textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .btn-primary { 
-            background-color: #007bff; 
-            color: white; 
-            padding: 10px 15px; 
-            border: none; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            width: 100%; 
-            font-size: 16px; 
-            margin-top: 10px; 
-        }
-        .role-selection { display: flex; gap: 20px; }
-        .role-option input { margin-right: 5px; }
-
-        /* --- ERROR MESSAGE STYLE --- */
-        .error-message {
-            color: red;
-            font-size: 12px;
-            display: block; 
-            margin-top: 5px;
-        }
-
-        /* Modal Specific Styles */
-        .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1000; 
-            left: 0;
-            top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.4); 
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 10% auto; 
-            padding: 25px;
-            border: 1px solid #888;
-            border-radius: 8px;
-            width: 80%; 
-            max-width: 500px;
-            position: relative;
-        }
-
-        .close-btn {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close-btn:hover,
-        .close-btn:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .file-upload-group input[type="file"] {
-            border: none;
-            padding: 0;
-            margin-top: 5px;
-        }
-    </style>
-    </head>
+    <link rel="stylesheet" href="styles.css">
+</head>
 <body>
 
     <div class="auth-container">
@@ -124,7 +43,7 @@
                 <div class="form-group">
                     <label for="phone">Phone Number</label>
                     <input type="tel" id="phone" name="phone" required>
-                    </div>
+                </div>
                 <div class="form-group">
                     <label for="address">Address</label>
                     <input type="text" id="address" name="address" required>
@@ -162,7 +81,7 @@
         <div class="modal-content">
             <span class="close-btn">&times;</span>
             <h2>Courier Application Details</h2>
-            <p style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 1rem; color: #555; line-height: 1.6; margin-bottom: 1.5rem;">Please provide the following information to complete your <strong>Courier</strong> profile with QuickDrop.</p>
+            <p class="courier-modal-text">Please provide the following information to complete your <strong>Courier</strong> profile with QuickDrop.</p>
             
             <form id="courier-details-form">
                 
@@ -172,7 +91,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="license-plate">Bike/Car Plate (Verified according to Rwanda’s law)</label>
+                    <label for="license-plate">Bike/Car Plate (Verified according to Rwanda's law)</label>
                     <input type="text" id="license-plate" required>
                 </div>
                 
@@ -208,77 +127,7 @@
             </form>
         </div>
     </div>
-    <script>
-        const roleCourier = document.getElementById('role-courier');
-        const courierModal = document.getElementById('courierModal');
-        const closeModal = document.querySelector('.close-btn');
-        const courierDetailsForm = document.getElementById('courier-details-form');
-        const mainForm = document.getElementById('main-signup-form');
-        
-        // Elements for Password Matching validation
-        const passwordInput = document.getElementById('password');
-        const confirmPasswordInput = document.getElementById('confirm-password');
-        const passwordMatchError = document.getElementById('password-match-error');
 
-        // Note: Phone number elements and its 'input' event listener have been removed here.
-
-
-        // --- Modal Logic (Unchanged) ---
-        roleCourier.addEventListener('change', function() {
-            if (this.checked) {
-                courierModal.style.display = 'block';
-            }
-        });
-        closeModal.addEventListener('click', function() {
-            courierModal.style.display = 'none';
-        });
-        window.addEventListener('click', function(event) {
-            if (event.target === courierModal) {
-                courierModal.style.display = 'none';
-            }
-        });
-        courierDetailsForm.addEventListener('submit', function(e) {
-            e.preventDefault(); 
-            document.getElementById('hidden-vehicle-model').value = document.getElementById('vehicle-model').value;
-            document.getElementById('hidden-license-plate').value = document.getElementById('license-plate').value;
-            document.getElementById('hidden-driver-license-num').value = document.getElementById('driver-license-num').value;
-            document.getElementById('hidden-id-card-num').value = document.getElementById('id-card-num').value;
-            document.getElementById('hidden-experience').value = document.getElementById('delivery-experience').value;
-            document.getElementById('hidden-motivation').value = document.getElementById('motivation').value;
-            alert('Courier details saved! Please click "Create Account" to finalize.');
-            courierModal.style.display = 'none';
-            mainForm.setAttribute('data-courier-details-complete', 'true');
-        });
-
-
-        // --- Main Form Submission and Validation (Password Matching is KEPT) ---
-        mainForm.addEventListener('submit', function(e) {
-            let formIsValid = true;
-            
-            // 1. Check Password Match (KEPT)
-            if (passwordInput.value !== confirmPasswordInput.value) {
-                passwordMatchError.textContent = 'Passwords do not match.';
-                formIsValid = false;
-            } else {
-                passwordMatchError.textContent = '';
-            }
-
-            // 2. Check Courier Details completion (KEPT)
-            const isCourier = document.getElementById('role-courier').checked;
-            const detailsComplete = mainForm.getAttribute('data-courier-details-complete') === 'true';
-
-            if (isCourier && !detailsComplete) {
-                alert('Please complete the Courier Application Details pop-up first.');
-                courierModal.style.display = 'block'; 
-                formIsValid = false;
-            }
-
-            // 3. Prevent form submission if any validation failed
-            if (!formIsValid) {
-                e.preventDefault(); 
-            }
-        });
-
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>

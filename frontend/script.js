@@ -144,58 +144,127 @@
     }
 })();
 
-// Reveal first feature card text when it scrolls into view
+// Reveal animations for hero, track, and feature cards on scroll
 (function() {
     document.addEventListener('DOMContentLoaded', function() {
-        const card = document.querySelector('.feature-card.first-feature');
-        if (!card) return;
-        const text = card.querySelector('.feature-text');
-        if (!text) return;
+        const elementsToAnimate = document.querySelectorAll('.fade-in-up, .feature-card.image-feature');
+        if (!elementsToAnimate || elementsToAnimate.length === 0) return;
 
         if ('IntersectionObserver' in window) {
-            // ONLY trigger when the entire card is visible
             const obs = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
-                    // require full visibility (threshold: 1.0)
-                    if (entry.isIntersecting && entry.intersectionRatio >= 1) {
-                        text.classList.add('in-view');
-                        observer.unobserve(entry.target);
+                    // For .fade-in-up elements, trigger at 20% visibility
+                    if (entry.target.classList.contains('fade-in-up')) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('in-view');
+                            observer.unobserve(entry.target);
+                        }
                     }
-                });
-            }, { threshold: 1.0, rootMargin: '0px' });
-
-            obs.observe(card);
-        } else {
-            // Fallback: immediately show if IntersectionObserver not supported
-            text.classList.add('in-view');
-        }
-    });
-})();
-
-// Reveal image-feature cards when they are fully in view
-(function() {
-    document.addEventListener('DOMContentLoaded', function() {
-        const cards = document.querySelectorAll('.feature-card.image-feature');
-        if (!cards || cards.length === 0) return;
-
-        if ('IntersectionObserver' in window) {
-            const obs = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting && entry.intersectionRatio >= 1) {
+                    // For .feature-card.image-feature, trigger at full visibility (100%)
+                    else if (entry.target.classList.contains('feature-card') && entry.isIntersecting && entry.intersectionRatio >= 1) {
                         const text = entry.target.querySelector('.feature-text');
                         if (text) text.classList.add('in-view');
                         observer.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 1.0, rootMargin: '0px' });
+            }, { threshold: [0.2, 1.0], rootMargin: '0px' });
 
-            cards.forEach(card => obs.observe(card));
+            elementsToAnimate.forEach(el => obs.observe(el));
         } else {
-            // Fallback: reveal all immediately
-            cards.forEach(card => {
-                const text = card.querySelector('.feature-text');
+            // Fallback: immediately show all
+            elementsToAnimate.forEach(el => {
+                el.classList.add('in-view');
+                const text = el.querySelector('.feature-text');
                 if (text) text.classList.add('in-view');
             });
         }
     });
+})();
+
+// =====================
+// SignUp Modal Functionality
+// =====================
+(function() {
+    const roleCourier = document.getElementById('role-courier');
+    const courierModal = document.getElementById('courierModal');
+    const closeModal = document.querySelector('.close-btn');
+    const courierDetailsForm = document.getElementById('courier-details-form');
+    const mainForm = document.getElementById('main-signup-form');
+    
+    // Elements for Password Matching validation
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm-password');
+    const passwordMatchError = document.getElementById('password-match-error');
+
+    // Modal Logic
+    if (roleCourier) {
+        roleCourier.addEventListener('change', function() {
+            if (this.checked && courierModal) {
+                courierModal.style.display = 'block';
+            }
+        });
+    }
+
+    if (closeModal) {
+        closeModal.addEventListener('click', function() {
+            if (courierModal) courierModal.style.display = 'none';
+        });
+    }
+
+    if (courierModal) {
+        window.addEventListener('click', function(event) {
+            if (event.target === courierModal) {
+                courierModal.style.display = 'none';
+            }
+        });
+    }
+
+    if (courierDetailsForm) {
+        courierDetailsForm.addEventListener('submit', function(e) {
+            e.preventDefault(); 
+            document.getElementById('hidden-vehicle-model').value = document.getElementById('vehicle-model').value;
+            document.getElementById('hidden-license-plate').value = document.getElementById('license-plate').value;
+            document.getElementById('hidden-driver-license-num').value = document.getElementById('driver-license-num').value;
+            document.getElementById('hidden-id-card-num').value = document.getElementById('id-card-num').value;
+            document.getElementById('hidden-experience').value = document.getElementById('delivery-experience').value;
+            document.getElementById('hidden-motivation').value = document.getElementById('motivation').value;
+            alert('Courier details saved! Please click "Create Account" to finalize.');
+            if (courierModal) courierModal.style.display = 'none';
+            if (mainForm) mainForm.setAttribute('data-courier-details-complete', 'true');
+        });
+    }
+
+    // Main Form Submission and Validation
+    if (mainForm) {
+        mainForm.addEventListener('submit', function(e) {
+            let formIsValid = true;
+            
+            // Check Password Match
+            if (passwordInput && confirmPasswordInput && passwordMatchError) {
+                if (passwordInput.value !== confirmPasswordInput.value) {
+                    passwordMatchError.textContent = 'Passwords do not match.';
+                    formIsValid = false;
+                } else {
+                    passwordMatchError.textContent = '';
+                }
+            }
+
+            // Check Courier Details completion
+            if (roleCourier) {
+                const isCourier = roleCourier.checked;
+                const detailsComplete = mainForm.getAttribute('data-courier-details-complete') === 'true';
+
+                if (isCourier && !detailsComplete) {
+                    alert('Please complete the Courier Application Details pop-up first.');
+                    if (courierModal) courierModal.style.display = 'block'; 
+                    formIsValid = false;
+                }
+            }
+
+            // Prevent form submission if validation failed
+            if (!formIsValid) {
+                e.preventDefault(); 
+            }
+        });
+    }
 })();
