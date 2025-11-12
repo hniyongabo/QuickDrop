@@ -147,7 +147,7 @@
 // Reveal animations for hero, track, and feature cards on scroll
 (function() {
     document.addEventListener('DOMContentLoaded', function() {
-        const elementsToAnimate = document.querySelectorAll('.fade-in-up, .feature-card.image-feature');
+        const elementsToAnimate = document.querySelectorAll('.fade-in-up, .feature-card.image-feature, .step');
         if (!elementsToAnimate || elementsToAnimate.length === 0) return;
 
         if ('IntersectionObserver' in window) {
@@ -155,6 +155,13 @@
                 entries.forEach(entry => {
                     // For .fade-in-up elements, trigger at 20% visibility
                     if (entry.target.classList.contains('fade-in-up')) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('in-view');
+                            observer.unobserve(entry.target);
+                        }
+                    }
+                    // For .step elements (How It Works), trigger at 20% visibility
+                    else if (entry.target.classList.contains('step')) {
                         if (entry.isIntersecting) {
                             entry.target.classList.add('in-view');
                             observer.unobserve(entry.target);
