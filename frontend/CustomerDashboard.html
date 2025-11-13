@@ -37,7 +37,7 @@
     <main class="container">
 
         <div class="dashboard-header">
-            <h1>Welcome, Raj!</h1>
+            <h1>Welcome, Ange!</h1>
         </div>
 
         <section class="content-section active-deliveries">
@@ -65,26 +65,26 @@
                 
                 <a href="#" class="past-order-item">
                     <div class="past-order-info">
-                        <p class="item-name">Package from Wardiere Store</p>
+                        <p class="item-name">Package from Simba Supermarket</p>
                         <p class="item-date">Oct 30, 2025</p>
                     </div>
-                    <span class="past-order-price">$12.50</span>
+                    <span class="past-order-price">12,500 RWF</span>
                 </a>
                 
                 <a href="#" class="past-order-item">
                     <div class="past-order-info">
-                        <p class="item-name">Documents to 123 Main St</p>
+                        <p class="item-name">Documents to Kacyiru Sector</p>
                         <p class="item-date">Oct 28, 2025</p>
                     </div>
-                    <span class="past-order-price">$9.00</span>
+                    <span class="past-order-price">9,000 RWF</span>
                 </a>
 
                 <a href="#" class="past-order-item">
                     <div class="past-order-info">
-                        <p class="item-name">Groceries from City Market</p>
+                        <p class="item-name">Groceries from Kigali City Market</p>
                         <p class="item-date">Oct 27, 2025</p>
                     </div>
-                    <span class="past-order-price">$15.20</span>
+                    <span class="past-order-price">15,200 RWF</span>
                 </a>
             </div>
         </section>
@@ -97,18 +97,18 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>New Delivery Details</h2>
-                <button class="modal-close" id="closeModalBtn">&times;</button>
+                <button class="modal-close" id="closeModalBtn">×</button>
             </div>
             
             <form id="parcelForm" class="modal-form">
                 
                 <div class="form-group">
                     <label for="pickup">Pickup Location</label>
-                    <input type="text" id="pickup" name="pickup" placeholder="Enter pickup address" required>
+                    <input type="text" id="pickup" name="pickup" placeholder="e.g., Nyarugenge, KN 4 Ave" required>
                 </div>
                 <div class="form-group">
                     <label for="delivery">Delivery Location</label>
-                    <input type="text" id="delivery" name="delivery" placeholder="Enter delivery address" required>
+                    <input type="text" id="delivery" name="delivery" placeholder="e.g., Gisozi, Gasabo" required>
                 </div>
 
                 <div class="form-group">
@@ -135,7 +135,7 @@
                
                 <div class="form-group">
                     <label for="senderName">Sender Name</label>
-                    <input type="text" id="senderName" name="senderName" value="Raj" required>
+                    <input type="text" id="senderName" name="senderName" value="Ange K." required>
                 </div>
                 <div class="form-group">
                     <label for="senderPhone">Sender Phone</label>
@@ -144,7 +144,7 @@
 
                 <div class="form-group">
                     <label for="receiverName">Receiver Name</label>
-                    <input type="text" id="receiverName" name="receiverName" placeholder="Receiver's full name" required>
+                    <input type="text" id="receiverName" name="receiverName" placeholder="e.g., Jean Claude M." required>
                 </div>
                 <div class="form-group">
                     <label for="receiverPhone">Receiver Phone</label>
@@ -155,10 +155,10 @@
                     <label for="courier">Choose Delivery Person</label>
                     <select id="courier" name="courier" required>
                         <option value="">Select available courier</option>
-                        <option value="david">David L. - Online (Rating: 4.8)</option>
-                        <option value="sarah">Sarah K. - Online (Rating: 4.9)</option>
-                        <option value="mike">Mike R. - Offline</option>
-                        <option value="jane">Jane M. - Online (Rating: 4.7)</option>
+                        <option value="didier">Didier M. - Online (Rating: 4.8)</option>
+                        <option value="solange">Solange K. - Online (Rating: 4.9)</option>
+                        <option value="moise">Moise R. - Offline</option>
+                        <option value="jeanne">Jeanne M. - Online (Rating: 4.7)</option>
                     </select>
                     <small class="courier-note">Only online couriers are available for selection</small>
                 </div>
@@ -167,9 +167,10 @@
                     <label>Pickup Location Map</label>
                     <div id="pickupMap">
                         <iframe 
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63800.03080612053!2d30.01950794863281!3d-1.9540456999999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca4258ed8e797%3A0xf32b36a5053b7f20!2sKigali%2CRwanda!5e0!3m2!1sen!2sin!4v1731002119385!5m2!1sen!2sin" 
+                            src="http://googleusercontent.com/maps/google.com/2" 
                             width="100%" 
                             height="200" 
+                            style="border:0;" 
                             allowfullscreen="" 
                             loading="lazy" 
                             referrerpolicy="no-referrer-when-downgrade">
