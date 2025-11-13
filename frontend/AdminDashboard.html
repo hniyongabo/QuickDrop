@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - QuickDrop</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <header>
+        <a href="landingpage.html" class="logo">QuickDrop</a>
+        
+        <nav class="main-nav" id="mainNav">
+            <ul>
+                <li><a href="#" class="nav-link active">Dashboard</a></li>
+                
+                <li class="profile-menu">
+                    <a href="#" class="profile-toggle" id="profileToggle">Admin ▼</a>
+                    <ul class="dropdown-menu" id="profileDropdown">
+                        <li><a href="login.html">Sign Out</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+    </header>
+
+    <main class="dashboard-container">
+
+        <section class="map-container">
+            <iframe 
+                class="map-iframe"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63800.03080612053!2d30.01950794863281!3d-1.9540456999999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca4258ed8e797%3A0xf32b36a5053b7f20!2sKigali%2CRwanda!5e0!3m2!1sen!2sin!4v1731002119385!5m2!1sen!2sin" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </section>
+
+        <aside class="sidebar">
+            <div class="sidebar-content">
+                
+                <section class="stats-container">
+                    <div class="stat-card">
+                        <h3>1,247</h3>
+                        <p>Total Deliveries</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>856</h3>
+                        <p>Active Users</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>1,189</h3>
+                        <p>Successful Deliveries</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>4.7/5</h3>
+                        <p>Customer Satisfaction</p>
+                    </div>
+                </section>
+
+                <nav class="tab-nav">
+                    <button class="tab-link active" data-tab="analytics">Analytics</button>
+                    <button class="tab-link" data-tab="active">Active</button>
+                    <button class="tab-link" data-tab="couriers">Couriers</button>
+                    <button class="tab-link" data-tab="alerts">Alerts</button>
+                </nav>
+                
+                <section id="tab-analytics" class="tab-content active">
+                    <div class="analytics-section">
+                        <h3>Delivery Statistics</h3>
+                        <canvas id="deliveriesChart" class="analytics-chart"></canvas>
+                    </div>
+                    <div class="analytics-section">
+                        <h3>User Growth</h3>
+                        <canvas id="usersChart" class="analytics-chart"></canvas>
+                    </div>
+                    <div class="analytics-section">
+                        <h3>Delivery Status Distribution</h3>
+                        <canvas id="statusChart" class="analytics-chart"></canvas>
+                    </div>
+                </section>
+                
+                <section id="tab-active" class="tab-content">
+                    <div class="list-item">
+                        <p><strong>Order:</strong> #1021</p>
+                        <p><strong>Courier:</strong> David L.</p>
+                        <p><strong>Status:</strong> <span class="status">En route to dropoff</span></p>
+                    </div>
+                    <div class="list-item">
+                        <p><strong>Order:</strong> #1020</p>
+                        <p><strong>Courier:</strong> Sarah K.</p>
+                        <p><strong>Status:</strong> <span class="status">En route to pickup</span></p>
+                    </div>
+                </section>
+                
+                <section id="tab-couriers" class="tab-content">
+                    <div class="list-item">
+                        <p><strong>Name:</strong> David L.</p>
+                        <p><strong>Status:</strong> <span class="status">On Task</span></p>
+                        <p><strong>Total Deliveries:</strong> 14</p>
+                    </div>
+                    <div class="list-item">
+                        <p><strong>Name:</strong> Sarah K.</p>
+                        <p><strong>Status:</strong> <span class="status status-online">Online</span></p>
+                        <p><strong>Total Deliveries:</strong> 22</p>
+                    </div>
+                    <div class="list-item">
+                        <p><strong>Name:</strong> Mike R.</p>
+                        <p><strong>Status:</strong> <span class="status status-offline">Offline</span></p>
+                        <p><strong>Total Deliveries:</strong> 8</p>
+                    </div>
+                </section>
+                
+                <section id="tab-alerts" class="tab-content">
+                    <div id="noDriverAlert" class="alert-item hidden">
+                        <div class="alert-header">
+                            <span class="alert-icon">⚠️</span>
+                            <strong>No Available Drivers</strong>
+                        </div>
+                        <p>There are currently no available drivers/bikes online. Please step in to handle pending deliveries.</p>
+                        <p class="alert-pending"><strong>Pending Orders:</strong> 3</p>
+                    </div>
+                    <div id="normalStatus" class="alert-item normal">
+                        <div class="alert-header">
+                            <span class="alert-icon">✓</span>
+                            <strong>System Status: Normal</strong>
+                        </div>
+                        <p>All systems operational. Drivers available.</p>
+                    </div>
+                </section>
+                </div>
+        </aside>
+    </main>
+
+<script src="script.js"></script>
+</body>
+</html>

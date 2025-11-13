@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>QuickDrop - Personalised Delivery in Rwanda</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-inner container" role="navigation" aria-label="Main navigation">
+            <a class="logo" href="landingpage.html">QuickDrop</a>
+
+            <nav>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#track">Track</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h2 class="hero-title">Fast &amp; Reliable Parcel Delivery Across Rwanda</h2>
+                    <p class="hero-subtitle">Connect senders and receivers seamlessly. Your parcels delivered safely and on time.</p>
+                    <a href="SignUp.html" class="btn btn-primary">Get Started Today</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="track" class="track-section">
+            <div class="container">
+                <h2 class="section-title">Track Your Parcel</h2>
+                <p class="track-description">Senders and receivers can track deliveries in real-time</p>
+
+                <div class="track-form">
+                    <input type="text" id="trackingNumber" placeholder="Enter order number (e.g., #1021)" class="track-input" aria-label="Order number">
+                    <button type="button" id="trackBtn" class="btn btn-secondary">Track</button>
+                </div>
+
+                <div id="trackingResult" class="tracking-result" aria-live="polite">
+                    <div class="tracking-result-content">
+                        <h3 class="tracking-status">Status: In Transit</h3>
+
+                        <div class="tracking-info-item"><strong>Origin:</strong> Kigali Region</div>
+                        <div class="tracking-info-item"><strong>Destination:</strong> Northern Province</div>
+
+                        <div class="tracking-footer">
+                            Last updated: <span id="lastUpdate">11/8/2025, 12:28:05 PM</span>
+                        </div>
+
+                        <div class="tracking-action">
+                            <a href="login.html?redirect=trackorder-1021" class="btn btn-primary">View Live Map &amp; Full Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="how-it-works">
+            <div class="container">
+                <h2 class="section-title">How It Works</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h3>Book Delivery</h3>
+                        <p>Fill out the form with pickup and delivery details, parcel information, and contact details.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h3>Get Quote</h3>
+                        <p>Receive an instant quote based on distance, weight, and parcel type.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h3>We Pick Up</h3>
+                        <p>Our courier arrives at your pickup location at the scheduled time.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <h3>Track &amp; Deliver</h3>
+                        <p>Track your parcel in real-time until it's safely delivered to the recipient.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="container">
+                <h2 class="section-title">Why Choose QuickDrop?</h2>
+                <div class="features-grid">
+                    <div class="feature-card image-feature" style="background-image: url('https://furtherafrica.com/content-files/uploads/2021/05/rowan-freeman-clYlmCaQbzY-unsplash-scaled-e1621989512143.jpg');">
+                        <div class="feature-text">
+                            <h3>Fast Delivery</h3>
+                            <p>Same-day and next-day delivery options available across Rwanda.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-card image-feature" style="background-image: url('https://th.bing.com/th?q=Real-Time+Tracking+Map+Screen&w=120&h=120&c=1&rs=1&qlt=70&o=7&cb=1&dpr=1.5&pid=InlineBlock&rm=3&mkt=en-WW&cc=RW&setlang=en&adlt=moderate&t=1&mw=247');">
+                        <div class="feature-text">
+                            <h3>Real-Time Tracking</h3>
+                            <p>Monitor your parcel from pickup to delivery with live location updates.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-card image-feature" style="background-image: url('https://i.pinimg.com/1200x/85/a1/9c/85a19cf5323734196ade391479be3231.jpg');">
+                        <div class="feature-text">
+                            <h3>24/7 Support</h3>
+                            <p>Round-the-clock customer support to help with any delivery questions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pricing" class="pricing">
+            <div class="container">
+                <h2 class="section-title">Simple Pricing</h2>
+                <div class="pricing-info">
+                    <p>Our pricing is based on distance and weight. Use our quote calculator above to get an instant price estimate.</p>
+                    <div class="pricing-table">
+                        <div class="pricing-item">
+                            <h4>Documents</h4>
+                            <p>Starting from 2,000 RWF</p>
+                        </div>
+                        <div class="pricing-item">
+                            <h4>Packages (up to 5kg)</h4>
+                            <p>Starting from 3,500 RWF</p>
+                        </div>
+                        <div class="pricing-item">
+                            <h4>Packages (5-10kg)</h4>
+                            <p>Starting from 5,000 RWF</p>
+                        </div>
+                        <div class="pricing-item">
+                            <h4>Large Items (10kg+)</h4>
+                            <p>Custom pricing</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact">
+            <div class="container">
+                <h2 class="section-title">Contact Us</h2>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <h3>Phone</h3>
+                        <p>+250 788 123 456</p>
+                    </div>
+                    <div class="contact-item">
+                        <h3>Email</h3>
+                        <p>info@quickdrop.rw</p>
+                    </div>
+                    <div class="contact-item">
+                        <h3>Address</h3>
+                        <p>Kigali, Rwanda</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 QuickDrop. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
