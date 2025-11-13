@@ -1,25 +1,307 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuickDrop - Personalized Delivery in Rwanda</title>
-    <link rel="stylesheet" href="styles.css">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
-    </head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>QuickDrop - Personalised Delivery in Rwanda</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+
+    <style>
+        :root{
+            --primary: #4a7c2a; /* primary green */
+            --primary-dark: #3d6a23;
+            --muted: #6c757d;
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --glass-alpha: 0.08;
+            --glass-border: rgba(255,255,255,0.12);
+            --max-width: 1200px;
+            --header-height: 72px;
+            --radius: 12px;
+        }
+
+        /* Reset */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html,body { height: 100%; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: #222;
+            line-height: 1.6;
+            /* reserve header space so fixed header won't overlap content */
+            padding-top: var(--header-height);
+        }
+
+        .container {
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 1.25rem;
+        }
+
+        /* Header: glass bar */
+        header {
+            position: fixed;
+            top: 10px; /* small gap from top */
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 2rem);
+            max-width: var(--max-width);
+            height: var(--header-height);
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+            border-radius: 16px;
+            padding: 0 1rem;
+            isolation: isolate;
+            border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,var(--glass-alpha));
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        }
+
+        .header-inner {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            width:100%;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display:flex;
+            align-items:center;
+            gap:.5rem;
+        }
+
+        /* Nav */
+        .nav-menu {
+            display:flex;
+            gap:1.25rem;
+            list-style: none;
+            align-items:center;
+        }
+        .nav-menu a {
+            color: #0b0b0b;
+            text-decoration: none;
+            font-weight: 600;
+            padding: .5rem .45rem;
+            border-radius: 8px;
+            transition: background .15s, color .15s;
+        }
+        .nav-menu a:hover {
+            color: #fff;
+            background: var(--primary);
+        }
+
+        /* Mobile menu toggle */
+        .menu-toggle {
+            display:none;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .menu-toggle .bar {
+            width: 24px;
+            height: 3px;
+            background: var(--primary);
+            display: block;
+            margin: 4px 0;
+            border-radius: 2px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.6rem 1rem;
+            border-radius: 10px;
+            font-weight: 700;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+        .btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+
+        .btn-secondary {
+            background: #fff;
+            color: var(--primary);
+            border: 1px solid rgba(0,0,0,0.06);
+            font-weight: 700;
+        }
+        .btn-secondary:hover { background: #f1f1f1; }
+
+        /* HERO */
+        .hero {
+            text-align: center;
+            padding: 6rem 1rem;
+            min-height: 520px;
+            position: relative;
+            overflow: hidden;
+            background-color: #222;
+            /* optional background image — keep fallback dark to preserve contrast */
+            background-image: url('../images/Street_photo.jpeg');
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            background-attachment: scroll; /* avoid fixed, fixes large whitespace issues on some browsers */
+            display:flex;
+            align-items:center;
+        }
+        /* stronger overlay so header glass reads on top */
+        .hero::before {
+            content: '';
+            position:absolute;
+            inset:0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.35) 100%);
+            z-index:1;
+        }
+        .hero .container { position: relative; z-index:2; }
+
+        .hero-title {
+            font-size: clamp(1.6rem, 4.6vw, 3rem);
+            color: #fff;
+            margin-bottom: .9rem;
+            text-shadow: 0 6px 20px rgba(0,0,0,0.45);
+        }
+        .hero-subtitle {
+            color: #e9f5df; /* pale greenish */
+            margin-bottom: 1.35rem;
+            font-size: 1.05rem;
+            text-shadow: 0 4px 14px rgba(0,0,0,0.35);
+        }
+
+        /* TRACK SECTION — plain white minimal vibe */
+        .track-section {
+            padding: 3.5rem 0;
+            background: #ffffff; /* plain white */
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+        }
+        .track-section .container { position: relative; z-index: 2; }
+
+        .section-title {
+            font-size: 1.9rem;
+            color: var(--primary-dark);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .track-description {
+            text-align:center;
+            color: #555;
+            margin-bottom: 1.25rem;
+            font-size: 1rem;
+        }
+
+        .track-form {
+            display:flex;
+            gap: .75rem;
+            max-width: 720px;
+            margin: 0 auto;
+            align-items:center;
+            justify-content:center;
+        }
+        .track-input {
+            flex:1;
+            min-width: 0;
+            padding: .85rem .9rem;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            background: #fff;
+            font-size: 1rem;
+            color: #111;
+            box-shadow: none;
+        }
+        .track-form .btn-secondary {
+            padding: .85rem 1rem;
+            border-radius: 10px;
+            white-space: nowrap;
+        }
+
+        /* Tracking result card (clean white card with contrast) */
+        .tracking-result {
+            display: none;
+            max-width: 820px;
+            margin: 1.5rem auto 0;
+            background: var(--card);
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.04);
+            color: #111;
+        }
+        .tracking-result.active { display:block; }
+        .tracking-status { color: var(--primary); font-weight:700; margin-bottom:.5rem; }
+        .tracking-info-item { margin-bottom: .5rem; color: #333; font-weight:600; }
+        .tracking-footer { margin-top: .8rem; color: var(--muted); font-size: .9rem; border-top:1px solid rgba(0,0,0,0.04); padding-top:.75rem; }
+
+        /* HOW IT WORKS */
+        .how-it-works { padding: 4rem 0; background: var(--bg); }
+        .steps { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1.5rem; margin-top:1.5rem; }
+        .step {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 1.6rem;
+            border: 1px solid rgba(0,0,0,0.04);
+            text-align:center;
+        }
+        .step-number {
+            width:56px; height:56px; border-radius:50%;
+            background: var(--primary); color:#fff; display:flex; align-items:center; justify-content:center;
+            margin:0 auto 0.9rem; font-weight:800;
+        }
+        .step h3 { margin-bottom:.6rem; color:#222; }
+        .step p { color:#555; font-size:.95rem; }
+
+        /* FEATURES */
+        .features { padding: 3rem 0; }
+        .features-grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:1rem; margin-top:1.25rem; }
+        .feature-card { border-radius: 12px; min-height: 220px; overflow:hidden; position:relative; }
+        .feature-card.image-feature { color:#fff; display:flex; align-items:flex-end; background-size:cover; background-position:center; padding: 1.5rem; background-blend-mode: multiply; background-color: rgba(0,0,0,0.35); }
+        .feature-text h3 { margin: 0 0 .45rem 0; }
+        .feature-text p { margin:0; opacity:.95; }
+
+        /* PRICING & CONTACT */
+        .pricing { padding: 3rem 0; background: #fff; }
+        .pricing-table { display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin-top:1.25rem; }
+        .pricing-item { background: var(--bg); padding:1.25rem; border-radius: 12px; border:1px solid rgba(0,0,0,0.04); text-align:center; }
+        .contact { padding: 3rem 0; background: var(--bg); }
+
+        /* Footer */
+        .footer { text-align:center; padding:2rem 0; background: var(--primary); color:#fff; margin-top: 2rem; border-top-left-radius: 8px; border-top-right-radius:8px; }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            header { width: calc(100% - 1.5rem); top: 8px; }
+            .navbar .container { padding: 0; }
+        }
+        @media (max-width: 768px) {
+            .nav-menu { display:none; }
+            .menu-toggle { display:block; }
+            .container { padding: 0 1rem; }
+            .hero { padding: 4rem 1rem; min-height: 440px; }
+        }
+
+        /* small JS-friendly utility for showing things */
+        .hidden { display: none !important; }
+    </style>
+</head>
 <body>
     <header>
-        <nav class="navbar">
-            <div class="container">
-                <div class="nav-brand">
-                    <a href="landingpage.html" class="logo">QuickDrop</a>
-                </div>
-                
+        <div class="header-inner container" role="navigation" aria-label="Main navigation">
+            <a class="logo" href="landingpage.html">QuickDrop</a>
+
+            <nav>
                 <ul class="nav-menu" id="navMenu">
                     <li><a href="#home">Home</a></li>
                     <li><a href="#track">Track</a></li>
@@ -27,68 +309,58 @@
                     <li><a href="#pricing">Pricing</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
-                
                 <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
                     <span class="bar"></span>
                     <span class="bar"></span>
                     <span class="bar"></span>
                 </button>
-            </div>
-        </nav>
+            </nav>
+        </div>
     </header>
 
     <main>
-        <section id="home" class="hero animate-on-scroll">
+        <section id="home" class="hero">
             <div class="container">
-                <div class="hero-content fade-in-up">
+                <div class="hero-content">
                     <h2 class="hero-title">Fast &amp; Reliable Parcel Delivery Across Rwanda</h2>
                     <p class="hero-subtitle">Connect senders and receivers seamlessly. Your parcels delivered safely and on time.</p>
                     <a href="SignUp.html" class="btn btn-primary">Get Started Today</a>
                 </div>
             </div>
         </section>
-        
-        <section id="track" class="track-section animate-on-scroll">
+
+        <section id="track" class="track-section">
             <div class="container">
-                <h2 class="section-title fade-in-up">Track Your Parcel</h2>
-                <p class="track-description fade-in-up">Senders and receivers can track deliveries in real-time</p>
-                
-                <div class="track-form fade-in-up">
-                    <input type="text" id="trackingNumber" placeholder="Enter order number (e.g., #1021)" class="track-input">
+                <h2 class="section-title">Track Your Parcel</h2>
+                <p class="track-description">Senders and receivers can track deliveries in real-time</p>
+
+                <div class="track-form">
+                    <input type="text" id="trackingNumber" placeholder="Enter order number (e.g., #1021)" class="track-input" aria-label="Order number">
                     <button type="button" id="trackBtn" class="btn btn-secondary">Track</button>
                 </div>
-                
-                <div id="trackingResult" class="tracking-result" style="display: none;">
+
+                <div id="trackingResult" class="tracking-result" aria-live="polite">
                     <div class="tracking-result-content">
-                        
-                        <h3 class="tracking-status">
-                            Status: In Transit
-                        </h3>
-                        
-                        <div class="tracking-info-item">
-                            <strong>Origin:</strong> Kigali Region
-                        </div>
-                        <div class="tracking-info-item">
-                            <strong>Destination:</strong> Northern Province
-                        </div>
-                        
+                        <h3 class="tracking-status">Status: In Transit</h3>
+
+                        <div class="tracking-info-item"><strong>Origin:</strong> Kigali Region</div>
+                        <div class="tracking-info-item"><strong>Destination:</strong> Northern Province</div>
+
                         <div class="tracking-footer">
                             Last updated: <span id="lastUpdate">11/8/2025, 12:28:05 PM</span>
                         </div>
-                        
-                        <div class="tracking-action">
-                            <a href="login.html?redirect=trackorder-1021" class="btn btn-primary btn-block">View Live Map & Full Details</a>
+
+                        <div class="tracking-action" style="margin-top:0.8rem;">
+                            <a href="login.html?redirect=trackorder-1021" class="btn btn-primary" style="display:block; width:100%;">View Live Map &amp; Full Details</a>
                         </div>
-                        
                     </div>
                 </div>
-                
             </div>
         </section>
 
         <section id="how-it-works" class="how-it-works">
             <div class="container">
-                <h2 class="section-title">How It Works</h2>
+                <h2 class="section-title" style="color:#222;">How It Works</h2>
                 <div class="steps">
                     <div class="step">
                         <div class="step-number">1</div>
@@ -116,9 +388,8 @@
 
         <section class="features">
             <div class="container">
-                <h2 class="section-title">Why Choose QuickDrop?</h2>
+                <h2 class="section-title" style="color:#222;">Why Choose QuickDrop?</h2>
                 <div class="features-grid">
-                    <!-- Image-style tiles: keep three, remove Nationwide, Affordable, Secure -->
                     <div class="feature-card image-feature" style="background-image: url('https://furtherafrica.com/content-files/uploads/2021/05/rowan-freeman-clYlmCaQbzY-unsplash-scaled-e1621989512143.jpg');">
                         <div class="feature-text">
                             <h3>Fast Delivery</h3>
@@ -145,7 +416,7 @@
 
         <section id="pricing" class="pricing">
             <div class="container">
-                <h2 class="section-title">Simple Pricing</h2>
+                <h2 class="section-title" style="color:#222;">Simple Pricing</h2>
                 <div class="pricing-info">
                     <p>Our pricing is based on distance and weight. Use our quote calculator above to get an instant price estimate.</p>
                     <div class="pricing-table">
@@ -172,17 +443,17 @@
 
         <section id="contact" class="contact">
             <div class="container">
-                <h2 class="section-title">Contact Us</h2>
-                <div class="contact-info">
-                    <div class="contact-item">
+                <h2 class="section-title" style="color:#222;">Contact Us</h2>
+                <div class="contact-info" style="display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:1rem; margin-top:1rem;">
+                    <div class="contact-item" style="background:#fff; padding:1.1rem; border-radius:12px; border:1px solid rgba(0,0,0,0.04);">
                         <h3>Phone</h3>
                         <p>+250 788 123 456</p>
                     </div>
-                    <div class="contact-item">
+                    <div class="contact-item" style="background:#fff; padding:1.1rem; border-radius:12px; border:1px solid rgba(0,0,0,0.04);">
                         <h3>Email</h3>
                         <p>info@quickdrop.rw</p>
                     </div>
-                    <div class="contact-item">
+                    <div class="contact-item" style="background:#fff; padding:1.1rem; border-radius:12px; border:1px solid rgba(0,0,0,0.04);">
                         <h3>Address</h3>
                         <p>Kigali, Rwanda</p>
                     </div>
@@ -198,6 +469,61 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        // Mobile menu toggle
+        (function() {
+            const menuToggle = document.getElementById('menuToggle');
+            const navMenu = document.getElementById('navMenu');
+
+            if (menuToggle && navMenu) {
+                menuToggle.addEventListener('click', () => {
+                    // simple toggle for small screens
+                    if (navMenu.style.display === 'flex') {
+                        navMenu.style.display = 'none';
+                    } else {
+                        navMenu.style.display = 'flex';
+                        navMenu.style.flexDirection = 'column';
+                        navMenu.style.background = 'rgba(255,255,255,0.98)';
+                        navMenu.style.position = 'absolute';
+                        navMenu.style.top = '72px';
+                        navMenu.style.right = '10px';
+                        navMenu.style.padding = '0.75rem';
+                        navMenu.style.borderRadius = '10px';
+                        navMenu.style.boxShadow = '0 8px 24px rgba(0,0,0,0.12)';
+                    }
+                });
+            }
+        })();
+
+        // Track button behaviour (demo) -> show result card with better contrast
+        (function() {
+            const trackBtn = document.getElementById('trackBtn');
+            const trackingResult = document.getElementById('trackingResult');
+            const trackingNumber = document.getElementById('trackingNumber');
+            const lastUpdateEl = document.getElementById('lastUpdate');
+
+            if (trackBtn && trackingResult && trackingNumber) {
+                trackBtn.addEventListener('click', function() {
+                    // simple UX: if empty, shake input (light feedback) else show result
+                    if (!trackingNumber.value || trackingNumber.value.trim().length < 2) {
+                        trackingNumber.focus();
+                        trackingNumber.style.transition = 'transform .12s ease';
+                        trackingNumber.style.transform = 'translateX(-6px)';
+                        setTimeout(()=> trackingNumber.style.transform = 'translateX(6px)', 120);
+                        setTimeout(()=> trackingNumber.style.transform = '', 240);
+                        return;
+                    }
+
+                    // simulate update timestamp
+                    const now = new Date();
+                    lastUpdateEl.textContent = now.toLocaleString();
+                    trackingResult.classList.add('active');
+                    // scroll into view lightly on small screens
+                    trackingResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
+            }
+        })();
+
+    </script>
 </body>
 </html>
