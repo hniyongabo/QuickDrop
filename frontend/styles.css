@@ -58,7 +58,7 @@ header {
     align-items: center;
 }
 
-.main-nav ul {
+.main-nav > ul {
     display: flex;
     align-items: center;
     list-style: none;
@@ -118,7 +118,7 @@ nav ul {
 .dropdown-menu {
     display: none;
     position: absolute;
-    top: 150%;
+    top: 100%;
     right: 0;
     background-color: #ffffff;
     border: 1px solid #eee;
@@ -1645,73 +1645,7 @@ body.full-height {
     box-sizing: border-box;
 }
 
-/* === Home & Pricing Backgrounds === */
-/* .home-section {
-    background-image: url('assets/images/home-bg.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    color: #fff;
-}
 
-.pricing-section {
-    background-image: url('assets/images/pricing-bg.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    color: #fff;
-}
-
-/* Optional overlay for readability */
-/*.home-section::before,
-.pricing-section::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.55);
-    z-index: 0;
-}
-
-.home-section > *,
-.pricing-section > * {
-    position: relative;
-    z-index: 1;
-}
-
-/* === Dark Mode === */
-body.dark-mode {
-    background-color: #121212;
-    color: #e0e0e0;
-}
-
-body.dark-mode header,
-body.dark-mode nav,
-body.dark-mode .sidebar,
-body.dark-mode .card,
-body.dark-mode .auth-card,
-body.dark-mode .modal-content {
-    background-color: #1f1f1f;
-    border-color: #333;
-}
-
-body.dark-mode a,
-body.dark-mode .nav-link {
-    color: #b8e994;
-}
-
-body.dark-mode .btn-primary {
-    background-color: #4a7c2a;
-    color: #fff;
-}
-
-body.dark-mode .chart-container {
-    background: #222;
-}
 
 canvas {
     display: block !important;
