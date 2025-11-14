@@ -26,7 +26,11 @@ def init_database():
             print("\nCreating database tables...")
 
             # Import all models to ensure they're registered
-            from app.modules.user.models import User
+            from app.models.user_model import User
+            from app.models.delivery_model import (
+                Courier, Shipment, Order, Address, 
+                Payment, OrderItem
+            )
 
             # Create all tables
             db.create_all()
