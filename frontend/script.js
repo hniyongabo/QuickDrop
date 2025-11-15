@@ -267,5 +267,40 @@
                 e.preventDefault(); 
             }
         });
+    
     }
+
+})(); 
+
+// --- Track Button Functionality ---
+(function() {
+    const trackBtn = document.getElementById('trackBtn');
+    const trackingResult = document.getElementById('trackingResult');
+    const trackingNumber = document.getElementById('trackingNumber');
+    const lastUpdateEl = document.getElementById('lastUpdate');
+
+    if (trackBtn && trackingResult && trackingNumber) {
+        trackBtn.addEventListener('click', function() {
+            // simple UX: if empty, shake input (light feedback) else show result
+            if (!trackingNumber.value || trackingNumber.value.trim().length < 2) {
+                trackingNumber.focus();
+                trackingNumber.style.transition = 'transform .12s ease';
+                trackingNumber.style.transform = 'translateX(-6px)';
+                setTimeout(()=> trackingNumber.style.transform = 'translateX(6px)', 120);
+                setTimeout(()=> trackingNumber.style.transform = '', 240);
+                return;
+            }
+
+            // simulate update timestamp
+            if(lastUpdateEl) {
+                const now = new Date();
+                lastUpdateEl.textContent = now.toLocaleString();
+            }
+            trackingResult.classList.add('active');
+            
+            // scroll into view lightly on small screens
+            trackingResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    }
+
 })();

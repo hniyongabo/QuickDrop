@@ -2991,5 +2991,84 @@ header {
 /* Courier Live Task Page */
 body.full-height {
     height: 100vh;
-    display
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* --- OVERRIDE: Restore White Track Section (from Beta) --- */
+
+.track-section {
+    padding: 3.5rem 0;
+    background: #ffffff; /* plain white */
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.track-section .section-title {
+    font-size: 1.9rem;
+    color: #3d6a23; /* var(--primary-dark) */
+    text-align: center;
+    margin-bottom: 1rem;
+    text-shadow: none;
+}
+
+.track-section .track-description {
+    text-align: center;
+    color: #555;
+    margin-bottom: 1.25rem;
+    font-size: 1rem;
+    text-shadow: none;
+}
+
+.track-form {
+    gap: .75rem;
+    max-width: 720px;
+}
+
+.track-input {
+    border: 1px solid #ddd;
+    background: #fff;
+}
+
+/* Restore the beta button style */
+.track-section .btn-secondary {
+    background-color: #fff;
+    color: #4a7c2a; /* var(--primary) */
+    border: 1px solid rgba(0,0,0,0.06);
+    font-weight: 700;
+}
+.track-section .btn-secondary:hover {
+    background-color: #f1f1f1;
+    border-color: rgba(0,0,0,0.06);
+}
+
+/* Restore the beta tracking result card style */
+.tracking-result {
+    max-width: 820px;
+    margin: 1.5rem auto 0;
+    background: #ffffff; /* var(--card) */
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.04);
+    color: #111;
+}
+
+.tracking-status { 
+    color: #4a7c2a; /* var(--primary) */
+    font-weight: 700; 
+    margin-bottom: .5rem; 
+}
+.tracking-info-item { 
+    margin-bottom: .5rem; 
+    color: #333; 
+    font-weight: 600; 
+}
+.tracking-footer { 
+    margin-top: .8rem; 
+    color: #6c757d; /* var(--muted) */
+    font-size: .9rem; 
+    border-top: 1px solid rgba(0,0,0,0.04); 
+    padding-top: .75rem; 
 }
