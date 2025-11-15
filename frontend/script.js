@@ -1,24 +1,4 @@
 //  this is a js file for responsiveness and interactivity
-// Mobile menu toggle functionality
-
-
-(function() {
-    // Select the landing page button and menu using their IDs
-    const menuToggle = document.getElementById('menuToggle');
-    const navMenu = document.getElementById('navMenu');
-
-    // Check if both elements were found
-    if (menuToggle && navMenu) {
-        // Add the click event listener
-        menuToggle.addEventListener('click', () => {
-            // Toggle the .active class on the menu itself
-            navMenu.classList.toggle('active');
-        });
-    }
-
-    // --- Keep the rest of your JS code below ---
-
-})();
 // Profile Dropdown Toggle
 (function() {
     const profileToggle = document.getElementById('profileToggle');
