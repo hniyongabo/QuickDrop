@@ -182,36 +182,43 @@ nav ul li a:hover {
 
     .logo {
         font-size: 1rem;
+        flex-shrink: 0;
     }
 
     .header-inner,
     .header-content {
-        flex-wrap: wrap;
-        gap: 0.5rem;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 0.4rem;
+        min-width: 0;
     }
 
     nav {
         width: 100%;
         display: flex;
         justify-content: flex-end;
+        min-width: 0;
+        flex-shrink: 1;
     }
 
     .nav-menu {
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         justify-content: flex-end;
-        gap: 0.5rem;
+        gap: 0.3rem;
+        flex: 1;
+        min-width: 0;
     }
 
     .nav-menu li {
-        flex: 0 0 auto;
+        flex: 0 1 auto;
         text-align: right;
     }
 
     .nav-menu a,
     .nav-link,
     nav ul li a {
-        font-size: 0.9rem;
-        padding: 0.35rem 0.45rem;
+        font-size: clamp(0.78rem, 2.6vw, 0.85rem);
+        padding: 0.28rem 0.38rem;
         width: auto;
         text-align: right;
     }
@@ -221,6 +228,23 @@ nav ul li a:hover {
         min-height: 38px;
         padding: 0.4rem 0.8rem;
         font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 520px) {
+    header {
+        padding: 0 0.6rem;
+    }
+
+    .nav-menu {
+        gap: 0.2rem;
+    }
+
+    .nav-menu a,
+    .nav-link,
+    nav ul li a {
+        font-size: 0.76rem;
+        padding: 0.24rem 0.32rem;
     }
 }
 
