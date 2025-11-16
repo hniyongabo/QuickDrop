@@ -106,6 +106,10 @@ header {
     background: var(--primary);
 }
 
+.nav-menu .btn-primary {
+    color: #fff;
+}
+
 .main-nav {
     display: flex;
     align-items: center;
