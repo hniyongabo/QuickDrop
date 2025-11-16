@@ -1,62 +1,72 @@
-
--- seeds/seed.sql — lightweight demo data for local dev
+-- seeds/seed.sql — demo data for local dev aligned to ERD
 SET search_path TO quickdrop;
 
 -- Users
-INSERT INTO "user"(username, role, address, email, phone_number)
+INSERT INTO "user"(username, password, role, email, phone_number)
 VALUES
- ('habeeb', 'DISPATCHER', 'KG 123 St', 'habeeb@example.com', '+250700000001'),
- ('harmony', 'ADMIN', 'KN 10 Ave', 'harmony@example.com', '+250700000002'),
- ('raj', 'CUSTOMER', 'KN 5 Rd', 'raj@example.com', '+250700000003'),
- ('crispin', 'DISPATCHER', 'KK 12 St', 'crispin@example.com', '+250700000004');
+ ('admin',    'password123', 'ADMIN',    'admin@example.com',    '+250700000000'),
+ ('courier1', 'password123', 'COURIER',  'courier1@example.com', '+250700000010'),
+ ('alice',    'password123', 'CUSTOMER', 'alice@example.com',    '+250700000011'),
+ ('bob',      'password123', 'CUSTOMER', 'bob@example.com',      '+250700000012')
+ON CONFLICT (username) DO NOTHING;
 
--- Addresses
+-- Role-specific tables
+INSERT INTO admin(user_id)
+SELECT user_id FROM "user" WHERE username='admin'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO customer(user_id)
+SELECT user_id FROM "user" WHERE username IN ('alice','bob')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO courier(user_id, vehicle_plate, online, last_seen, current_latitude, current_longitude, current_address)
+SELECT user_id, 'RAB123A', TRUE, NOW(), -1.9700, 30.1100, 'Kigali, Rwanda'
+FROM "user" WHERE username='courier1'
+ON CONFLICT DO NOTHING;
+
+-- Addresses (owned by users)
 INSERT INTO address(user_id, district, city, longitude, latitude)
 VALUES
- (1, 'Gasabo', 'Kigali', 30.099900, -1.944400),
- (2, 'Kicukiro', 'Kigali', 30.110000, -1.970000),
- (1, 'Gasabo', 'Kigali', 30.120000, -1.950000); -- extra address for user 1
-
--- Couriers
-INSERT INTO courier(name, vehicle_plate, phone, status)
-VALUES
- ('Desire N.', 'RAG123A', '+250788000111', 'active'),
- ('Honette M.', 'RAB456B', '+250788000222', 'active');
-
--- Stores
-INSERT INTO store(name, type, location, contact)
-VALUES
- ('Alpha Mart', 'grocery', 'Remera', '+250788111222'),
- ('MediPlus', 'pharmacy', 'Kacyiru', '+250788333444');
-
--- Products
-INSERT INTO product(store_id, name, category, price, stock, image_url)
-VALUES
- (1, 'Bottled Water 500ml', 'beverage', 500, 200, NULL),
- (1, 'Bread Loaf', 'bakery', 1200, 80, NULL),
- (2, 'Paracetamol 500mg', 'medicine', 1500, 150, NULL);
-
--- Orders
-INSERT INTO "order"(user_id, dropoff_address_id, pickup_address_id, status, total_amount)
-VALUES
- (1, 1, 3, 'created', 2700),
- (2, 2, 3, 'created', 1500);
-
--- Order Items
-INSERT INTO order_item(quantity, order_id, product_id, unit_price)
-VALUES
- (2, 1, 1, 500),
- (1, 1, 2, 1200),
- (1, 2, 3, 1500);
-
--- Payments
-INSERT INTO payment(order_id, method, status, paid_at)
-VALUES
- (1, 'momo', 'paid', NOW()),
- (2, 'cash', 'pending', NULL);
+ ((SELECT user_id FROM "user" WHERE username='alice'), 'Gasabo',  'Kigali', 30.099900, -1.944400),
+ ((SELECT user_id FROM "user" WHERE username='bob'),   'Kicukiro','Kigali', 30.110000, -1.970000),
+ ((SELECT user_id FROM "user" WHERE username='alice'), 'Gasabo',  'Kigali', 30.120000, -1.950000) -- extra address for Alice
+ON CONFLICT DO NOTHING;
 
 -- Shipments
-INSERT INTO shipment(order_id, picked_at, courier_id, delivered_at, status)
+-- Shipment 1: assigned and in transit
+INSERT INTO shipment(created_at, assigned_at, picked_at, courier_id, customer_id, delivered_at, 
+  pickup_latitude, pickup_longitude, pickup_address,
+  destination_latitude, destination_longitude, destination_address, status)
+VALUES (
+  NOW() - INTERVAL '45 minutes',
+  NOW() - INTERVAL '35 minutes',
+  NOW() - INTERVAL '30 minutes',
+  (SELECT c.courier_id FROM courier c JOIN "user" u ON u.user_id=c.user_id WHERE u.username='courier1'),
+  (SELECT customer_id FROM customer cu JOIN "user" u ON u.user_id=cu.user_id WHERE u.username='alice'),
+  NULL,
+  -1.9500, 30.1200, 'Remera Bus Park, Kigali',
+  -1.9550, 30.1300, 'Kacyiru Health Center, Kigali',
+  'in_transit'
+);
+
+-- Shipment 2: created and assigned but not picked yet
+INSERT INTO shipment(created_at, assigned_at, picked_at, courier_id, customer_id, delivered_at, 
+  pickup_latitude, pickup_longitude, pickup_address,
+  destination_latitude, destination_longitude, destination_address, status)
+VALUES (
+  NOW() - INTERVAL '10 minutes',
+  NOW() - INTERVAL '5 minutes',
+  NULL,
+  (SELECT c.courier_id FROM courier c JOIN "user" u ON u.user_id=c.user_id WHERE u.username='courier1'),
+  (SELECT customer_id FROM customer cu JOIN "user" u ON u.user_id=cu.user_id WHERE u.username='bob'),
+  NULL,
+  -1.9600, 30.1350, 'Kimironko Market, Kigali',
+  -1.9650, 30.1450, 'Kigali Heights, Kigali',
+  'assigned'
+);
+
+-- Payments
+INSERT INTO payment(shipment_id, method, status, paid_at)
 VALUES
- (1, NOW() - INTERVAL '30 minutes', 1, NULL, 'in_transit'),
- (2, NULL, 2, NULL, 'assigned');
+ ((SELECT shipment_id FROM shipment ORDER BY shipment_id ASC LIMIT 1), 'momo', 'paid', NOW()),
+ ((SELECT shipment_id FROM shipment ORDER BY shipment_id DESC LIMIT 1), 'cash', 'pending', NULL);

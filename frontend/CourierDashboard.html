@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tasks - QuickDrop</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <a href="landingpage.html" class="logo">QuickDrop</a>
+        
+        <nav class="main-nav" id="mainNav">
+            <ul>
+                <li><a href="#" class="nav-link active">My Tasks</a></li>
+                
+                
+                <li>
+                    <div class="status-toggle">
+                        <span class="dot"></span>
+                        <span>Online</span>
+                    </div>
+                </li>
+                
+                <li class="profile-menu">
+                    <a href="#" class="profile-toggle" id="profileToggle">Profile ▼</a>
+                    <ul class="dropdown-menu" id="profileDropdown">
+                        <li><a href="#">Settings</a></li>
+                        <li><a href="login.html">Sign Out</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+    </header>
+
+    <main class="container">
+
+        <div class="dashboard-header">
+            <h1>Your Tasks</h1>
+        </div>
+
+        <section class="content-section current-task">
+            <h2>Current Task</h2>
+            
+            <div class="current-task-card">
+                <div class="task-address pickup">
+                    <p>PICK UP FROM</p>
+                    <h3>Wardiere Store (123 Main St)</h3>
+                </div>
+                
+                <div class="task-address dropoff">
+                    <p>DELIVER TO</p>
+                    <h3>Raj P. (456 Oak Ave)</h3>
+                </div>
+
+                <div class="task-actions">
+                    <a href="CourierLiveTask.html" class="btn btn-primary">Navigate to Pickup</a>
+                    <a href="#" class="btn btn-secondary">Confirm Pickup</a>
+                </div>
+            </div>
+            
+            </section>
+        
+        <section class="content-section upcoming-tasks">
+            <h2>Upcoming Queue</h2>
+            <div class="list-container">
+                
+                <div class="task-list-item">
+                    <div class="task-list-info">
+                        <p class="locations">789 Pine Ln ➔ 321 Elm Blvd</p>
+                        <p class="id">Order: #1023</p>
+                    </div>
+                    <span class="task-list-status">Pending</span>
+                </div>
+                
+                <div class="task-list-item">
+                    <div class="task-list-info">
+                        <p class="locations">555 Maple Rd ➔ 999 Birch Pl</p>
+                        <p class="id">Order: #1024</p>
+                    </div>
+                    <span class="task-list-status">Pending</span>
+                </div>
+
+            </div>
+        </section>
+            
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

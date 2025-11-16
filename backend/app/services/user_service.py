@@ -7,6 +7,7 @@ from app import db
 from app.models.user_model import User
 from app.common.validators import validate_user_data
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import text
 
 
 class UserService:
@@ -24,6 +25,7 @@ class UserService:
             tuple: (user, error)
         """
         try:
+            print(f"data: {data}")
             # Validate user data
             is_valid, errors = validate_user_data(data, is_update=False)
             if not is_valid:
@@ -34,18 +36,72 @@ class UserService:
             if existing_user:
                 return None, {'message': 'User with this email already exists'}
             
-            # Create user
+            # Normalize incoming role
+            requested_role = str(data.get('role', 'customer')).lower()
+            # Internal role mapping for existing ORM model
+            internal_role = (
+                'ADMIN' if requested_role == 'admin'
+                else 'COURIER' if requested_role in ('driver', 'courier')
+                else 'CUSTOMER'
+            )
+
+            # Create user (ORM table)
             user = User(
                 name=data['name'],
-                phone=data['phone'],
+                phone=str(data['phone']),
                 email=data['email'],
-                role=data.get('role', 'user'),
+                role=internal_role,
                 address=data.get('address', '')
             )
+            print(f"user: {user}")
             user.set_password(data['password'])
-            
-            user.save()
-            current_app.logger.info(f'User created successfully: {user.email}')
+
+            user.save()  # commits
+
+            # Mirror into quickdrop schema and create role-specific record
+            # Map to enum role for quickdrop
+            quickdrop_role = (
+                'ADMIN' if requested_role == 'admin'
+                else 'COURIER' if requested_role in ('driver', 'courier')
+                else 'CUSTOMER'
+            )
+            # Use email as unique username to avoid collisions
+            username_value = data.get('username') or data['email']
+
+            quick_user_id = db._scalar(
+                text("""
+                    INSERT INTO quickdrop."user"(username, password, role, email, phone_number)
+                    VALUES (:username, :password, :role, :email, :phone)
+                    RETURNING user_id
+                """),
+                {
+                    'username': username_value,
+                    'password': user.password_hash,
+                    'role': quickdrop_role,
+                    'email': user.email,
+                    'phone': user.phone
+                }
+            )
+
+            # Create role-specific row
+            if quickdrop_role == 'CUSTOMER':
+                db.session.execute(
+                    text('INSERT INTO quickdrop.customer(user_id) VALUES (:uid) ON CONFLICT DO NOTHING'),
+                    {'uid': quick_user_id}
+                )
+            elif quickdrop_role == 'COURIER':
+                db.session.execute(
+                    text('INSERT INTO quickdrop.courier(user_id, online) VALUES (:uid, FALSE) ON CONFLICT DO NOTHING'),
+                    {'uid': quick_user_id}
+                )
+            elif quickdrop_role == 'ADMIN':
+                db.session.execute(
+                    text('INSERT INTO quickdrop.admin(user_id) VALUES (:uid) ON CONFLICT DO NOTHING'),
+                    {'uid': quick_user_id}
+                )
+            db.session.commit()
+
+            current_app.logger.info(f'User created successfully: {user.email} (quickdrop user_id={quick_user_id})')
             return user, None
             
         except IntegrityError as e:
@@ -53,7 +109,17 @@ class UserService:
             current_app.logger.error(f'Database integrity error: {str(e)}')
             return None, {'message': 'User with this email already exists'}
         except Exception as e:
-            db.session.rollback()
+            # Best-effort rollback including removing the ORM user if quickdrop insert failed after ORM commit
+            try:
+                db.session.rollback()
+            except Exception:
+                pass
+            try:
+                if 'user' in locals() and getattr(user, 'user_id', None):
+                    # delete the created ORM user to keep systems consistent
+                    user.delete()
+            except Exception:
+                pass
             current_app.logger.error(f'Error creating user: {str(e)}')
             return None, {'message': 'Failed to create user', 'error': str(e)}
     

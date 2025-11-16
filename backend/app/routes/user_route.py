@@ -44,8 +44,8 @@ def register():
               example: +1234567890
             role:
               type: string
-              example: user
-              enum: [user, admin, driver]
+              example: customer
+              enum: [customer, courier, admin]
             address:
               type: string
               example: 123 Main St, City, Country

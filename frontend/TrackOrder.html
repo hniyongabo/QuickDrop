@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order - QuickDrop</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <div class="container header-content">
+            <a href="landingpage.html" class="logo">QuickDrop</a>
+            
+            <nav class="header-nav">
+                <a href="CustomerDashboard.html" class="nav-link">← Back to Dashboard</a>
+                
+                <div class="profile-menu">
+                    <a href="#" class="profile-toggle" id="profileToggle">Profile ▼</a>
+                    <ul class="dropdown-menu" id="profileDropdown">
+                        <li><a href="#">Settings</a></li>
+                        <li><a href="login.html?action=logout">Sign Out</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <div class="page-header">
+            <h1>Track Your Order (#1021)</h1> 
+        </div>
+        
+        <div class="tracking-layout container">
+            
+            <section class="map-wrapper" id="liveMapWrapper">
+                <iframe 
+                    src="https://maps.google.com/maps?q=40.7128,-74.0060&z=15&output=embed"
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </section>
+            
+            <aside class="status-sidebar">
+                
+                <h2>Status: En route to pickup</h2>
+                <p class="eta">Arrives in 5 minutes</p>
+                
+                <div class="info-group">
+                    <h3>Courier</h3>
+                    <p>David L.</p>
+                </div>
+                
+                <div class="info-group">
+                    <h3>From (Pickup)</h3>
+                    <p>Wardiere Store (123 Main St)</p>
+                </div>
+
+                <div class="info-group">
+                    <h3>To (Delivery)</h3>
+                    <p>Raj P. (456 Oak Ave)</p>
+                </div>
+                
+                <div class="info-group">
+                    <h3>Delivery Timeline</h3>
+                    <ul class="status-timeline">
+                        <li class="status-step completed"><p>Order Placed</p><span>10:01 AM</span></li>
+                        <li class="status-step completed"><p>Courier Assigned</p><span>10:02 AM</span></li>
+                        <li class="status-step"><p>At Pickup Location</p><span>Est. 10:05 AM</span></li>
+                        <li class="status-step"><p>Delivered</p><span>Est. 10:20 AM</span></li>
+                    </ul>
+                </div>
+            </aside>
+            
+        </div>
+            
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

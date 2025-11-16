@@ -47,8 +47,8 @@ class UserController:
                   example: +1234567890
                 role:
                   type: string
-                  example: user
-                  enum: [user, admin, driver]
+                  example: customer
+                  enum: [customer, courier, admin]
                 address:
                   type: string
                   example: 123 Main St, City, Country
@@ -59,10 +59,10 @@ class UserController:
             description: Invalid input data
         """
         data = request.get_json()
-        
         user, error = UserService.create_user(data)
         
-        if error:
+        if error: 
+            print(f"error: {error}")
             return error_response(
                 error.get('message', 'Failed to create user'),
                 400,
@@ -273,20 +273,24 @@ class UserController:
         user, error = UserService.authenticate_user(data['email'], data['password'])
         
         if error:
-            return error_response(error.get('message', 'Authentication failed'), 401)
+          print(f"error: {error}")
+          return error_response(error.get('message', 'Authentication failed'), 401)
         
-        # Create JWT tokens
+        # Issue JWT tokens
         access_token = create_access_token(
-            identity=user.user_id,
-            additional_claims={'role': user.role, 'email': user.email}
+            identity=str(user.user_id),
+            additional_claims={"role": str(user.role).lower(), "email": user.email},
         )
-        refresh_token = create_refresh_token(identity=user.user_id)
-        
-        return success_response({
-            'user': user.to_dict(),
-            'access_token': access_token,
-            'refresh_token': refresh_token
-        }, 'Login successful')
+        refresh_token = create_refresh_token(identity=str(user.user_id))
+
+        return success_response(
+            {
+                "user": user.to_dict(),
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+            },
+            'Login successful'
+        )
     
     @staticmethod
     @handle_exceptions
@@ -306,7 +310,11 @@ class UserController:
             description: Unauthorized
         """
         user_id = get_jwt_identity()
-        user = UserService.get_user_by_id(user_id)
+        try:
+            user_id_int = int(user_id)
+        except (TypeError, ValueError):
+            return error_response('Invalid token identity', 401)
+        user = UserService.get_user_by_id(user_id_int)
         
         if not user:
             return error_response('User not found', 404)

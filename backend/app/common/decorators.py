@@ -41,14 +41,18 @@ def role_required(required_roles):
             try:
                 verify_jwt_in_request()
                 claims = get_jwt()
-                user_role = claims.get('role', 'user')
+                user_role = str(claims.get('role', 'customer')).lower()
                 
                 if isinstance(required_roles, str):
                     roles = [required_roles]
                 else:
                     roles = required_roles
+                roles = [str(r).lower() for r in roles]
                 
                 if user_role not in roles:
+                    current_app.logger.error(
+                        f'Role mismatch: token role="{user_role}", required={roles}'
+                    )
                     return error_response(
                         'You do not have permission to access this resource',
                         403

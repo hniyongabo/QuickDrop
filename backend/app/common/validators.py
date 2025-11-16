@@ -128,8 +128,9 @@ def validate_user_data(data, is_update=False):
     
     # Role validation
     if 'role' in data and data['role']:
-        valid_roles = ['user', 'admin', 'driver']
-        if data['role'] not in valid_roles:
+        role_value = str(data['role']).lower()
+        valid_roles = ['user', 'admin', 'driver', 'customer', 'courier']
+        if role_value not in valid_roles:
             errors.append(f"Invalid role. Must be one of: {', '.join(valid_roles)}")
     
     return len(errors) == 0, errors

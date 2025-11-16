@@ -3,7 +3,7 @@ Database utilities and base model
 """
 from datetime import datetime
 from app import db
-
+from typing import Any, Dict, List
 
 class BaseModel(db.Model):
     """
@@ -53,6 +53,24 @@ class BaseModel(db.Model):
             column.name: getattr(self, column.name)
             for column in self.__table__.columns
         }
+
+ 
+# Lightweight query helpers for read-only analytics
+def _scalar(stmt, params: Dict[str, Any] = None) -> Any:
+    result = db.session.execute(stmt, params or {})
+    row = result.fetchone()
+    return row[0] if row else None
+
+
+def _rows(stmt, params: Dict[str, Any] = None) -> List[Dict[str, Any]]:
+    result = db.session.execute(stmt, params or {})
+    cols = result.keys()
+    return [dict(zip(cols, r)) for r in result.fetchall()]
+
+
+# Expose helpers on the SQLAlchemy instance for convenience (db._scalar / db._rows)
+setattr(db, '_scalar', _scalar)
+setattr(db, '_rows', _rows)
 
 
 def init_db(app):

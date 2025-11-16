@@ -99,7 +99,7 @@ def is_valid_phone(phone):
         bool: True if valid, False otherwise
     """
     # Remove common separators
-    cleaned = re.sub(r'[\s\-\(\)\+]', '', phone)
+    cleaned = re.sub(r'[\s\-\(\)\+]', '', str(phone))
     # Check if it contains only digits and has reasonable length
     return cleaned.isdigit() and 10 <= len(cleaned) <= 15
 
