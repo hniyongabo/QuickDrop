@@ -59,7 +59,7 @@ def create_app(config_name='development'):
         "swagger": "2.0",
         "info": {
             "title": "QuickDrop API",
-            "description": "API Documentation for QuickDrop Backend System",
+            "description": "API Documentation for QuickDrop Delivery System",
             "version": "1.0.0",
             "contact": {
                 "name": "QuickDrop Team",
@@ -80,6 +80,24 @@ def create_app(config_name='development'):
             {
                 "Bearer": []
             }
+        ],
+        "tags": [
+            {
+                "name": "Authentication",
+                "description": "User authentication and authorization"
+            },
+            {
+                "name": "Users",
+                "description": "User management operations"
+            },
+            {
+                "name": "Courier",
+                "description": "Courier/Driver operations and delivery management"
+            },
+            {
+                "name": "Health",
+                "description": "Health check endpoints"
+            }
         ]
     }
     
@@ -91,10 +109,17 @@ def create_app(config_name='development'):
     # Import models to ensure they're registered with SQLAlchemy
     with app.app_context():
         from app.models.user_model import User
+        from app.models.delivery_model import (
+            Courier, Shipment, Order, Address, 
+            Payment, OrderItem
+        )
 
     # Register blueprints
     from app.routes.user_route import user_bp
+    from app.routes.courier_route import courier_bp
+    
     app.register_blueprint(user_bp, url_prefix='/api/v1/users')
+    app.register_blueprint(courier_bp, url_prefix='/api/v1/courier')
 
     # Error handlers
     register_error_handlers(app)
@@ -111,10 +136,51 @@ def create_app(config_name='development'):
         responses:
           200:
             description: Service is healthy
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: healthy
+                service:
+                  type: string
+                  example: QuickDrop Backend
         """
         return jsonify({
             'status': 'healthy',
             'service': 'QuickDrop Backend'
+        }), 200
+    
+    # API info endpoint
+    @app.route('/api/info', methods=['GET'])
+    def api_info():
+        """
+        API information endpoint
+        ---
+        tags:
+          - Health
+        responses:
+          200:
+            description: API information
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                version:
+                  type: string
+                endpoints:
+                  type: object
+        """
+        return jsonify({
+            'name': 'QuickDrop API',
+            'version': '1.0.0',
+            'endpoints': {
+                'users': '/api/v1/users',
+                'courier': '/api/v1/courier',
+                'documentation': '/apidocs',
+                'health': '/health'
+            }
         }), 200
     
     return app
