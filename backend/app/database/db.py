@@ -30,7 +30,7 @@ class BaseModel(db.Model):
             db.session.delete(self)
             db.session.commit()
             return True
-        except Exception as e:
+        except Exception as e:w
             db.session.rollback()
             raise e
     
