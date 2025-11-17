@@ -290,12 +290,6 @@ pip install -r requirements.txt --force-reinstall
 
 To add a new module (e.g., `orders`):
 
-1. Create module structure:
-```bash
-mkdir -p app/modules/orders
-touch app/modules/orders/{__init__.py,models.py,services.py,controllers.py,routes.py}
-```
-
 2. Define model in `models.py`
 3. Implement business logic in `services.py`
 4. Create controllers in `controllers.py`
