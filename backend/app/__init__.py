@@ -117,7 +117,7 @@ def create_app(config_name='development'):
     # Register blueprints
     from app.routes.user_route import user_bp
     from app.routes.admin_route import admin_bp
-    from app.routes.courier_route import courier_bp
+    # from app.routes.courier_route import courier_bp
     from app.routes.shipment_route import shipment_bp
     app.register_blueprint(user_bp, url_prefix='/api/v1/users')
     app.register_blueprint(admin_bp, url_prefix='/api/v1/admin')
