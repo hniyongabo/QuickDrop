@@ -31,8 +31,8 @@ class Shipment(BaseModel):
     courier_id = db.Column(db.Integer, db.ForeignKey('courier.courier_id'), nullable=True)
     courier = db.relationship('Courier', backref='shipments')
 
-    # We don't model Customer class here; store the id for linkage
-    customer_id = db.Column(db.Integer, nullable=True)
+    # Customer linkage
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.customer_id'), nullable=True)
 
     # Locations
     pickup_latitude = db.Column(db.Numeric(9, 6), nullable=True)

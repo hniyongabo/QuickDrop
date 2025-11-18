@@ -25,11 +25,11 @@ class ShipmentService:
                   s.destination_address,
                   cu.username AS customer_name,
                   co.username AS courier_name
-                FROM quickdrop.shipment s
-                LEFT JOIN quickdrop.customer c ON c.customer_id = s.customer_id
-                LEFT JOIN quickdrop."user" cu ON cu.user_id = c.user_id
-                LEFT JOIN quickdrop.courier cr ON cr.courier_id = s.courier_id
-                LEFT JOIN quickdrop."user" co ON co.user_id = cr.user_id
+                FROM shipment s
+                LEFT JOIN customer c ON c.customer_id = s.customer_id
+                LEFT JOIN "users" cu ON cu.user_id = c.user_id
+                LEFT JOIN courier cr ON cr.courier_id = s.courier_id
+                LEFT JOIN "users" co ON co.user_id = cr.user_id
                 WHERE s.shipment_id = :sid
             """),
             {"sid": shipment_id},
@@ -121,11 +121,11 @@ class ShipmentService:
                   s.destination_address,
                   cu.username AS customer_name,
                   co.username AS courier_name
-                FROM quickdrop.shipment s
-                LEFT JOIN quickdrop.customer c ON c.customer_id = s.customer_id
-                LEFT JOIN quickdrop."user" cu ON cu.user_id = c.user_id
-                LEFT JOIN quickdrop.courier cr ON cr.courier_id = s.courier_id
-                LEFT JOIN quickdrop."user" co ON co.user_id = cr.user_id
+                FROM shipment s
+                LEFT JOIN customer c ON c.customer_id = s.customer_id
+                LEFT JOIN "users" cu ON cu.user_id = c.user_id
+                LEFT JOIN courier cr ON cr.courier_id = s.courier_id
+                LEFT JOIN "users" co ON co.user_id = cr.user_id
                 {status_clause}
                 ORDER BY s.shipment_id DESC
                 LIMIT :limit OFFSET :offset
@@ -136,7 +136,7 @@ class ShipmentService:
         total = db._scalar(
             text(f"""
                 SELECT COUNT(*)
-                FROM quickdrop.shipment s
+                FROM shipment s
                 {status_clause}
             """),
             {"status": status} if status else {},

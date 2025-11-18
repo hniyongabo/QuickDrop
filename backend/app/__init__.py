@@ -111,18 +111,22 @@ def create_app(config_name='development'):
         from app.models.user_model import User
         from app.models.admin_model import Admin
         from app.models.courier_model import Courier
+        from app.models.customer_model import Customer
+        from app.models.address_model import Address
         from app.models.shipment_model import Shipment
-        from app.models.delivery_model import Payment
+        from app.models.payment_model import Payment
 
     # Register blueprints
     from app.routes.user_route import user_bp
     from app.routes.admin_route import admin_bp
     from app.routes.courier_route import courier_bp
     from app.routes.shipment_route import shipment_bp
+    from app.routes.payment_route import payment_bp
     app.register_blueprint(user_bp, url_prefix='/api/v1/users')
     app.register_blueprint(admin_bp, url_prefix='/api/v1/admin')
     app.register_blueprint(courier_bp, url_prefix='/api/v1/couriers')
     app.register_blueprint(shipment_bp, url_prefix='/api/v1/shipments')
+    app.register_blueprint(payment_bp, url_prefix='/api/v1/payments')
 
     # Error handlers
     register_error_handlers(app)

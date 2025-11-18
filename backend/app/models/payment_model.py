@@ -15,10 +15,10 @@ class Payment(BaseModel):
         paid_at: Timestamp when paid
     """
     __tablename__ = 'payment'
-    __table_args__ = {'schema': 'quickdrop'}
     
     payment_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    method = db.Column(db.String(50), nullable=False)
+    shipment_id = db.Column(db.Integer, db.ForeignKey('shipment.shipment_id'), nullable=False)
+    method = db.Column(db.String(150), nullable=False)
     status = db.Column(db.String(50), nullable=False, default='pending')
     paid_at = db.Column(db.DateTime(timezone=True), nullable=True)
     

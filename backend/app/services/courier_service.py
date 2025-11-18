@@ -25,8 +25,8 @@ class CourierService:
         courier_id = db._scalar(
             text("""
                 SELECT c.courier_id
-                FROM quickdrop.courier c
-                JOIN quickdrop."user" u ON u.user_id = c.user_id
+                FROM courier c
+                JOIN "users" u ON u.user_id = c.user_id
                 WHERE u.email = :email
             """),
             {"email": email},
@@ -48,7 +48,7 @@ class CourierService:
                   s.destination_address   AS destination_address,
                   s.picked_at,
                   s.delivered_at
-                FROM quickdrop.shipment s
+                FROM shipment s
                 WHERE s.courier_id = :courier_id
                   AND s.status IN ('assigned','picked_up','in_transit')
                 ORDER BY s.picked_at NULLS LAST, s.shipment_id
@@ -68,7 +68,7 @@ class CourierService:
                   s.destination_latitude AS destination_lat,
                   s.destination_longitude AS destination_lng,
                   s.destination_address   AS destination_address
-                FROM quickdrop.shipment s
+                FROM shipment s
                 WHERE s.courier_id = :courier_id
                   AND s.status = 'assigned'
                 ORDER BY s.shipment_id DESC

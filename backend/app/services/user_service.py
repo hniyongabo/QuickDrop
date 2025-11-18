@@ -36,72 +36,47 @@ class UserService:
             if existing_user:
                 return None, {'message': 'User with this email already exists'}
             
-            # Normalize incoming role
+            # Normalize incoming role to match ERD values
             requested_role = str(data.get('role', 'customer')).lower()
-            # Internal role mapping for existing ORM model
             internal_role = (
                 'ADMIN' if requested_role == 'admin'
                 else 'COURIER' if requested_role in ('driver', 'courier')
                 else 'CUSTOMER'
             )
 
-            # Create user (ORM table)
+            # Create user (ORM table) per ERD
+            username_value = data.get('username') or data['email']
             user = User(
-                name=data['name'],
-                phone=str(data['phone']),
+                username=username_value,
                 email=data['email'],
-                role=internal_role,
-                address=data.get('address', '')
+                phone_number=str(data['phone']),
+                role=internal_role
             )
             print(f"user: {user}")
             user.set_password(data['password'])
 
             user.save()  # commits
 
-            # Mirror into quickdrop schema and create role-specific record
-            # Map to enum role for quickdrop
-            quickdrop_role = (
-                'ADMIN' if requested_role == 'admin'
-                else 'COURIER' if requested_role in ('driver', 'courier')
-                else 'CUSTOMER'
-            )
-            # Use email as unique username to avoid collisions
-            username_value = data.get('username') or data['email']
-
-            quick_user_id = db._scalar(
-                text("""
-                    INSERT INTO quickdrop."user"(username, password, role, email, phone_number)
-                    VALUES (:username, :password, :role, :email, :phone)
-                    RETURNING user_id
-                """),
-                {
-                    'username': username_value,
-                    'password': user.password_hash,
-                    'role': quickdrop_role,
-                    'email': user.email,
-                    'phone': user.phone
-                }
-            )
-
-            # Create role-specific row
-            if quickdrop_role == 'CUSTOMER':
+            # Create role-specific row using ORM user_id
+            quick_user_id = user.user_id
+            if internal_role == 'CUSTOMER':
                 db.session.execute(
-                    text('INSERT INTO quickdrop.customer(user_id) VALUES (:uid) ON CONFLICT DO NOTHING'),
+                    text('INSERT INTO customer(user_id) VALUES (:uid) ON CONFLICT DO NOTHING'),
                     {'uid': quick_user_id}
                 )
-            elif quickdrop_role == 'COURIER':
+            elif internal_role == 'COURIER':
                 db.session.execute(
-                    text('INSERT INTO quickdrop.courier(user_id, online) VALUES (:uid, FALSE) ON CONFLICT DO NOTHING'),
+                    text('INSERT INTO courier(user_id, online) VALUES (:uid, FALSE) ON CONFLICT DO NOTHING'),
                     {'uid': quick_user_id}
                 )
-            elif quickdrop_role == 'ADMIN':
+            elif internal_role == 'ADMIN':
                 db.session.execute(
-                    text('INSERT INTO quickdrop.admin(user_id) VALUES (:uid) ON CONFLICT DO NOTHING'),
+                    text('INSERT INTO admin(user_id) VALUES (:uid) ON CONFLICT DO NOTHING'),
                     {'uid': quick_user_id}
                 )
             db.session.commit()
 
-            current_app.logger.info(f'User created successfully: {user.email} (quickdrop user_id={quick_user_id})')
+            current_app.logger.info(f'User created successfully: {user.email} (user_id={quick_user_id})')
             return user, None
             
         except IntegrityError as e:
@@ -116,7 +91,6 @@ class UserService:
                 pass
             try:
                 if 'user' in locals() and getattr(user, 'user_id', None):
-                    # delete the created ORM user to keep systems consistent
                     user.delete()
             except Exception:
                 pass
@@ -135,7 +109,7 @@ class UserService:
             User: User object or None
         """
         try:
-            user = User.query.filter_by(user_id=user_id, is_active=True).first()
+            user = User.query.filter_by(user_id=user_id).first()
             return user
         except Exception as e:
             current_app.logger.error(f'Error fetching user: {str(e)}')
@@ -153,7 +127,7 @@ class UserService:
             User: User object or None
         """
         try:
-            user = User.query.filter_by(email=email, is_active=True).first()
+            user = User.query.filter_by(email=email).first()
             return user
         except Exception as e:
             current_app.logger.error(f'Error fetching user by email: {str(e)}')
@@ -173,7 +147,7 @@ class UserService:
             dict: Paginated users data
         """
         try:
-            query = User.query.filter_by(is_active=True)
+            query = User.query
             
             if role:
                 query = query.filter_by(role=role)
@@ -208,7 +182,7 @@ class UserService:
             tuple: (user, error)
         """
         try:
-            user = User.query.filter_by(user_id=user_id, is_active=True).first()
+            user = User.query.filter_by(user_id=user_id).first()
             if not user:
                 return None, {'message': 'User not found'}
             
@@ -224,16 +198,19 @@ class UserService:
                     return None, {'message': 'Email already in use'}
             
             # Update fields
-            if 'name' in data:
-                user.name = data['name']
+            if 'username' in data:
+                user.username = data['username']
             if 'phone' in data:
-                user.phone = data['phone']
+                user.phone_number = data['phone']
             if 'email' in data:
                 user.email = data['email']
-            if 'address' in data:
-                user.address = data['address']
             if 'role' in data:
-                user.role = data['role']
+                requested_role = str(data.get('role', user.role)).lower()
+                user.role = (
+                    'ADMIN' if requested_role == 'admin'
+                    else 'COURIER' if requested_role in ('driver', 'courier')
+                    else 'CUSTOMER'
+                )
             if 'password' in data:
                 user.set_password(data['password'])
             
@@ -252,23 +229,14 @@ class UserService:
     
     @staticmethod
     def delete_user(user_id):
-        """
-        Soft delete a user (deactivate)
-        
-        Args:
-            user_id (int): User ID
-        
-        Returns:
-            tuple: (success, error)
-        """
+        """Hard delete a user."""
         try:
             user = User.query.filter_by(user_id=user_id).first()
             if not user:
                 return False, {'message': 'User not found'}
             
-            user.is_active = False
-            user.save()
-            current_app.logger.info(f'User deactivated successfully: {user.email}')
+            user.delete()
+            current_app.logger.info(f'User deleted successfully: {user.email}')
             return True, None
             
         except Exception as e:
@@ -289,7 +257,7 @@ class UserService:
             tuple: (user, error)
         """
         try:
-            user = User.query.filter_by(email=email, is_active=True).first()
+            user = User.query.filter_by(email=email).first()
             
             if not user or not user.check_password(password):
                 return None, {'message': 'Invalid email or password'}

@@ -29,14 +29,14 @@ class AdminService:
         total_deliveries = db._scalar(
             text("""
                 SELECT COUNT(*)::BIGINT
-                FROM quickdrop.shipment
+                FROM shipment
             """),
         )
 
         successful_deliveries = db._scalar(
             text("""
                 SELECT COUNT(*)::BIGINT
-                FROM quickdrop.shipment
+                FROM shipment
                 WHERE status = 'delivered'
             """),
         )
@@ -45,25 +45,25 @@ class AdminService:
             text("""
                 WITH recent_shipments AS (
                   SELECT s.shipment_id, s.courier_id, s.customer_id
-                  FROM quickdrop.shipment s
+                  FROM shipment s
                   WHERE (s.picked_at IS NOT NULL AND s.picked_at >= NOW() - (:hours || ' hours')::INTERVAL)
                      OR s.status IN ('assigned','picked_up','in_transit')
                 ),
                 active_customers AS (
                   SELECT cu.user_id
-                  FROM quickdrop.customer cu
+                  FROM customer cu
                   JOIN recent_shipments rs ON rs.customer_id = cu.customer_id
                 ),
                 active_couriers AS (
                   SELECT co.user_id
-                  FROM quickdrop.courier co
+                  FROM courier co
                   JOIN recent_shipments rs ON rs.courier_id = co.courier_id
                 ),
                 online_couriers AS (
-                  SELECT user_id FROM quickdrop.courier WHERE online = TRUE
+                  SELECT user_id FROM courier WHERE online = TRUE
                 )
                 SELECT COUNT(DISTINCT u.user_id)::BIGINT
-                FROM quickdrop."user" u
+                FROM "users" u
                 WHERE u.user_id IN (
                   SELECT user_id FROM active_customers
                   UNION
@@ -82,7 +82,7 @@ class AdminService:
                   DATE_TRUNC('day', COALESCE(delivered_at, picked_at))::DATE AS day,
                   COUNT(*)::BIGINT AS total,
                   COUNT(*) FILTER (WHERE status = 'delivered')::BIGINT AS delivered
-                FROM quickdrop.shipment
+                FROM shipment
                 WHERE COALESCE(delivered_at, picked_at, NOW()) >= NOW() - (:days || ' days')::INTERVAL
                 GROUP BY 1
                 ORDER BY 1
@@ -95,7 +95,7 @@ class AdminService:
                 SELECT
                   DATE_TRUNC('day', created_at)::DATE AS day,
                   COUNT(*)::BIGINT AS new_users
-                FROM quickdrop."user"
+                FROM "users"
                 WHERE created_at >= NOW() - (:days || ' days')::INTERVAL
                 GROUP BY 1
                 ORDER BY 1
@@ -106,7 +106,7 @@ class AdminService:
         status_distribution = db._rows(
             text("""
                 SELECT status, COUNT(*)::BIGINT AS count
-                FROM quickdrop.shipment
+                FROM shipment
                 GROUP BY status
                 ORDER BY count DESC
             """),
@@ -119,9 +119,9 @@ class AdminService:
                   s.shipment_id,
                   u.username AS courier,
                   s.status
-                FROM quickdrop.shipment s
-                LEFT JOIN quickdrop.courier c ON c.courier_id = s.courier_id
-                LEFT JOIN quickdrop."user" u ON u.user_id = c.user_id
+                FROM shipment s
+                LEFT JOIN courier c ON c.courier_id = s.courier_id
+                LEFT JOIN "users" u ON u.user_id = c.user_id
                 WHERE s.status NOT IN ('delivered','failed')
                 ORDER BY s.picked_at NULLS LAST, s.shipment_id
             """),
@@ -136,19 +136,19 @@ class AdminService:
                   u.username AS name,
                   c.online AS online,
                   EXISTS (
-                    SELECT 1 FROM quickdrop.shipment s
+                    SELECT 1 FROM shipment s
                     WHERE s.courier_id = c.courier_id
                       AND s.status IN ('assigned','picked_up','in_transit')
                       AND (COALESCE(s.picked_at, NOW()))::DATE = CURRENT_DATE
                   ) AS on_task,
                   (
-                    SELECT COUNT(*)::BIGINT FROM quickdrop.shipment s
+                    SELECT COUNT(*)::BIGINT FROM shipment s
                     WHERE s.courier_id = c.courier_id
                       AND s.status = 'delivered'
                       AND s.delivered_at::DATE = CURRENT_DATE
                   ) AS total_deliveries
-                FROM quickdrop.courier c
-                JOIN quickdrop."user" u ON u.user_id = c.user_id
+                FROM courier c
+                JOIN "users" u ON u.user_id = c.user_id
                 ORDER BY name
             """),
         )
@@ -167,7 +167,7 @@ class AdminService:
         overdue_shipments = db._scalar(
             text("""
                 SELECT COUNT(*)::BIGINT
-                FROM quickdrop.shipment s
+                FROM shipment s
                 WHERE s.status IN ('assigned','picked_up','in_transit')
                   AND s.picked_at IS NOT NULL
                   AND NOW() - s.picked_at > INTERVAL '24 hours'
