@@ -1,35 +1,36 @@
--- seeds/seed.sql — demo data for local dev aligned to ERD
-SET search_path TO quickdrop;
+-- seeds/seed.sql — demo data for local dev aligned to ERD (public schema)
+-- Ensure pgcrypto is available for bcrypt hashing
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- Users
-INSERT INTO "user"(username, password, role, email, phone_number)
+INSERT INTO "users"(username, password, role, email, phone_number)
 VALUES
- ('admin',    'password123', 'ADMIN',    'admin@example.com',    '+250700000000'),
- ('courier1', 'password123', 'COURIER',  'courier1@example.com', '+250700000010'),
- ('alice',    'password123', 'CUSTOMER', 'alice@example.com',    '+250700000011'),
- ('bob',      'password123', 'CUSTOMER', 'bob@example.com',      '+250700000012')
+ ('admin',    crypt('password123', gen_salt('bf')), 'ADMIN',    'admin@example.com',    '+250700000000'),
+ ('courier1', crypt('password123', gen_salt('bf')), 'COURIER',  'courier1@example.com', '+250700000010'),
+ ('alice',    crypt('password123', gen_salt('bf')), 'CUSTOMER', 'alice@example.com',    '+250700000011'),
+ ('bob',      crypt('password123', gen_salt('bf')), 'CUSTOMER', 'bob@example.com',      '+250700000012')
 ON CONFLICT (username) DO NOTHING;
 
 -- Role-specific tables
 INSERT INTO admin(user_id)
-SELECT user_id FROM "user" WHERE username='admin'
+SELECT user_id FROM "users" WHERE username='admin'
 ON CONFLICT DO NOTHING;
 
 INSERT INTO customer(user_id)
-SELECT user_id FROM "user" WHERE username IN ('alice','bob')
+SELECT user_id FROM "users" WHERE username IN ('alice','bob')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO courier(user_id, vehicle_plate, online, last_seen, current_latitude, current_longitude, current_address)
 SELECT user_id, 'RAB123A', TRUE, NOW(), -1.9700, 30.1100, 'Kigali, Rwanda'
-FROM "user" WHERE username='courier1'
+FROM "users" WHERE username='courier1'
 ON CONFLICT DO NOTHING;
 
 -- Addresses (owned by users)
 INSERT INTO address(user_id, district, city, longitude, latitude)
 VALUES
- ((SELECT user_id FROM "user" WHERE username='alice'), 'Gasabo',  'Kigali', 30.099900, -1.944400),
- ((SELECT user_id FROM "user" WHERE username='bob'),   'Kicukiro','Kigali', 30.110000, -1.970000),
- ((SELECT user_id FROM "user" WHERE username='alice'), 'Gasabo',  'Kigali', 30.120000, -1.950000) -- extra address for Alice
+ ((SELECT user_id FROM "users" WHERE username='alice'), 'Gasabo',  'Kigali', 30.099900, -1.944400),
+ ((SELECT user_id FROM "users" WHERE username='bob'),   'Kicukiro','Kigali', 30.110000, -1.970000),
+ ((SELECT user_id FROM "users" WHERE username='alice'), 'Gasabo',  'Kigali', 30.120000, -1.950000) -- extra address for Alice
 ON CONFLICT DO NOTHING;
 
 -- Shipments
@@ -41,8 +42,8 @@ VALUES (
   NOW() - INTERVAL '45 minutes',
   NOW() - INTERVAL '35 minutes',
   NOW() - INTERVAL '30 minutes',
-  (SELECT c.courier_id FROM courier c JOIN "user" u ON u.user_id=c.user_id WHERE u.username='courier1'),
-  (SELECT customer_id FROM customer cu JOIN "user" u ON u.user_id=cu.user_id WHERE u.username='alice'),
+  (SELECT c.courier_id FROM courier c JOIN "users" u ON u.user_id=c.user_id WHERE u.username='courier1'),
+  (SELECT customer_id FROM customer cu JOIN "users" u ON u.user_id=cu.user_id WHERE u.username='alice'),
   NULL,
   -1.9500, 30.1200, 'Remera Bus Park, Kigali',
   -1.9550, 30.1300, 'Kacyiru Health Center, Kigali',
@@ -57,8 +58,8 @@ VALUES (
   NOW() - INTERVAL '10 minutes',
   NOW() - INTERVAL '5 minutes',
   NULL,
-  (SELECT c.courier_id FROM courier c JOIN "user" u ON u.user_id=c.user_id WHERE u.username='courier1'),
-  (SELECT customer_id FROM customer cu JOIN "user" u ON u.user_id=cu.user_id WHERE u.username='bob'),
+  (SELECT c.courier_id FROM courier c JOIN "users" u ON u.user_id=c.user_id WHERE u.username='courier1'),
+  (SELECT customer_id FROM customer cu JOIN "users" u ON u.user_id=cu.user_id WHERE u.username='bob'),
   NULL,
   -1.9600, 30.1350, 'Kimironko Market, Kigali',
   -1.9650, 30.1450, 'Kigali Heights, Kigali',
