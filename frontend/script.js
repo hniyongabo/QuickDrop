@@ -282,5 +282,30 @@
             trackingResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
     }
+})(); // <--- This closes the Track Button Logic properly
 
+
+// =====================
+// Mobile Menu Toggle (CLEAN & SEPARATED)
+// =====================
+(function() {
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('navMenu');
+    const navLinks = document.querySelectorAll('.nav-menu li a');
+
+    if (hamburger && navMenu) {
+        // Toggle Menu on Click
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close menu when a link is clicked
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+    }
 })();

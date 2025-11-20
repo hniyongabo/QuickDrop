@@ -41,8 +41,12 @@ body {
 header {
     position: fixed;
     top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
+    
+    /* NEW CENTERING METHOD (Safe for mobile menus) */
+    left: 0;
+    right: 0;
+    margin: 0 auto; /* This centers the pill without 'transform' */
+    
     width: min(calc(100% - 2rem), var(--max-width));
     height: var(--header-height);
     z-index: 1100;
@@ -177,63 +181,7 @@ nav ul li a:hover {
 }
 
 
-@media (max-width: 768px) {
-    header {
-        width: calc(100% - 1rem);
-        padding: 0 0.75rem;
-        top: 0.75rem;
-    }
 
-    .logo {
-        font-size: 1rem;
-        flex-shrink: 0;
-    }
-
-    .header-inner,
-    .header-content {
-        flex-wrap: nowrap;
-        align-items: center;
-        gap: 0.4rem;
-        min-width: 0;
-    }
-
-    nav {
-        width: 100%;
-        display: flex;
-        justify-content: flex-end;
-        min-width: 0;
-        flex-shrink: 1;
-    }
-
-    .nav-menu {
-        flex-wrap: nowrap;
-        justify-content: flex-end;
-        gap: 0.3rem;
-        flex: 1;
-        min-width: 0;
-    }
-
-    .nav-menu li {
-        flex: 0 1 auto;
-        text-align: right;
-    }
-
-    .nav-menu a,
-    .nav-link,
-    nav ul li a {
-        font-size: clamp(0.78rem, 2.6vw, 0.85rem);
-        padding: 0.28rem 0.38rem;
-        width: auto;
-        text-align: right;
-    }
-
-    .main-nav .btn,
-    .main-nav .profile-toggle {
-        min-height: 38px;
-        padding: 0.4rem 0.8rem;
-        font-size: 0.9rem;
-    }
-}
 
 @media (max-width: 520px) {
     header {
@@ -1897,4 +1845,133 @@ canvas {
     font-size: .9rem; 
     border-top: 1px solid rgba(0,0,0,0.04); 
     padding-top: .75rem; 
+}
+/* =========================================
+   MOBILE MENU FINAL FIX
+   ========================================= */
+
+/* 1. Hamburger Icon Styles */
+
+
+/* 1. Hamburger Icon Styles (Base Styles) */
+.hamburger {
+    display: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 5px;
+    z-index: 1200; 
+}
+
+.hamburger .bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px auto;
+    background-color: var(--primary);
+    transition: all 0.3s ease-in-out;
+    border-radius: 2px;
+}
+
+/* =========================================
+   MOBILE LAYOUT & ANIMATIONS
+   ========================================= */
+
+@media (max-width: 768px) {
+    
+    /* 1. Layout Adjustments */
+    .header-inner {
+        justify-content: space-between; 
+    }
+
+    /* Remove nav wrapper from flow so it doesn't break layout */
+    nav {
+        display: contents; 
+    }
+
+    /* 2. Hamburger Icon Visibility */
+    .hamburger {
+        display: block;
+        z-index: 1200; /* Ensure it sits ABOVE the glass header */
+    }
+
+    /* 3. The Side Drawer Menu (Right Side) */
+    .nav-menu {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: auto;
+        
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start; 
+        padding-left: 2.5rem; 
+        
+        /* Glassmorphism Style */
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        
+        width: 70%; 
+        max-width: 280px;
+        height: 100vh;
+        
+        /* Spacing for the header pill */
+        padding-top: calc(var(--header-height) + 2.5rem);
+        
+        /* Animation Logic */
+        transform: translateX(100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease, visibility 0.3s;
+        
+        /* Borders & Shadow */
+        border-left: 1px solid rgba(0,0,0,0.1);
+        border-top-left-radius: 24px;
+        border-bottom-left-radius: 24px;
+        
+        /* Sits underneath the header pill (1100) so X is visible */
+        z-index: 1000; 
+    }
+
+    .nav-menu.active {
+        transform: translateX(0);
+        opacity: 1;
+        visibility: visible;
+        box-shadow: -5px 0 30px rgba(0,0,0,0.15), 0 0 0 100vmax rgba(0, 0, 0, 0.5);
+    }
+
+    /* Link Animations */
+    .nav-menu li {
+        margin: 1rem 0;
+        width: 100%;
+        text-align: left;
+        opacity: 0;
+        transform: translateX(20px); 
+        transition: all 0.4s ease;
+    }
+
+    .nav-menu.active li {
+        opacity: 1;
+        transform: translateX(0);
+        transition-delay: 0.2s;
+    }
+
+    .nav-menu a {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+        width: 100%;
+    }
+
+    /* 4. Hamburger to 'X' Animation */
+    .hamburger.active .bar:nth-child(2) {
+        opacity: 0;
+    }
+    .hamburger.active .bar:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+    .hamburger.active .bar:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
 }
