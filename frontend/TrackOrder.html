@@ -9,20 +9,30 @@
 <body>
 
     <header>
-        <div class="container header-content">
+        <div class="header-inner container">
             <a href="landingpage.html" class="logo">QuickDrop</a>
             
-            <nav class="header-nav">
-                <a href="CustomerDashboard.html" class="nav-link">← Back to Dashboard</a>
-                
-                <div class="profile-menu">
-                    <a href="#" class="profile-toggle" id="profileToggle">Profile ▼</a>
-                    <ul class="dropdown-menu" id="profileDropdown">
-                        <li><a href="#">Settings</a></li>
-                        <li><a href="login.html?action=logout">Sign Out</a></li>
-                    </ul>
-                </div>
+            <nav>
+                <ul class="nav-menu" id="navMenu">
+                    <li>
+                        <a href="CustomerDashboard.html" class="nav-link back-link">← Back to Dashboard</a>
+                    </li>
+                    
+                    <li class="profile-menu">
+                        <a href="#" class="profile-toggle" id="profileToggle">Profile ▼</a>
+                        <ul class="dropdown-menu" id="profileDropdown">
+                            <li><a href="Profile.html">Settings</a></li>
+                            <li><a href="login.html?action=logout">Sign Out</a></li>
+                        </ul>
+                    </li>
+                </ul>
             </nav>
+
+            <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
         </div>
     </header>
 

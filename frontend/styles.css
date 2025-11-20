@@ -2075,4 +2075,28 @@ canvas {
     background-color: #28a745;
     border-radius: 50%;
 }
+
+
+.nav-menu .back-link {
+    font-size: 0.95rem !important;  
+    color: #888 !important;        
+    font-weight: 500 !important;   
+    padding: 0.75rem 0 !important; 
+    border-bottom: none !important; 
+}
+
+/* Fix for the Live Task 'Exit' button */
+.exit-link {
+    font-size: 0.85rem !important; 
+    padding: 0.4rem 0.8rem !important;
+    background-color: rgba(0,0,0,0.05); 
+    border-radius: 20px; 
+    white-space: nowrap; 
+    color: #333;
+    
+    /* CRITICAL FIXES: */
+    width: auto !important;          /* Stop it from stretching to 100% */
+    display: inline-flex !important; /* act like a button, not a block */
+    margin-left: auto !important;    /* Push to the right */
+}
 }
