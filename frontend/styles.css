@@ -2025,14 +2025,22 @@ canvas {
         color: #d9534f !important;
     }
 
-    /* 5. BUTTON RESET */
+   
+    /* 5. BUTTON RESET (Updated for better sizing) */
     .nav-menu .btn {
         background-color: transparent !important;
-        color: #4a7c2a !important;
+        color: #4a7c2a !important; /* Green text */
         border: none !important;
         padding: 0;
-        font-size: 1.5rem;
+        
+        /* CHANGED: Reduced from 1.5rem to 1.25rem so it's not huge */
+        font-size: 1.25rem; 
+        font-weight: 600;
+        
         text-align: left;
+        margin-bottom: 0.5rem; /* Adds a little space below it */
+        display: block;
+        width: 100%;
     }
     
     /* 6. Hamburger Animation */
