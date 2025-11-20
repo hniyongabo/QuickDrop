@@ -1873,8 +1873,9 @@ canvas {
     border-radius: 2px;
 }
 
+
 /* =========================================
-   MOBILE LAYOUT & ANIMATIONS
+   MOBILE MENU (Restored Design + Text Fix)
    ========================================= */
 
 @media (max-width: 768px) {
@@ -1884,70 +1885,71 @@ canvas {
         justify-content: space-between; 
     }
 
-    /* Remove nav wrapper from flow so it doesn't break layout */
     nav {
         display: contents; 
     }
 
-    /* 2. Hamburger Icon Visibility */
     .hamburger {
         display: block;
-        z-index: 1200; /* Ensure it sits ABOVE the glass header */
+        z-index: 1200;
     }
 
-    /* 3. The Side Drawer Menu (Right Side) */
+    /* 2. THE SIDE DRAWER (Restored to the "Epic" Version) */
     .nav-menu {
         position: fixed;
         top: 0;
         right: 0;
         left: auto;
         
+        /* Layout: Align to the left side of the drawer */
         flex-direction: column;
         justify-content: flex-start;
-        align-items: flex-start; 
-        padding-left: 2.5rem; 
+        align-items: flex-start; /* Restored this alignment */
+        padding-left: 2.5rem;    /* Restored the spacious padding */
         
-        /* Glassmorphism Style */
-        background-color: rgba(255, 255, 255, 0.95);
+        /* Visuals: Restored the "Glass" look and Curves */
+        background-color: rgba(255, 255, 255, 0.95); /* Slight transparency again */
         backdrop-filter: blur(10px);
         
-        width: 70%; 
-        max-width: 280px;
+        width: 70%;          /* Restored narrower width */
+        max-width: 280px;    /* Restored max-width */
         height: 100vh;
         
-        /* Spacing for the header pill */
         padding-top: calc(var(--header-height) + 2.5rem);
         
-        /* Animation Logic */
+        /* Animation: Restored the specific curve */
         transform: translateX(100%);
         opacity: 0;
         visibility: hidden;
         transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease, visibility 0.3s;
         
-        /* Borders & Shadow */
+        /* Borders: Restored the curved left side */
         border-left: 1px solid rgba(0,0,0,0.1);
-        border-top-left-radius: 24px;
-        border-bottom-left-radius: 24px;
+        border-top-left-radius: 24px;    /* ROUNDED CORNERS BACK */
+        border-bottom-left-radius: 24px; /* ROUNDED CORNERS BACK */
         
-        /* Sits underneath the header pill (1100) so X is visible */
         z-index: 1000; 
+        overflow-y: auto;
     }
 
     .nav-menu.active {
         transform: translateX(0);
         opacity: 1;
         visibility: visible;
+        /* Restored the specific shadow */
         box-shadow: -5px 0 30px rgba(0,0,0,0.15), 0 0 0 100vmax rgba(0, 0, 0, 0.5);
     }
 
-    /* Link Animations */
+    /* 3. LINK STYLING (The Text Fixes) */
     .nav-menu li {
         margin: 1rem 0;
         width: 100%;
         text-align: left;
+        /* Animation for links sliding in */
         opacity: 0;
         transform: translateX(20px); 
         transition: all 0.4s ease;
+        border-bottom: none; /* Removed the lines I added in the previous step */
     }
 
     .nav-menu.active li {
@@ -1956,22 +1958,85 @@ canvas {
         transition-delay: 0.2s;
     }
 
-    .nav-menu a {
+    /* Fix the "Dashboard" Green Button Glitch */
+    .nav-menu a,
+    .nav-link,
+    .nav-link.active {
         display: block;
-        font-size: 1.5rem;
+        font-size: 1.5rem; /* Restored larger font */
         font-weight: 600;
-        color: #333;
+        color: #333 !important;
+        text-align: left;
+        width: 100%;
+        
+        /* STRIP THE GREEN BACKGROUND */
+        background-color: transparent !important; 
+        border-radius: 0 !important;
+        padding: 0; /* Reset padding */
+    }
+
+    /* Make active link text green instead of background */
+    .nav-menu .nav-link.active {
+        color: #4a7c2a !important;
+    }
+
+    /* 4. DROPDOWN / ADMIN FIX (Flattened) */
+    .nav-menu .profile-menu {
+        margin-top: 1rem;
+        border-top: 1px solid rgba(0,0,0,0.1); /* Keep the separator */
+        padding-top: 1rem;
         width: 100%;
     }
 
-    /* 4. Hamburger to 'X' Animation */
-    .hamburger.active .bar:nth-child(2) {
-        opacity: 0;
+    .nav-menu .profile-toggle {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        color: #888 !important;
+        pointer-events: none;
+        margin-bottom: 0.5rem;
+        padding: 0;
     }
-    .hamburger.active .bar:nth-child(1) {
-        transform: translateY(8px) rotate(45deg);
+
+    .nav-menu li ul,
+    .dropdown-menu {
+        display: block !important;
+        position: static !important;
+        box-shadow: none !important;
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
     }
-    .hamburger.active .bar:nth-child(3) {
-        transform: translateY(-8px) rotate(-45deg);
+    
+    .nav-menu li ul li {
+        margin: 0.5rem 0; /* Tighter spacing for sub-items */
     }
+
+    .nav-menu li ul li a {
+        font-size: 1.2rem; /* Slightly smaller than main links */
+        color: #555 !important;
+    }
+
+    .nav-menu li ul li a[href*="login"] {
+        color: #d9534f !important;
+    }
+
+    /* 5. BUTTON RESET */
+    .nav-menu .btn {
+        background-color: transparent !important;
+        color: #4a7c2a !important;
+        border: none !important;
+        padding: 0;
+        font-size: 1.5rem;
+        text-align: left;
+    }
+    
+    /* 6. Hamburger Animation */
+    .hamburger.active .bar:nth-child(2) { opacity: 0; }
+    .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 }
