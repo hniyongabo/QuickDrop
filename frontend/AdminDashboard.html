@@ -9,22 +9,29 @@
 </head>
 <body>
 
-    <header>
-        <a href="landingpage.html" class="logo">QuickDrop</a>
-        
-        <nav class="main-nav" id="mainNav">
-            <ul class="nav-menu">
-                <li><a href="#" class="nav-link active">Dashboard</a></li>
-                
-                <li class="profile-menu">
-                    <a href="#" class="profile-toggle" id="profileToggle">Admin ▼</a>
-                    <ul class="dropdown-menu" id="profileDropdown">
-                        <li><a href="login.html">Sign Out</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
-        
+    <<header>
+        <div class="header-inner container">
+            <a href="landingpage.html" class="logo">QuickDrop</a>
+            
+            <nav>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#" class="nav-link active">Dashboard</a></li>
+                    
+                    <li class="profile-menu">
+                        <a href="#" class="profile-toggle" id="profileToggle">Admin ▼</a>
+                        <ul class="dropdown-menu" id="profileDropdown">
+                            <li><a href="login.html">Sign Out</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+            
+            <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
     </header>
 
     <main class="dashboard-container">
