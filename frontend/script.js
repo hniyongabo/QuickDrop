@@ -1,5 +1,6 @@
-//  this is a js file for responsiveness and interactivity
-// Profile Dropdown Toggle
+// this is a js file for responsiveness and interactivity
+
+// --- 1. Profile Dropdown Toggle ---
 (function() {
     const profileToggle = document.getElementById('profileToggle');
     const profileDropdown = document.getElementById('profileDropdown');
@@ -20,8 +21,10 @@
 })();
 
 
-// Tab Switching
+// --- 2. Tab Switching ---
 (function() {
+    // Note: The customer dashboard HTML does not currently contain .tab-link or .tab-content elements, 
+    // but the logic is preserved here for future use.
     const tabLinks = document.querySelectorAll('.tab-link');
     const tabContents = document.querySelectorAll('.tab-content');
 
@@ -43,17 +46,15 @@
     }
 })();
 
-// =====================
-// Modal Functionality
-// =====================
+// --- 3. Modal Functionality (New Delivery Form) ---
 (function() {
     const openModalBtnDesktop = document.getElementById('openModalBtnDesktop');
     const openModalBtnMobile = document.getElementById('openModalBtnMobile');
     const closeModalBtn = document.getElementById('closeModalBtn');
     const deliveryModal = document.getElementById('deliveryModal');
-    const parcelForm = document.getElementById('parcelForm'); // Moved up for scope
+    const parcelForm = document.getElementById('parcelForm'); 
 
-    // Elements for 'Other' details functionality (NEW)
+    // Elements for 'Other' details functionality
     const parcelTypeSelect = document.getElementById('parcelType');
     const otherDetailsGroup = document.getElementById('otherDetailsGroup');
     const otherDetailsTextarea = document.getElementById('otherDetails');
@@ -64,15 +65,22 @@
             event.preventDefault();
         }
         if (deliveryModal) {
+            // Added check to show modal using flex for centering
+            deliveryModal.style.display = 'flex';
             deliveryModal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling behind modal
         }
     }
 
     function closeModal() {
-        if (deliveryModal) deliveryModal.classList.remove('active');
+        if (deliveryModal) {
+            deliveryModal.style.display = 'none';
+            deliveryModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
     }
     
-    // --- NEW: Toggle Visibility of 'Other Details' ---
+    // Toggle Visibility of 'Other Details'
     function toggleOtherDetails() {
         if (!parcelTypeSelect || !otherDetailsGroup || !otherDetailsTextarea) return;
 
@@ -82,20 +90,17 @@
         } else {
             otherDetailsGroup.style.display = 'none';
             otherDetailsTextarea.removeAttribute('required');
-            // Optional: Clear the value when hidden to ensure clean data submission
+            // Clear the value when hidden to ensure clean data submission
             otherDetailsTextarea.value = ''; 
         }
     }
 
-    // Attach listener for 'Parcel Type' change (NEW)
+    // Attach listeners
     if (parcelTypeSelect) {
         parcelTypeSelect.addEventListener('change', toggleOtherDetails);
     }
     
-    // Run on content load to set initial state (e.g., if page cached) (NEW)
     document.addEventListener('DOMContentLoaded', toggleOtherDetails); 
-    // --------------------------------------------------
-
 
     if (openModalBtnDesktop) openModalBtnDesktop.addEventListener('click', openModal);
     if (openModalBtnMobile) openModalBtnMobile.addEventListener('click', openModal);
@@ -108,23 +113,78 @@
     }
 
     // Form submission handler
-    
     if (parcelForm) {
         parcelForm.addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(parcelForm);
-            console.log('Form Submitted!');
+            
+            console.log('--- New Delivery Request Submitted ---');
             for (let [key, value] of formData.entries()) {
                 console.log(`${key}: ${value}`);
             }
-
-            alert('Booking request sent!');
+            console.log('Booking request sent successfully.');
+            
+            // NOTE: Replaced 'alert' with console logging for better user experience.
+            
             closeModal();
         });
     }
 })();
 
-// Reveal animations for hero, track, and feature cards on scroll
+// --- 4. Google Maps Autocomplete Logic (NEW) ---
+(function() {
+    /**
+     * Initializes Google Maps Places Autocomplete for the Pickup and Dropoff fields.
+     * Uses a retry mechanism to ensure the 'google' object is loaded from the API script.
+     */
+    const initAutocomplete = () => {
+        // Check if the Google Maps API (and Places library) is loaded
+        if (typeof google === 'undefined' || typeof google.maps.places === 'undefined') {
+            // If not loaded, retry in 500ms. This handles the async nature of the API script.
+            setTimeout(initAutocomplete, 500); 
+            return;
+        }
+
+        const pickupInput = document.getElementById('pickup');
+        const deliveryInput = document.getElementById('delivery');
+        
+        const autocompleteOptions = {
+            // Restrict results to general addresses/cities
+            types: ['geocode'], 
+            // Optional: Restrict results to a specific country 
+            componentRestrictions: { country: 'us' } 
+        };
+
+        if (pickupInput) {
+            // This initializes Autocomplete on the Pickup Address field (#pickup)
+            const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, autocompleteOptions);
+            // Listener for when a place is selected
+            pickupAutocomplete.addListener('place_changed', () => {
+                const place = pickupAutocomplete.getPlace();
+                console.log('Pickup Place Selected:', place);
+            });
+        }
+
+        if (deliveryInput) {
+            // This initializes Autocomplete on the Dropoff Address field (#delivery)
+            const deliveryAutocomplete = new google.maps.places.PlaceAutocompleteElement(deliveryInput, autocompleteOptions);
+            // Listener for when a place is selected
+            deliveryAutocomplete.addListener('place_changed', () => {
+                const place = deliveryAutocomplete.getPlace();
+                console.log('Dropoff Place Selected:', place);
+            });
+        }
+
+        console.log("Google Places Autocomplete initialized successfully.");
+    };
+
+    // Initialize Autocomplete once the DOM is loaded
+    document.addEventListener('DOMContentLoaded', initAutocomplete);
+})();
+// =================================================
+
+
+// --- 5. Reveal animations for hero, track, and feature cards on scroll ---
 (function() {
     document.addEventListener('DOMContentLoaded', function() {
         // Added #heroContent to the list of elements to observe for its animation
@@ -162,10 +222,9 @@
     });
 })();
 
-// =====================
-// SignUp Modal Functionality
-// =====================
+// --- 6. SignUp Modal Functionality (for couriers) ---
 (function() {
+    // Note: These elements are likely on a separate signup/landing page, but the logic is preserved.
     const roleCourier = document.getElementById('role-courier');
     const courierModal = document.getElementById('courierModal');
     const closeModal = document.querySelector('.close-btn');
@@ -203,13 +262,14 @@
     if (courierDetailsForm) {
         courierDetailsForm.addEventListener('submit', function(e) {
             e.preventDefault(); 
+            // Save details to hidden inputs
             document.getElementById('hidden-vehicle-model').value = document.getElementById('vehicle-model').value;
             document.getElementById('hidden-license-plate').value = document.getElementById('license-plate').value;
             document.getElementById('hidden-driver-license-num').value = document.getElementById('driver-license-num').value;
             document.getElementById('hidden-id-card-num').value = document.getElementById('id-card-num').value;
             document.getElementById('hidden-experience').value = document.getElementById('delivery-experience').value;
             document.getElementById('hidden-motivation').value = document.getElementById('motivation').value;
-            alert('Courier details saved! Please click "Create Account" to finalize.');
+            console.log('Courier details saved! Please click "Create Account" to finalize.');
             if (courierModal) courierModal.style.display = 'none';
             if (mainForm) mainForm.setAttribute('data-courier-details-complete', 'true');
         });
@@ -236,7 +296,7 @@
                 const detailsComplete = mainForm.getAttribute('data-courier-details-complete') === 'true';
 
                 if (isCourier && !detailsComplete) {
-                    alert('Please complete the Courier Application Details pop-up first.');
+                    console.error('Please complete the Courier Application Details pop-up first.');
                     if (courierModal) courierModal.style.display = 'block'; 
                     formIsValid = false;
                 }
@@ -247,12 +307,11 @@
                 e.preventDefault(); 
             }
         });
-    
     }
 
 })(); 
 
-// --- Track Button Functionality ---
+// --- 7. Track Button Functionality ---
 (function() {
     const trackBtn = document.getElementById('trackBtn');
     const trackingResult = document.getElementById('trackingResult');

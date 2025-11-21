@@ -48,7 +48,6 @@
                     <p class="status">Waiting for courier</p>
                     <p class="eta">Courier will be assigned shortly</p>
                 </a>
-                
             </div>
         </section>
         
@@ -96,12 +95,12 @@
             <form id="parcelForm" class="modal-form">
                 
                 <div class="form-group">
-                    <label for="pickup">Pickup Location</label>
-                    <input type="text" id="pickup" name="pickup" placeholder="e.g., Nyarugenge, KN 4 Ave" required>
+                    <label for="pickup">Pickup Address</label>
+                    <input type="text" id="pickup" name="pickup" placeholder="Enter full pickup address or landmark" required>
                 </div>
                 <div class="form-group">
-                    <label for="delivery">Delivery Location</label>
-                    <input type="text" id="delivery" name="delivery" placeholder="e.g., Gisozi, Gasabo" required>
+                    <label for="delivery">Dropoff Address</label>
+                    <input type="text" id="delivery" name="delivery" placeholder="Enter full dropoff address or landmark" required>
                 </div>
 
                 <div class="form-group">
@@ -125,7 +124,7 @@
                     <input type="number" id="weight" name="weight" step="0.1" min="0.1" placeholder="e.g. 2.5" required>
                 </div>
 
-               
+                
                 <div class="form-group">
                     <label for="senderName">Sender Name</label>
                     <input type="text" id="senderName" name="senderName" value="Ange K." required>
@@ -176,6 +175,12 @@
         </div>
     </div>
 
+   
+    <script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBzP69ZzbQiVyrxDtz59s2BVUFwXXZNIVs&libraries=places">
+    </script>
+    
+    <!-- Your custom application script (now contains Autocomplete logic) -->
     <script src="script.js"></script>
 </body>
 </html>
