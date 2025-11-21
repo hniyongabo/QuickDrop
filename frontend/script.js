@@ -264,8 +264,245 @@
 
             // Prevent form submission if validation failed
             if (!formIsValid) {
-                e.preventDefault(); 
+                e.preventDefault();
+                return;
+            }
+
+            // If valid, prevent default and handle API submission
+            e.preventDefault();
+            handleSignup();
+        });
+    }
+})();
+
+// =====================
+// API Integration
+// =====================
+const API_BASE_URL = 'http://localhost:5001/api';
+
+// Helper function to make API calls
+async function apiCall(endpoint, method = 'GET', data = null, includeAuth = false) {
+    const options = {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    if (includeAuth) {
+        const token = localStorage.getItem('access_token');
+        if (token) {
+            options.headers['Authorization'] = `Bearer ${token}`;
+        }
+    }
+
+    if (data && (method === 'POST' || method === 'PUT')) {
+        options.body = JSON.stringify(data);
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || 'An error occurred');
+        }
+
+        return result;
+    } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+    }
+}
+
+// =====================
+// Signup Handler
+// =====================
+async function handleSignup() {
+    const mainForm = document.getElementById('main-signup-form');
+    if (!mainForm) return;
+
+    const formData = new FormData(mainForm);
+    const role = formData.get('role');
+
+    const signupData = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        address: formData.get('address'),
+        password: formData.get('password'),
+        role: role
+    };
+
+    // Add courier-specific fields if role is courier
+    if (role === 'courier') {
+        signupData.vehicle_model = formData.get('vehicle_model');
+        signupData.license_plate = formData.get('license_plate');
+        signupData.driver_license_num = formData.get('driver_license_num');
+        signupData.id_card_num = formData.get('id_card_num');
+        signupData.experience = parseInt(formData.get('experience')) || 0;
+        signupData.motivation = formData.get('motivation');
+    }
+
+    try {
+        const result = await apiCall('/signup', 'POST', signupData);
+
+        // Store the access token
+        localStorage.setItem('access_token', result.access_token);
+        localStorage.setItem('user', JSON.stringify(result.user));
+
+        alert('Account created successfully!');
+
+        // Redirect based on role
+        if (result.user.role === 'customer') {
+            window.location.href = 'CustomerDashboard.html';
+        } else if (result.user.role === 'courier') {
+            window.location.href = 'CourierDashboard.html';
+        } else if (result.user.role === 'admin') {
+            window.location.href = 'AdminDashboard.html';
+        }
+    } catch (error) {
+        alert('Signup failed: ' + error.message);
+    }
+}
+
+// =====================
+// Login Handler
+// =====================
+(function() {
+    const loginForm = document.querySelector('form[action="#"]');
+    const isLoginPage = document.title.includes('Sign In');
+
+    if (loginForm && isLoginPage) {
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const result = await apiCall('/login', 'POST', { email, password });
+
+                // Store the access token and user data
+                localStorage.setItem('access_token', result.access_token);
+                localStorage.setItem('user', JSON.stringify(result.user));
+
+                alert('Login successful!');
+
+                // Redirect based on role
+                if (result.user.role === 'customer') {
+                    window.location.href = 'CustomerDashboard.html';
+                } else if (result.user.role === 'courier') {
+                    window.location.href = 'CourierDashboard.html';
+                } else if (result.user.role === 'admin') {
+                    window.location.href = 'AdminDashboard.html';
+                }
+            } catch (error) {
+                alert('Login failed: ' + error.message);
             }
         });
     }
 })();
+
+// =====================
+// Profile Page Handler
+// =====================
+(function() {
+    const isProfilePage = document.title.includes('My Profile');
+
+    if (isProfilePage) {
+        // Load user profile on page load
+        loadUserProfile();
+
+        // Handle profile update form
+        const profileForm = document.querySelector('.settings-card form');
+        if (profileForm && !profileForm.querySelector('#current-password')) {
+            profileForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const updateData = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    address: document.getElementById('address').value
+                };
+
+                try {
+                    const result = await apiCall('/profile', 'PUT', updateData, true);
+
+                    // Update local storage
+                    localStorage.setItem('user', JSON.stringify(result.user));
+
+                    alert('Profile updated successfully!');
+                } catch (error) {
+                    alert('Profile update failed: ' + error.message);
+                }
+            });
+        }
+
+        // Handle password change form
+        const passwordForm = document.querySelectorAll('.settings-card form')[1];
+        if (passwordForm) {
+            passwordForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const currentPassword = document.getElementById('current-password').value;
+                const newPassword = document.getElementById('new-password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+
+                if (newPassword !== confirmPassword) {
+                    alert('New passwords do not match!');
+                    return;
+                }
+
+                try {
+                    await apiCall('/change-password', 'POST', {
+                        current_password: currentPassword,
+                        new_password: newPassword
+                    }, true);
+
+                    alert('Password changed successfully!');
+                    passwordForm.reset();
+                } catch (error) {
+                    alert('Password change failed: ' + error.message);
+                }
+            });
+        }
+    }
+})();
+
+async function loadUserProfile() {
+    try {
+        const result = await apiCall('/profile', 'GET', null, true);
+
+        // Populate form fields
+        document.getElementById('name').value = result.name || '';
+        document.getElementById('email').value = result.email || '';
+        document.getElementById('phone').value = result.phone || '';
+        document.getElementById('address').value = result.address || '';
+
+        // Update local storage
+        localStorage.setItem('user', JSON.stringify(result));
+    } catch (error) {
+        console.error('Failed to load profile:', error);
+        alert('Failed to load profile. Please login again.');
+        window.location.href = 'Login.html';
+    }
+}
+
+// =====================
+// Auth Check
+// =====================
+function checkAuth() {
+    const token = localStorage.getItem('access_token');
+    const protectedPages = ['CustomerDashboard.html', 'CourierDashboard.html', 'AdminDashboard.html', 'Profile.html'];
+    const currentPage = window.location.pathname.split('/').pop();
+
+    if (protectedPages.includes(currentPage) && !token) {
+        alert('Please login to access this page');
+        window.location.href = 'Login.html';
+    }
+}
+
+// Run auth check on page load
+document.addEventListener('DOMContentLoaded', checkAuth);
