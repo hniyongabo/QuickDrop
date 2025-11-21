@@ -9,27 +9,31 @@
 <body>
 
     <header>
-        <a href="CustomerDashboard.html" class="logo">QuickDrop</a>
-        
-        <nav class="main-nav" id="mainNav">
-            <ul>
-                <li><a href="CustomerDashboard.html" class="nav-link">My Dashboard</a></li>
-                
-                <li class="profile-menu">
-                    <a href="#" class="profile-toggle" id="profileToggle">Profile ▼</a>
-                    <ul class="dropdown-menu" id="profileDropdown">
-                        <li><a href="Profile.html" class="nav-link active">Settings</a></li>
-                        <li><a href="Login.html">Sign Out</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
-        
-        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </button>
+        <div class="header-inner container">
+            <a href="landingpage.html" class="logo">QuickDrop</a>
+            
+            <nav>
+                <ul class="nav-menu" id="navMenu">
+                    <li>
+                        <a href="CustomerDashboard.html" class="nav-link back-link">My Dashboard</a>
+                    </li>
+                    
+                    <li class="profile-menu">
+                        <a href="#" class="profile-toggle" id="profileToggle">Profile ▼</a>
+                        <ul class="dropdown-menu" id="profileDropdown">
+                            <li><a href="Profile.html" class="nav-link active">Settings</a></li>
+                            <li><a href="login.html">Sign Out</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+            
+            <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
     </header>
 
     <main class="container">

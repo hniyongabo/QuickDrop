@@ -1,24 +1,4 @@
 //  this is a js file for responsiveness and interactivity
-// Mobile menu toggle functionality
-
-
-(function() {
-    // Select the landing page button and menu using their IDs
-    const menuToggle = document.getElementById('menuToggle');
-    const navMenu = document.getElementById('navMenu');
-
-    // Check if both elements were found
-    if (menuToggle && navMenu) {
-        // Add the click event listener
-        menuToggle.addEventListener('click', () => {
-            // Toggle the .active class on the menu itself
-            navMenu.classList.toggle('active');
-        });
-    }
-
-    // --- Keep the rest of your JS code below ---
-
-})();
 // Profile Dropdown Toggle
 (function() {
     const profileToggle = document.getElementById('profileToggle');
@@ -400,6 +380,66 @@ async function handleSignup() {
             } catch (error) {
                 alert('Login failed: ' + error.message);
             }
+        });
+    
+    }
+
+})(); 
+
+// --- Track Button Functionality ---
+(function() {
+    const trackBtn = document.getElementById('trackBtn');
+    const trackingResult = document.getElementById('trackingResult');
+    const trackingNumber = document.getElementById('trackingNumber');
+    const lastUpdateEl = document.getElementById('lastUpdate');
+
+    if (trackBtn && trackingResult && trackingNumber) {
+        trackBtn.addEventListener('click', function() {
+            // simple UX: if empty, shake input (light feedback) else show result
+            if (!trackingNumber.value || trackingNumber.value.trim().length < 2) {
+                trackingNumber.focus();
+                trackingNumber.style.transition = 'transform .12s ease';
+                trackingNumber.style.transform = 'translateX(-6px)';
+                setTimeout(()=> trackingNumber.style.transform = 'translateX(6px)', 120);
+                setTimeout(()=> trackingNumber.style.transform = '', 240);
+                return;
+            }
+
+            // simulate update timestamp
+            if(lastUpdateEl) {
+                const now = new Date();
+                lastUpdateEl.textContent = now.toLocaleString();
+            }
+            trackingResult.classList.add('active');
+            
+            // scroll into view lightly on small screens
+            trackingResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    }
+})(); // <--- This closes the Track Button Logic properly
+
+
+// =====================
+// Mobile Menu Toggle (CLEAN & SEPARATED)
+// =====================
+(function() {
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('navMenu');
+    const navLinks = document.querySelectorAll('.nav-menu li a');
+
+    if (hamburger && navMenu) {
+        // Toggle Menu on Click
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close menu when a link is clicked
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
         });
     }
 })();
