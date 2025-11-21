@@ -34,6 +34,10 @@
                 tabLinks.forEach(item => item.classList.remove('active'));
                 link.classList.add('active');
 
+                 // on small screens keep tab button visible
+                const activeBtn = document.querySelector('.tab-link.active');
+                if (activeBtn && window.innerWidth < 800) activeBtn.scrollIntoView({ inline: 'center', behavior: 'smooth' });
+            
                 // Show/hide tab content
                 tabContents.forEach(function(content) {
                     content.classList.toggle('active', content.id === 'tab-' + tabId);
@@ -283,4 +287,72 @@
         });
     }
 
+})();
+
+
+// Append this block to initialize charts (DOM-ready)
+(function initAdminCharts() {
+  function createLine(ctx, labels, data, xLabel, yLabel) {
+    return new Chart(ctx, {
+      type: 'line',
+      data: { labels, datasets: [{ label: yLabel, data, borderColor: '#4a7c2a', backgroundColor: 'rgba(74,124,42,0.12)', fill: true, tension: 0.25 }]},
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { title: { display: true, text: xLabel } },
+          y: { beginAtZero: true, title: { display: true, text: yLabel } }
+        }
+      }
+    });
+  }
+
+  function createBar(ctx, labels, data, xLabel, yLabel) {
+    const barColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#4a7c2a';
+    return new Chart(ctx, {
+      type: 'bar',
+      data: { labels, datasets: [{ label: yLabel, data, backgroundColor: barColor }]},
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { title: { display: true, text: xLabel } },
+          y: { beginAtZero: true, title: { display: true, text: yLabel } }
+        }
+      }
+    });
+  }
+
+  function createDoughnut(ctx, labels, data) {
+    return new Chart(ctx, {
+      type: 'doughnut',
+      data: { labels, datasets: [{ data, backgroundColor: ['#4a7c2a','#2196F3','#FFC107','#dc3545'] }]},
+      options: { responsive: true, plugins: { legend: { position: 'right' } } }
+    });
+  }
+
+  function onReady(fn) {
+    if (document.readyState !== 'loading') return fn();
+    document.addEventListener('DOMContentLoaded', fn);
+  }
+
+  onReady(function () {
+    const dEl = document.getElementById('deliveriesChart');
+    const uEl = document.getElementById('usersChart');
+    const sEl = document.getElementById('statusChart');
+
+    if (dEl) createLine(dEl.getContext('2d'),
+      Array.from({length:14}, (_,i)=>`Day ${i+1}`),
+      Array.from({length:14}, ()=>Math.floor(40 + Math.random()*120)),
+      'Day', 'Deliveries');
+
+    if (uEl) createBar(uEl.getContext('2d'),
+      ['Week 1','Week 2','Week 3','Week 4'],
+      [120,210,330,470],
+      'Week', 'New Users');
+
+    if (sEl) createDoughnut(sEl.getContext('2d'),
+      ['Delivered','In Transit','Pending','Failed'],
+      [420,54,24,6]);
+  });
 })();

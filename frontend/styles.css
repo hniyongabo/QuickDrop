@@ -988,11 +988,15 @@ nav ul li a:hover {
     text-decoration: underline;
 }
 
-/* ========================================
-   Dashboard Pages
-   ======================================== */
+/* Dashboard Pages */
 .dashboard-container {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 1rem;
+    padding: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-sizing: border-box;
     flex-grow: 1;
     overflow: hidden;
     min-height: calc(100vh - 70px);
@@ -1073,6 +1077,72 @@ nav ul li a:hover {
     overflow: hidden;
 }
 
+.list-card, .courier-card { 
+    background:#fff; 
+    border:1px solid #eef3f7; 
+    border-radius:8px; 
+    padding:0.6rem; 
+    display:flex; 
+    gap:0.6rem; 
+    align-items:center; 
+    margin-bottom:0.6rem; 
+    box-shadow:0 4px 10px rgba(0,0,0,0.02); 
+}
+
+.list-card .meta, .courier-card .meta { 
+    font-size: 0.9rem; 
+    color: #555; 
+} 
+
+.list-card .title, .courier-card .title { 
+    font-weight: 600; 
+    color: #111; 
+    margin-bottom: 0.15rem;
+}
+
+.courier-avatar { 
+    width:46px; 
+    height:46px; 
+    border-radius:50%; 
+    display:grid; 
+    place-items:center; 
+    background:var(--primary); 
+    color:#fff; 
+    font-weight:700; 
+}
+
+.title { font-weight:600;
+    color:#111; 
+} 
+
+.meta { 
+    font-size:0.9rem; 
+    color:var(--muted); 
+}
+
+.badge { 
+    padding:0.18rem 0.45rem; 
+    border-radius:12px; 
+    font-size:0.78rem; 
+    font-weight:600; 
+}
+
+.badge.active { 
+    background:rgba(74,124,42,0.12); 
+    color:#4a7c2a; 
+} 
+
+.badge.non-active {
+    background: rgba(255,193,7,0.12); 
+    color:#990303; 
+}
+
+.badge.pending { 
+    background:rgba(255,193,7,0.12); 
+    color:#b07b00; 
+}
+
+
 .past-order-item {
     display: flex;
     justify-content: space-between;
@@ -1116,9 +1186,10 @@ nav ul li a:hover {
 }
 
 .sidebar {
-    width: 420px;
+    width: 40rem;
     flex-shrink: 0;
     background-color: #ffffff;
+    box-sizing: border-box;
     border-left: 1px solid #ddd;
     display: flex;
     flex-direction: column;
@@ -1218,7 +1289,7 @@ nav ul li a:hover {
 
 /* Stats Cards */
 .stats-container {
-    display: grid;
+    display: flex;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
     margin-bottom: 2rem;
@@ -1236,17 +1307,23 @@ nav ul li a:hover {
     border-radius: 8px;
     padding: 1rem;
     text-align: center;
+    display: flex;
+    gap: 0.75rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
 }
 
 .stat-card h3 {
     font-size: 2rem;
     color: #4a7c2a;
+    margin: 0;
 }
 
 .stat-card p {
     font-size: 0.9rem;
     color: #6c757d;
     font-weight: 500;
+    margin: 0.25rem 0 0;
+    color:var(--muted);
 }
 
 /* Tab Navigation */
@@ -1432,36 +1509,32 @@ nav ul li a:hover {
     background-color: #fff3cd;
     border: 1px solid #ffc107;
     border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
+    padding: 0.6rem;
+    margin-bottom: 0.6rem;
+    display:flex;
+    gap:0.6rem;
+    align-items: flex-start;
 }
 
-.alert-item.normal {
-    background-color: #d1e7dd;
-    border-color: #4a7c2a;
+.alert-item.warning .icon {
+    background:#ffc107;
+    color:#111;
 }
 
-.alert-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
+.alert-item.success .icon {
+    background:var(--primary); 
 }
 
-.alert-icon {
+.alert-item .icon {
     font-size: 1.25rem;
-}
-
-.alert-item p {
-    margin: 0;
-    color: #333;
-    line-height: 1.5;
-}
-
-.alert-pending {
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-    color: #6c757d;
+    width:36px;
+    height:36px;
+    border-radius:6px;
+    display:grid;
+    place-items:center;
+    color:#fff;
+    background:#dc3545;
+    font-weight:700; 
 }
 
 /* Pickup Map Container */
@@ -1528,8 +1601,12 @@ nav ul li a:hover {
 
 /* Analytics Chart Canvas */
 .analytics-chart {
-    max-height: 200px;
-    margin-bottom: 1.5rem;
+    max-height: 520px;
+    height: 360px !important;
+    width: 100% !important;
+    margin-bottom: 3rem;
+    display: block;
+    align-items: center;
 }
 
 .analytics-chart:last-child {
@@ -1604,9 +1681,7 @@ body.full-height {
     margin-bottom: 1.5rem;
 }
 
-/* ========================================
-   Modal Styles
-   ======================================== */
+/* Modal Styles */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -1688,9 +1763,7 @@ body.full-height {
     line-height: 1.4;
 }
 
-/* ========================================
-   SignUp Page Styles
-   ======================================== */
+/* SignUp Page Styles */
 
 .error-message {
     color: red;
@@ -1806,9 +1879,11 @@ canvas {
     display: block !important;
     width: 100% !important;
     height: auto !important;
+    max-width: 600px;
+    margin: 2rem auto;
   }
   
-  .chart-container {
+.chart-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1897,4 +1972,95 @@ canvas {
     font-size: .9rem; 
     border-top: 1px solid rgba(0,0,0,0.04); 
     padding-top: .75rem; 
+}
+
+/* Status badge */
+.badge {
+  padding: 0.18rem 0.45rem; border-radius: 12px; font-size: 0.78rem; font-weight: 600;
+}
+.badge.active { background: rgba(74,124,42,0.12); color: #4a7c2a; border: 1px solid rgba(74,124,42,0.12); }
+.badge.pending { background: rgba(255,193,7,0.12); color: #b07b00; border: 1px solid rgba(255,193,7,0.12); }
+
+/* Mobile: keep charts/map smaller */
+@media (max-width: 991px) {
+  .dashboard-container { grid-template-columns: 1fr; padding: 0.75rem; }
+  .map-container { min-height: 240px; }
+  .analytics-chart { height: 180px !important; }
+}
+
+/* keep desktop charts tall enough after map reduction */
+@media (min-width: 992px) {
+  .analytics-chart { height: 380px !important; max-height: 480px; }
+}
+@media (max-width: 991px) {
+  .map-container { min-height: 200px; }
+  .map-iframe { min-height: 200px; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+  .map-iframe { min-height:260px; }
+  .analytics-chart { height:200px !important; }
+  .chart-container { padding:0; }
+}
+
+/* Layout: main content larger than sidebar on desktop, stacked on mobile */
+@media (min-width: 992px) {
+  .dashboard-container { 
+    grid-template-columns: 2fr 360px; 
+    gap: 1rem; max-width:1400px; 
+    margin:0 auto;
+ }
+}
+@media (max-width: 991px) {
+  .dashboard-container { 
+    grid-template-columns: 1fr;
+    padding:0.75rem;
+ }
+}
+
+@media (min-width: 992px) {
+  .dashboard-container {
+    grid-template-columns: 2fr 1fr; /* main content wider than sidebar */
+    gap: 1.25rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* Map: fill its box with no inner padding and reasonable height on desktop */
+  .map-container {
+    padding: 0;
+    min-height: 420px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f7f9fb;
+  }
+  .map-iframe {
+    width: 100%;
+    height: 100%;
+    min-height: 420px;
+    border: 0;
+    display: block;
+  }
+
+  /* Larger charts on desktop */
+  .analytics-chart { height: 420px !important; max-height: 520px; }
+
+  /* Sidebar: limit height so it doesn't push content; allow controlled scrolling */
+  .sidebar {
+    max-height: calc(100vh - 110px);
+    overflow: auto;
+    padding: 0.75rem;
+    box-sizing: border-box;
+  }
+  .sidebar::-webkit-scrollbar { width: 8px; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.08); border-radius: 8px; }
+
+  /* Hide inactive panels (safety) */
+  .tab-content { 
+    display: none;
+ }
+  .tab-content.active { 
+    display: block;
+ }
 }
