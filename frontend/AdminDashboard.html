@@ -9,22 +9,29 @@
 </head>
 <body>
 
-    <header>
-        <a href="landingpage.html" class="logo">QuickDrop</a>
-        
-        <nav class="main-nav" id="mainNav">
-            <ul class="nav-menu">
-                <li><a href="#" class="nav-link active">Dashboard</a></li>
-                
-                <li class="profile-menu">
-                    <a href="#" class="profile-toggle" id="profileToggle">Admin ▼</a>
-                    <ul class="dropdown-menu" id="profileDropdown">
-                        <li><a href="login.html">Sign Out</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
-        
+    <<header>
+        <div class="header-inner container">
+            <a href="landingpage.html" class="logo">QuickDrop</a>
+            
+            <nav>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#" class="nav-link active">Dashboard</a></li>
+                    
+                    <li class="profile-menu">
+                        <a href="#" class="profile-toggle" id="profileToggle">Admin ▼</a>
+                        <ul class="dropdown-menu" id="profileDropdown">
+                            <li><a href="login.html">Sign Out</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+            
+            <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
     </header>
 
     <main class="dashboard-container">
@@ -55,10 +62,6 @@
                         <h3>1,189</h3>
                         <p>Successful Deliveries</p>
                     </div>
-                    <div class="stat-card">
-                        <h3>4.7/5</h3>
-                        <p>Customer Satisfaction</p>
-                    </div>
                 </section>
 
                 <nav class="tab-nav">
@@ -71,65 +74,103 @@
                 <section id="tab-analytics" class="tab-content active">
                     <div class="analytics-section">
                         <h3>Delivery Statistics</h3>
-                        <canvas id="deliveriesChart" class="analytics-chart"></canvas>
+                        <div class="chart-container">
+                        <canvas id="deliveriesChart" class="analytics-chart"></canvas></div>
                     </div>
                     <div class="analytics-section">
                         <h3>User Growth</h3>
-                        <canvas id="usersChart" class="analytics-chart"></canvas>
+                        <div class="chart-container">
+                        <canvas id="usersChart" class="analytics-chart"></canvas></div>
                     </div>
                     <div class="analytics-section">
                         <h3>Delivery Status Distribution</h3>
-                        <canvas id="statusChart" class="analytics-chart"></canvas>
+                        <div class="chart-container">
+                        <canvas id="statusChart" class="analytics-chart"></canvas></div>
                     </div>
                 </section>
                 
                 <section id="tab-active" class="tab-content">
-                    <div class="list-item">
-                        <p><strong>Order:</strong> #1021</p>
-                        <p><strong>Courier:</strong> David L.</p>
-                        <p><strong>Status:</strong> <span class="status">En route to dropoff</span></p>
+                    <div class="list-card">
+                        <div style="flex:0 0 12px; color:#4a7c2a;">●</div>
+                        <div style="flex:1">
+                        <div class="title">Order #1021</div>
+                        <div class="subtitle">Pickup: Kimironko Market</div>
+                        <div class="subtitle">Dropoff: Gisozi</div>
+                        <div class="meta">Courier: David L. ETA: 12m  <span class="badge active">In Transit</span></div>
+                        </div>
                     </div>
-                    <div class="list-item">
-                        <p><strong>Order:</strong> #1020</p>
-                        <p><strong>Courier:</strong> Sarah K.</p>
-                        <p><strong>Status:</strong> <span class="status">En route to pickup</span></p>
+                    <div class="list-card">
+                        <div style="flex:0 0 12px; color:#ffc107;">●</div>
+                        <div style="flex:1">
+                        <div class="title">Order #1020</div>
+                        <div class="subtitle">Pickup: Nyarugenge</div>
+                        <div class="subtitle">Dropoff: Musanze</div>
+                        <div class="meta">Courier: Sarah K. ETA: 50m  <span class="badge pending">Pending</span></div>
+                        </div>
                     </div>
                 </section>
                 
                 <section id="tab-couriers" class="tab-content">
-                    <div class="list-item">
-                        <p><strong>Name:</strong> David L.</p>
-                        <p><strong>Status:</strong> <span class="status">On Task</span></p>
-                        <p><strong>Total Deliveries:</strong> 14</p>
+                    <div class="courier-card">
+                        <div class="courier-avatar">DL</div>
+                        <div style="flex:1">
+                            <div class="title">David L.</div>
+                            <div class="subtitle">Total Deliveries: 14</div>
+                            <div class="meta">Bike - Rating: 4.8  <span class="badge active">Online</span></div>
+                        </div>
                     </div>
-                    <div class="list-item">
-                        <p><strong>Name:</strong> Sarah K.</p>
-                        <p><strong>Status:</strong> <span class="status status-online">Online</span></p>
-                        <p><strong>Total Deliveries:</strong> 22</p>
+                    <div class="courier-card">
+                        <div class="courier-avatar">SK</div>
+                        <div style="flex:1">
+                            <div class="title">Sarah K.</div>
+                            <div class="subtitle">Total Deliveries: 22</div>
+                            <div class="meta">Car - Rating: 5.0  <span class="badge non-active">Offline</span></div>
+                        </div>
                     </div>
-                    <div class="list-item">
-                        <p><strong>Name:</strong> Mike R.</p>
-                        <p><strong>Status:</strong> <span class="status status-offline">Offline</span></p>
-                        <p><strong>Total Deliveries:</strong> 8</p>
+                    <div class="courier-card">
+                        <div class="courier-avatar">MR</div>
+                        <div style="flex:1">
+                            <div class="title">Mike R.</div>
+                            <div class="subtitle">Total Deliveries: 8</div>
+                            <div class="meta">Truck - Rating: 4.2  <span class="badge active">Online</span></div>
+                        </div>
                     </div>
                 </section>
                 
                 <section id="tab-alerts" class="tab-content">
-                    <div id="noDriverAlert" class="alert-item hidden">
-                        <div class="alert-header">
-                            <span class="alert-icon">⚠️</span>
-                            <strong>No Available Drivers</strong>
+                    <div id="noDriverAlert" class="alert-item hidden"></div>
+                    <div class="alert-item alert">
+                        <div class="icon">!</div>
+                        <div>
+                            <strong>Critical:</strong> There are currently no available drivers/bikes online. Please step in to handle pending deliveries.
+                            <p class="alert-pending"><strong>Pending Orders:</strong> 3</p>
+                            <div style="color:var(--muted); font-size:0.9rem; margin-top:0.25rem;">Reported 5 minutes ago · Priority: High</div>
                         </div>
-                        <p>There are currently no available drivers/bikes online. Please step in to handle pending deliveries.</p>
-                        <p class="alert-pending"><strong>Pending Orders:</strong> 3</p>
                     </div>
-                    <div id="normalStatus" class="alert-item normal">
-                        <div class="alert-header">
-                            <span class="alert-icon">✓</span>
-                            <strong>System Status: Normal</strong>
+
+                    <div class="alert-item warning">
+                        <div class="icon">⚠</div>
+                        <div>
+                            <strong>Delay:</strong> Route congestion on Nyarugenge main road causing 15–25 min delays.
+                            <div style="color:var(--muted); font-size:0.9rem; margin-top:0.25rem;">Updated 12 minutes ago · Affected: 24 deliveries</div>
                         </div>
-                        <p>All systems operational. Drivers available.</p>
                     </div>
+
+                    <div class="alert-item success">
+                        <div class="icon">✓</div>
+                        <div>
+                            <strong>Info:</strong> New courier onboarding completed — 5 couriers now live.
+                            <div style="color:var(--muted); font-size:0.9rem; margin-top:0.25rem;">Checked 30 minutes ago</div>
+                        </div>
+                    </div>
+
+                    <div class="alert-item">
+                        <div class="icon" style="background:#2196F3;">i</div>
+                        <div>
+                            <strong>System:</strong> Scheduled maintenance tonight 00:00–01:00 CAT. Minor disruption expected.
+                            <div style="color:var(--muted); font-size:0.9rem; margin-top:0.25rem;">Announced 1 hour ago</div>
+                            </div>
+                        </div>
                 </section>
                 </div>
         </aside>
