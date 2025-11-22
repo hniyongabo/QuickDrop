@@ -4,23 +4,35 @@ Database initialization script for QuickDrop
 Creates all tables and optionally seeds with sample data
 """
 
-from app import create_app
-from utils.database import db
-from models import User, Customer, Courier, Order
 from datetime import datetime, timedelta
 
 def init_database(seed_data=False):
     """Initialize database with tables"""
-    app = create_app()
+    from flask import Flask
+    from config import Config
+    from utils.database import db
+    from sqlalchemy import text
+
+    # Create minimal app
+    app = Flask(__name__)
+    app.config.from_object(Config)
+    db.init_app(app)
 
     with app.app_context():
         print("\n" + "="*50)
         print("🗄️  Database Initialization")
         print("="*50)
 
-        # Drop all tables (use with caution!)
+        # Drop all tables via raw SQL first (handles corrupted state)
         print("\n⚠️  Dropping existing tables...")
-        db.drop_all()
+        db.session.execute(text("DROP TABLE IF EXISTS orders CASCADE"))
+        db.session.execute(text("DROP TABLE IF EXISTS customers CASCADE"))
+        db.session.execute(text("DROP TABLE IF EXISTS couriers CASCADE"))
+        db.session.execute(text("DROP TABLE IF EXISTS users CASCADE"))
+        db.session.commit()
+
+        # Import models so SQLAlchemy knows about them
+        from models import User, Customer, Courier, Order
 
         # Create all tables
         print("📝 Creating new tables...")
@@ -34,13 +46,13 @@ def init_database(seed_data=False):
 
         if seed_data:
             print("\n🌱 Seeding sample data...")
-            seed_sample_data()
+            seed_sample_data(db, User, Customer, Courier, Order)
 
         print("\n" + "="*50)
         print("✨ Database initialization complete!")
         print("="*50 + "\n")
 
-def seed_sample_data():
+def seed_sample_data(db, User, Customer, Courier, Order):
     """Seed database with sample data for testing"""
 
     # Create sample customer

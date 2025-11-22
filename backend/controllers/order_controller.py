@@ -62,6 +62,13 @@ def create_order():
         # Set estimated delivery time (example: 2 hours from now)
         order.estimated_delivery_time = datetime.utcnow() + timedelta(hours=2)
 
+        # If courier_id provided, assign courier directly
+        if data.get('courier_id'):
+            courier = Courier.query.get(data['courier_id'])
+            if courier and courier.is_verified and courier.is_available:
+                order.courier_id = courier.id
+                order.status = 'courier_assigned'
+
         db.session.add(order)
         db.session.commit()
 
@@ -259,6 +266,99 @@ def assign_courier(order_id):
             'order': order.to_dict()
         }), 200
 
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@order_bp.route('/couriers/online', methods=['GET'])
+@jwt_required()
+def get_online_couriers():
+    """Get all online and available couriers"""
+    try:
+        couriers = Courier.query.filter_by(
+            is_verified=True,
+            is_available=True
+        ).order_by(Courier.rating.desc()).all()
+
+        return jsonify({
+            'couriers': [c.to_dict() for c in couriers]
+        }), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@order_bp.route('/couriers/<int:courier_id>', methods=['GET'])
+@jwt_required()
+def get_courier_profile(courier_id):
+    """Get courier profile by ID"""
+    try:
+        courier = Courier.query.get(courier_id)
+        if not courier:
+            return jsonify({'error': 'Courier not found'}), 404
+
+        return jsonify(courier.to_dict()), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@order_bp.route('/orders/pending', methods=['GET'])
+@jwt_required()
+def get_pending_orders():
+    """Get all pending orders (for couriers to view and accept)"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+
+        if not user or user.role != 'courier':
+            return jsonify({'error': 'Only couriers can view pending orders'}), 403
+
+        orders = Order.query.filter_by(status='pending').order_by(Order.created_at.desc()).all()
+
+        return jsonify({
+            'orders': [order.to_dict() for order in orders]
+        }), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@order_bp.route('/orders/<int:order_id>/accept', methods=['POST'])
+@jwt_required()
+def accept_order(order_id):
+    """Courier accepts an order"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+
+        if not user or user.role != 'courier':
+            return jsonify({'error': 'Only couriers can accept orders'}), 403
+
+        if not user.courier:
+            return jsonify({'error': 'Courier profile not found'}), 404
+
+        if not user.courier.is_verified:
+            return jsonify({'error': 'Courier is not verified'}), 400
+
+        order = Order.query.get(order_id)
+
+        if not order:
+            return jsonify({'error': 'Order not found'}), 404
+
+        if order.status != 'pending':
+            return jsonify({'error': 'Order is not available for acceptance'}), 400
+
+        if order.courier_id:
+            return jsonify({'error': 'Order already has a courier assigned'}), 400
+
+        order.courier_id = user.courier.id
+        order.status = 'courier_assigned'
+
+        db.session.commit()
+
+        return jsonify({
+            'message': 'Order accepted successfully',
+            'order': order.to_dict()
+        }), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500

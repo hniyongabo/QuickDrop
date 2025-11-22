@@ -20,10 +20,9 @@ def create_app(config_class=Config):
     app.register_blueprint(profile_bp)
     app.register_blueprint(order_bp)
 
-    # Create tables
+    # Import models so SQLAlchemy knows about them
     with app.app_context():
-        db.create_all()
-        print("✅ Database tables created successfully!")
+        from models import User, Customer, Courier, Order
 
     # Health check endpoint
     @app.route('/api/health', methods=['GET'])

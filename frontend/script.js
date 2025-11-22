@@ -118,7 +118,7 @@
                 console.log(`${key}: ${value}`);
             }
 
-            alert('Booking request sent!');
+            Toast.success('Booking request sent!');
             closeModal();
         });
     }
@@ -209,7 +209,7 @@
             document.getElementById('hidden-id-card-num').value = document.getElementById('id-card-num').value;
             document.getElementById('hidden-experience').value = document.getElementById('delivery-experience').value;
             document.getElementById('hidden-motivation').value = document.getElementById('motivation').value;
-            alert('Courier details saved! Please click "Create Account" to finalize.');
+            Toast.success('Courier details saved! Please click "Create Account" to finalize.');
             if (courierModal) courierModal.style.display = 'none';
             if (mainForm) mainForm.setAttribute('data-courier-details-complete', 'true');
         });
@@ -236,7 +236,7 @@
                 const detailsComplete = mainForm.getAttribute('data-courier-details-complete') === 'true';
 
                 if (isCourier && !detailsComplete) {
-                    alert('Please complete the Courier Application Details pop-up first.');
+                    Toast.warning('Please complete the Courier Application Details pop-up first.');
                     if (courierModal) courierModal.style.display = 'block'; 
                     formIsValid = false;
                 }
@@ -254,6 +254,107 @@
         });
     }
 })();
+
+// =====================
+// Toast Notification System
+// =====================
+const Toast = {
+    container: null,
+
+    init() {
+        if (this.container) return;
+        this.container = document.createElement('div');
+        this.container.id = 'toast-container';
+        this.container.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 400px;
+        `;
+        document.body.appendChild(this.container);
+    },
+
+    show(message, type = 'success', duration = 4000) {
+        this.init();
+
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+
+        const icons = {
+            success: '✓',
+            error: '✕',
+            warning: '⚠',
+            info: 'ℹ'
+        };
+
+        const colors = {
+            success: { bg: '#10b981', border: '#059669' },
+            error: { bg: '#ef4444', border: '#dc2626' },
+            warning: { bg: '#f59e0b', border: '#d97706' },
+            info: { bg: '#3b82f6', border: '#2563eb' }
+        };
+
+        const color = colors[type] || colors.info;
+
+        toast.style.cssText = `
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            background: ${color.bg};
+            border-left: 4px solid ${color.border};
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transform: translateX(120%);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        `;
+
+        toast.innerHTML = `
+            <span style="font-size: 20px; flex-shrink: 0;">${icons[type]}</span>
+            <span style="flex: 1;">${message}</span>
+            <button onclick="this.parentElement.remove()" style="
+                background: none;
+                border: none;
+                color: white;
+                font-size: 18px;
+                cursor: pointer;
+                opacity: 0.7;
+                padding: 0;
+                margin-left: 8px;
+            ">×</button>
+        `;
+
+        this.container.appendChild(toast);
+
+        // Animate in
+        requestAnimationFrame(() => {
+            toast.style.transform = 'translateX(0)';
+            toast.style.opacity = '1';
+        });
+
+        // Auto remove
+        setTimeout(() => {
+            toast.style.transform = 'translateX(120%)';
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 400);
+        }, duration);
+
+        return toast;
+    },
+
+    success(message, duration) { return this.show(message, 'success', duration); },
+    error(message, duration) { return this.show(message, 'error', duration); },
+    warning(message, duration) { return this.show(message, 'warning', duration); },
+    info(message, duration) { return this.show(message, 'info', duration); }
+};
 
 // =====================
 // API Integration
@@ -331,7 +432,7 @@ async function handleSignup() {
         localStorage.setItem('access_token', result.access_token);
         localStorage.setItem('user', JSON.stringify(result.user));
 
-        alert('Account created successfully!');
+        Toast.success('Account created successfully!');
 
         // Redirect based on role
         if (result.user.role === 'customer') {
@@ -342,7 +443,7 @@ async function handleSignup() {
             window.location.href = 'AdminDashboard.html';
         }
     } catch (error) {
-        alert('Signup failed: ' + error.message);
+        Toast.error('Signup failed: ' + error.message);
     }
 }
 
@@ -367,7 +468,7 @@ async function handleSignup() {
                 localStorage.setItem('access_token', result.access_token);
                 localStorage.setItem('user', JSON.stringify(result.user));
 
-                alert('Login successful!');
+                Toast.success('Login successful!');
 
                 // Redirect based on role
                 if (result.user.role === 'customer') {
@@ -378,7 +479,7 @@ async function handleSignup() {
                     window.location.href = 'AdminDashboard.html';
                 }
             } catch (error) {
-                alert('Login failed: ' + error.message);
+                Toast.error('Login failed: ' + error.message);
             }
         });
     
@@ -473,9 +574,9 @@ async function handleSignup() {
                     // Update local storage
                     localStorage.setItem('user', JSON.stringify(result.user));
 
-                    alert('Profile updated successfully!');
+                    Toast.success('Profile updated successfully!');
                 } catch (error) {
-                    alert('Profile update failed: ' + error.message);
+                    Toast.error('Profile update failed: ' + error.message);
                 }
             });
         }
@@ -491,7 +592,7 @@ async function handleSignup() {
                 const confirmPassword = document.getElementById('confirm-password').value;
 
                 if (newPassword !== confirmPassword) {
-                    alert('New passwords do not match!');
+                    Toast.warning('New passwords do not match!');
                     return;
                 }
 
@@ -501,10 +602,10 @@ async function handleSignup() {
                         new_password: newPassword
                     }, true);
 
-                    alert('Password changed successfully!');
+                    Toast.success('Password changed successfully!');
                     passwordForm.reset();
                 } catch (error) {
-                    alert('Password change failed: ' + error.message);
+                    Toast.error('Password change failed: ' + error.message);
                 }
             });
         }
@@ -525,7 +626,7 @@ async function loadUserProfile() {
         localStorage.setItem('user', JSON.stringify(result));
     } catch (error) {
         console.error('Failed to load profile:', error);
-        alert('Failed to load profile. Please login again.');
+        Toast.error('Failed to load profile. Please login again.');
         window.location.href = 'Login.html';
     }
 }
@@ -539,10 +640,369 @@ function checkAuth() {
     const currentPage = window.location.pathname.split('/').pop();
 
     if (protectedPages.includes(currentPage) && !token) {
-        alert('Please login to access this page');
+        Toast.warning('Please login to access this page');
         window.location.href = 'Login.html';
     }
 }
 
 // Run auth check on page load
 document.addEventListener('DOMContentLoaded', checkAuth);
+
+// =====================
+// Customer Dashboard Integration
+// =====================
+(function() {
+    const isCustomerDashboard = document.title.includes('My Dashboard');
+    if (!isCustomerDashboard) return;
+
+    const courierSelect = document.getElementById('courier');
+    const deliveriesGrid = document.querySelector('.deliveries-grid');
+    const pastDeliveriesContainer = document.querySelector('.past-deliveries .list-container');
+    const pickupInput = document.getElementById('pickup');
+    const pickupMapDiv = document.getElementById('pickupMap');
+    const parcelForm = document.getElementById('parcelForm');
+    const welcomeHeader = document.querySelector('.dashboard-header h1');
+
+    // Load user name
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (welcomeHeader && user.name) {
+        welcomeHeader.textContent = `Welcome, ${user.name.split(' ')[0]}!`;
+    }
+
+    // Populate sender name from user
+    const senderNameInput = document.getElementById('senderName');
+    if (senderNameInput && user.name) {
+        senderNameInput.value = user.name;
+    }
+
+    // Load online couriers
+    async function loadOnlineCouriers() {
+        if (!courierSelect) return;
+        try {
+            const result = await apiCall('/couriers/online', 'GET', null, true);
+            courierSelect.innerHTML = '<option value="">Select available courier (optional)</option>';
+
+            result.couriers.forEach(courier => {
+                const option = document.createElement('option');
+                option.value = courier.id;
+                option.textContent = `${courier.name} - Online (Rating: ${courier.rating || 'N/A'})`;
+                option.dataset.courier = JSON.stringify(courier);
+                courierSelect.appendChild(option);
+            });
+
+            if (result.couriers.length === 0) {
+                const option = document.createElement('option');
+                option.value = "";
+                option.textContent = "No couriers available - order will be posted for couriers";
+                courierSelect.appendChild(option);
+            }
+        } catch (error) {
+            console.error('Failed to load couriers:', error);
+        }
+    }
+
+    // Show courier profile modal
+    function showCourierProfile(courier) {
+        const existingModal = document.getElementById('courierProfileModal');
+        if (existingModal) existingModal.remove();
+
+        const modal = document.createElement('div');
+        modal.id = 'courierProfileModal';
+        modal.className = 'modal-overlay active';
+        modal.innerHTML = `
+            <div class="modal-content" style="max-width: 400px;">
+                <div class="modal-header">
+                    <h2>Courier Profile</h2>
+                    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+                </div>
+                <div style="padding: 1rem;">
+                    <p><strong>Name:</strong> ${courier.name}</p>
+                    <p><strong>Phone:</strong> ${courier.phone}</p>
+                    <p><strong>Vehicle:</strong> ${courier.vehicle_model}</p>
+                    <p><strong>Rating:</strong> ${courier.rating || 'N/A'} ⭐</p>
+                    <p><strong>Total Deliveries:</strong> ${courier.total_deliveries}</p>
+                    <p><strong>Experience:</strong> ${courier.experience} years</p>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.remove();
+        });
+    }
+
+    // Add view profile button next to courier select
+    if (courierSelect) {
+        const viewProfileBtn = document.createElement('button');
+        viewProfileBtn.type = 'button';
+        viewProfileBtn.textContent = 'View Profile';
+        viewProfileBtn.className = 'btn btn-secondary';
+        viewProfileBtn.style.marginTop = '0.5rem';
+        viewProfileBtn.addEventListener('click', () => {
+            const selected = courierSelect.options[courierSelect.selectedIndex];
+            if (selected && selected.dataset.courier) {
+                showCourierProfile(JSON.parse(selected.dataset.courier));
+            } else {
+                Toast.info('Please select a courier first');
+            }
+        });
+        courierSelect.parentNode.appendChild(viewProfileBtn);
+    }
+
+    // Update pickup map when location is entered
+    if (pickupInput && pickupMapDiv) {
+        pickupInput.addEventListener('change', function() {
+            const location = this.value;
+            if (location) {
+                const encodedLocation = encodeURIComponent(location + ', Kigali, Rwanda');
+                pickupMapDiv.innerHTML = `
+                    <iframe
+                        src="https://maps.google.com/maps?q=${encodedLocation}&output=embed"
+                        width="100%"
+                        height="200"
+                        style="border:0;"
+                        allowfullscreen=""
+                        loading="lazy">
+                    </iframe>
+                `;
+            }
+        });
+    }
+
+    // Load customer orders
+    async function loadCustomerOrders() {
+        try {
+            const result = await apiCall('/orders', 'GET', null, true);
+
+            // Separate active and past orders
+            const activeOrders = result.orders.filter(o =>
+                !['delivered', 'completed', 'cancelled', 'failed'].includes(o.status)
+            );
+            const pastOrders = result.orders.filter(o =>
+                ['delivered', 'completed', 'cancelled', 'failed'].includes(o.status)
+            );
+
+            // Render active orders
+            if (deliveriesGrid) {
+                if (activeOrders.length === 0) {
+                    deliveriesGrid.innerHTML = '<p class="no-orders">No active deliveries</p>';
+                } else {
+                    deliveriesGrid.innerHTML = activeOrders.map(order => `
+                        <a href="TrackOrder.html?order=${order.order_number}" class="order-card" data-order-id="${order.id}">
+                            <h4>Order #${order.order_number}</h4>
+                            <p class="status">${formatStatus(order.status)}</p>
+                            <p class="eta">${order.courier ? `Courier: ${order.courier?.name || 'Assigned'}` : 'Waiting for courier'}</p>
+                        </a>
+                    `).join('');
+                }
+            }
+
+            // Render past orders
+            if (pastDeliveriesContainer) {
+                if (pastOrders.length === 0) {
+                    pastDeliveriesContainer.innerHTML = '<p class="no-orders">No past deliveries</p>';
+                } else {
+                    pastDeliveriesContainer.innerHTML = pastOrders.map(order => `
+                        <a href="#" class="past-order-item">
+                            <div class="past-order-info">
+                                <p class="item-name">Order #${order.order_number}</p>
+                                <p class="item-date">${new Date(order.created_at).toLocaleDateString()}</p>
+                            </div>
+                            <span class="past-order-price">${order.delivery_fee} RWF</span>
+                        </a>
+                    `).join('');
+                }
+            }
+        } catch (error) {
+            console.error('Failed to load orders:', error);
+        }
+    }
+
+    function formatStatus(status) {
+        const statusMap = {
+            'pending': 'Waiting for courier',
+            'courier_assigned': 'Courier assigned',
+            'en_route_to_pickup': 'En route to pickup',
+            'picked_up': 'Package picked up',
+            'in_transit': 'In transit',
+            'delivered': 'Delivered',
+            'completed': 'Completed',
+            'cancelled': 'Cancelled',
+            'failed': 'Failed'
+        };
+        return statusMap[status] || status;
+    }
+
+    // Handle order form submission
+    if (parcelForm) {
+        parcelForm.removeEventListener('submit', parcelForm._submitHandler);
+        parcelForm._submitHandler = async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(parcelForm);
+            const weight = parseFloat(formData.get('weight')) || 1;
+            const deliveryFee = Math.round(weight * 2000 + 1000); // Base 1000 + 2000/kg
+
+            const orderData = {
+                pickup_address: formData.get('pickup'),
+                pickup_contact_name: formData.get('senderName'),
+                pickup_contact_phone: formData.get('senderPhone'),
+                delivery_address: formData.get('delivery'),
+                delivery_contact_name: formData.get('receiverName'),
+                delivery_contact_phone: formData.get('receiverPhone'),
+                parcel_type: formData.get('parcelType'),
+                parcel_description: formData.get('otherDetails') || '',
+                parcel_weight: weight,
+                delivery_fee: deliveryFee
+            };
+
+            // If courier selected, assign directly
+            const courierId = formData.get('courier');
+            if (courierId) {
+                orderData.courier_id = parseInt(courierId);
+            }
+
+            try {
+                const result = await apiCall('/orders', 'POST', orderData, true);
+                Toast.success('Order created successfully! Order #' + result.order.order_number);
+                document.getElementById('deliveryModal').classList.remove('active');
+                parcelForm.reset();
+                loadCustomerOrders();
+            } catch (error) {
+                Toast.error('Failed to create order: ' + error.message);
+            }
+        };
+        parcelForm.addEventListener('submit', parcelForm._submitHandler);
+    }
+
+    // Initialize
+    loadOnlineCouriers();
+    loadCustomerOrders();
+
+    // Poll for order updates every 30 seconds
+    setInterval(loadCustomerOrders, 30000);
+})();
+
+// =====================
+// Courier Dashboard Integration
+// =====================
+(function() {
+    const isCourierDashboard = document.title.includes('My Tasks');
+    if (!isCourierDashboard) return;
+
+    const currentTaskCard = document.querySelector('.current-task-card');
+    const currentTaskSection = document.querySelector('.current-task');
+    const upcomingTasksContainer = document.querySelector('.upcoming-tasks .list-container');
+
+    // Load courier's assigned orders and pending orders
+    async function loadCourierTasks() {
+        try {
+            // Load assigned orders (current tasks)
+            const assignedResult = await apiCall('/orders', 'GET', null, true);
+            const currentTasks = assignedResult.orders.filter(o =>
+                ['courier_assigned', 'en_route_to_pickup', 'picked_up', 'in_transit'].includes(o.status)
+            );
+
+            // Load pending orders available to accept
+            const pendingResult = await apiCall('/orders/pending', 'GET', null, true);
+
+            // Render current task
+            if (currentTaskSection) {
+                if (currentTasks.length > 0) {
+                    const task = currentTasks[0];
+                    currentTaskSection.innerHTML = `
+                        <h2>Current Task</h2>
+                        <div class="current-task-card">
+                            <div class="task-address pickup">
+                                <p>PICK UP FROM</p>
+                                <h3>${task.pickup_address}</h3>
+                                <p>${task.pickup_contact_name} - ${task.pickup_contact_phone}</p>
+                            </div>
+                            <div class="task-address dropoff">
+                                <p>DELIVER TO</p>
+                                <h3>${task.delivery_address}</h3>
+                                <p>${task.delivery_contact_name} - ${task.delivery_contact_phone}</p>
+                            </div>
+                            <div class="task-actions">
+                                <a href="CourierLiveTask.html?order=${task.order_number}" class="btn btn-primary">Navigate</a>
+                                <button class="btn btn-secondary" onclick="updateOrderStatus(${task.id}, '${getNextStatus(task.status)}')">${getNextAction(task.status)}</button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    currentTaskSection.innerHTML = `
+                        <h2>Current Task</h2>
+                        <p class="no-orders">No current task. Check pending orders below.</p>
+                    `;
+                }
+            }
+
+            // Render pending orders for acceptance
+            if (upcomingTasksContainer) {
+                const html = pendingResult.orders.length > 0
+                    ? pendingResult.orders.map(order => `
+                        <div class="task-list-item">
+                            <div class="task-list-info">
+                                <p class="locations">${order.pickup_address} ➔ ${order.delivery_address}</p>
+                                <p class="id">Order: #${order.order_number} | ${order.parcel_type} | ${order.parcel_weight}kg</p>
+                                <p class="fee">Fee: ${order.delivery_fee} RWF</p>
+                            </div>
+                            <button class="btn btn-primary" onclick="acceptOrder(${order.id})">Accept</button>
+                        </div>
+                    `).join('')
+                    : '<p class="no-orders">No pending orders available</p>';
+
+                upcomingTasksContainer.innerHTML = html;
+            }
+        } catch (error) {
+            console.error('Failed to load tasks:', error);
+        }
+    }
+
+    function getNextStatus(currentStatus) {
+        const flow = {
+            'courier_assigned': 'en_route_to_pickup',
+            'en_route_to_pickup': 'picked_up',
+            'picked_up': 'in_transit',
+            'in_transit': 'delivered'
+        };
+        return flow[currentStatus] || currentStatus;
+    }
+
+    function getNextAction(currentStatus) {
+        const actions = {
+            'courier_assigned': 'Start Pickup',
+            'en_route_to_pickup': 'Confirm Pickup',
+            'picked_up': 'Start Delivery',
+            'in_transit': 'Confirm Delivery'
+        };
+        return actions[currentStatus] || 'Update Status';
+    }
+
+    // Global functions for button clicks
+    window.acceptOrder = async function(orderId) {
+        try {
+            await apiCall(`/orders/${orderId}/accept`, 'POST', {}, true);
+            Toast.success('Order accepted!');
+            loadCourierTasks();
+        } catch (error) {
+            Toast.error('Failed to accept order: ' + error.message);
+        }
+    };
+
+    window.updateOrderStatus = async function(orderId, newStatus) {
+        try {
+            await apiCall(`/orders/${orderId}/status`, 'PUT', { status: newStatus }, true);
+            Toast.success('Status updated!');
+            loadCourierTasks();
+        } catch (error) {
+            Toast.error('Failed to update status: ' + error.message);
+        }
+    };
+
+    // Initialize
+    loadCourierTasks();
+
+    // Poll for updates every 15 seconds
+    setInterval(loadCourierTasks, 15000);
+})();
