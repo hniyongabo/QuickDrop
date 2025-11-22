@@ -401,3 +401,414 @@
         });
     }
 })();
+
+// --- 9. Google Maps Real-Time Tracking ---
+/**
+ * Initializes Google Maps for real-time tracking on tracking pages.
+ * Handles TrackOrder.html, CourierLiveTask.html, and AdminDashboard.html
+ */
+(function() {
+    let retryCount = 0;
+    const MAX_RETRIES = 20; // Maximum 10 seconds (20 * 500ms)
+    
+    // Default center for Kigali, Rwanda
+    const DEFAULT_CENTER = { lat: -1.9441, lng: 30.0619 };
+    
+    // Sample coordinates for tracking (in production, these would come from your backend)
+    const TRACKING_DATA = {
+        // TrackOrder.html data
+        tracking: {
+            pickup: { lat: -1.9500, lng: 30.0589, address: 'MTN Centre (KG 9 Ave, Nyarugenge)' },
+            delivery: { lat: -1.9441, lng: 30.0619, address: 'Ange K. (Gisozi Sector, Gasabo)' },
+            courier: { lat: -1.9480, lng: 30.0600 }, // Starting position (will be updated)
+            courierName: 'Didier M.'
+        },
+        // CourierLiveTask.html data
+        courierLive: {
+            pickup: { lat: -1.9500, lng: 30.0589, address: 'Wardiere Store (123 Main St)' },
+            delivery: { lat: -1.9441, lng: 30.0619, address: 'Gisozi Sector' },
+            courier: { lat: -1.9490, lng: 30.0595 }, // Starting position
+            courierName: 'Current Courier'
+        },
+        // AdminDashboard.html - overview map
+        admin: {
+            center: DEFAULT_CENTER,
+            zoom: 12
+        }
+    };
+    
+    // Store map instances and tracking intervals
+    const mapInstances = {
+        trackingMap: null,
+        courierLiveMap: null,
+        adminMap: null
+    };
+    
+    const trackingIntervals = {
+        tracking: null,
+        courierLive: null
+    };
+    
+    function initTrackingMaps() {
+        // Check if the Google Maps API is loaded
+        if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+            retryCount++;
+            
+            if (retryCount >= MAX_RETRIES) {
+                console.error('Google Maps API failed to load after ' + (MAX_RETRIES * 500) + 'ms. Please check your API key and network connection.');
+                return;
+            }
+            
+            setTimeout(initTrackingMaps, 500);
+            return;
+        }
+        
+        // Initialize TrackOrder.html map
+        const trackingMapEl = document.getElementById('trackingMap');
+        if (trackingMapEl) {
+            initOrderTrackingMap(trackingMapEl);
+        }
+        
+        // Initialize CourierLiveTask.html map
+        const courierLiveMapEl = document.getElementById('courierLiveMap');
+        if (courierLiveMapEl) {
+            initCourierLiveMap(courierLiveMapEl);
+        }
+        
+        // Initialize AdminDashboard.html map
+        const adminMapEl = document.getElementById('adminMap');
+        if (adminMapEl) {
+            initAdminMap(adminMapEl);
+        }
+    }
+    
+    /**
+     * Initialize map for TrackOrder.html - Customer tracking view
+     */
+    function initOrderTrackingMap(mapElement) {
+        const data = TRACKING_DATA.tracking;
+        
+        // Create map centered between pickup and delivery
+        const center = {
+            lat: (data.pickup.lat + data.delivery.lat) / 2,
+            lng: (data.pickup.lng + data.delivery.lng) / 2
+        };
+        
+        const map = new google.maps.Map(mapElement, {
+            zoom: 13,
+            center: center,
+            mapTypeControl: true,
+            streetViewControl: false,
+            fullscreenControl: true
+        });
+        
+        mapInstances.trackingMap = map;
+        
+        // Create markers
+        const pickupMarker = new google.maps.Marker({
+            position: data.pickup,
+            map: map,
+            title: 'Pickup Location',
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 8,
+                fillColor: '#4CAF50',
+                fillOpacity: 1,
+                strokeColor: '#FFFFFF',
+                strokeWeight: 2
+            },
+            label: {
+                text: 'P',
+                color: '#FFFFFF',
+                fontSize: '12px',
+                fontWeight: 'bold'
+            }
+        });
+        
+        const deliveryMarker = new google.maps.Marker({
+            position: data.delivery,
+            map: map,
+            title: 'Delivery Location',
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 8,
+                fillColor: '#FF5722',
+                fillOpacity: 1,
+                strokeColor: '#FFFFFF',
+                strokeWeight: 2
+            },
+            label: {
+                text: 'D',
+                color: '#FFFFFF',
+                fontSize: '12px',
+                fontWeight: 'bold'
+            }
+        });
+        
+        // Courier marker (will move in real-time)
+        const courierMarker = new google.maps.Marker({
+            position: data.courier,
+            map: map,
+            title: `Courier: ${data.courierName}`,
+            icon: {
+                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                scale: 6,
+                rotation: 45,
+                fillColor: '#2196F3',
+                fillOpacity: 1,
+                strokeColor: '#FFFFFF',
+                strokeWeight: 2
+            }
+        });
+        
+        // Draw route between pickup and delivery
+        const routePath = new google.maps.Polyline({
+            path: [data.pickup, data.delivery],
+            geodesic: true,
+            strokeColor: '#2196F3',
+            strokeOpacity: 0.5,
+            strokeWeight: 3
+        });
+        routePath.setMap(map);
+        
+        // Info windows
+        const pickupInfo = new google.maps.InfoWindow({
+            content: `<div><strong>Pickup Location</strong><br>${data.pickup.address}</div>`
+        });
+        const deliveryInfo = new google.maps.InfoWindow({
+            content: `<div><strong>Delivery Location</strong><br>${data.delivery.address}</div>`
+        });
+        const courierInfo = new google.maps.InfoWindow({
+            content: `<div><strong>Courier: ${data.courierName}</strong><br>En route to pickup</div>`
+        });
+        
+        pickupMarker.addListener('click', () => pickupInfo.open(map, pickupMarker));
+        deliveryMarker.addListener('click', () => deliveryInfo.open(map, deliveryMarker));
+        courierMarker.addListener('click', () => courierInfo.open(map, courierMarker));
+        
+        // Simulate real-time courier movement
+        simulateCourierMovement(courierMarker, data.pickup, data.delivery, 'tracking');
+        
+        // Fit bounds to show all markers
+        const bounds = new google.maps.LatLngBounds();
+        bounds.extend(data.pickup);
+        bounds.extend(data.delivery);
+        bounds.extend(data.courier);
+        map.fitBounds(bounds);
+    }
+    
+    /**
+     * Initialize map for CourierLiveTask.html - Courier navigation view
+     */
+    function initCourierLiveMap(mapElement) {
+        const data = TRACKING_DATA.courierLive;
+        
+        const center = {
+            lat: (data.pickup.lat + data.delivery.lat) / 2,
+            lng: (data.pickup.lng + data.delivery.lng) / 2
+        };
+        
+        const map = new google.maps.Map(mapElement, {
+            zoom: 14,
+            center: center,
+            mapTypeControl: true,
+            streetViewControl: true,
+            fullscreenControl: true
+        });
+        
+        mapInstances.courierLiveMap = map;
+        
+        // Pickup marker
+        const pickupMarker = new google.maps.Marker({
+            position: data.pickup,
+            map: map,
+            title: 'Pickup Location',
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 10,
+                fillColor: '#4CAF50',
+                fillOpacity: 1,
+                strokeColor: '#FFFFFF',
+                strokeWeight: 3
+            },
+            label: {
+                text: 'PICKUP',
+                color: '#FFFFFF',
+                fontSize: '11px',
+                fontWeight: 'bold'
+            }
+        });
+        
+        // Delivery marker
+        const deliveryMarker = new google.maps.Marker({
+            position: data.delivery,
+            map: map,
+            title: 'Delivery Location',
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 10,
+                fillColor: '#FF5722',
+                fillOpacity: 1,
+                strokeColor: '#FFFFFF',
+                strokeWeight: 3
+            },
+            label: {
+                text: 'DELIVERY',
+                color: '#FFFFFF',
+                fontSize: '11px',
+                fontWeight: 'bold'
+            }
+        });
+        
+        // Current position marker (blue dot)
+        const currentPosMarker = new google.maps.Marker({
+            position: data.courier,
+            map: map,
+            title: 'Your Location',
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 8,
+                fillColor: '#2196F3',
+                fillOpacity: 1,
+                strokeColor: '#FFFFFF',
+                strokeWeight: 3
+            }
+        });
+        
+        // Draw route
+        const routePath = new google.maps.Polyline({
+            path: [data.courier, data.pickup, data.delivery],
+            geodesic: true,
+            strokeColor: '#2196F3',
+            strokeOpacity: 0.7,
+            strokeWeight: 4
+        });
+        routePath.setMap(map);
+        
+        // Info windows
+        const pickupInfo = new google.maps.InfoWindow({
+            content: `<div><strong>Pickup: ${data.pickup.address}</strong></div>`
+        });
+        const deliveryInfo = new google.maps.InfoWindow({
+            content: `<div><strong>Delivery: ${data.delivery.address}</strong></div>`
+        });
+        
+        pickupMarker.addListener('click', () => pickupInfo.open(map, pickupMarker));
+        deliveryMarker.addListener('click', () => deliveryInfo.open(map, deliveryMarker));
+        
+        // Simulate movement towards pickup
+        simulateCourierMovement(currentPosMarker, data.pickup, data.delivery, 'courierLive');
+        
+        // Fit bounds
+        const bounds = new google.maps.LatLngBounds();
+        bounds.extend(data.pickup);
+        bounds.extend(data.delivery);
+        bounds.extend(data.courier);
+        map.fitBounds(bounds);
+    }
+    
+    /**
+     * Initialize map for AdminDashboard.html - Overview map
+     */
+    function initAdminMap(mapElement) {
+        const data = TRACKING_DATA.admin;
+        
+        const map = new google.maps.Map(mapElement, {
+            zoom: data.zoom,
+            center: data.center,
+            mapTypeControl: true,
+            streetViewControl: false,
+            fullscreenControl: true
+        });
+        
+        mapInstances.adminMap = map;
+        
+        // Add sample markers for active deliveries (in production, these would come from backend)
+        const activeDeliveries = [
+            { lat: -1.9500, lng: 30.0589, title: 'Order #1021' },
+            { lat: -1.9441, lng: 30.0619, title: 'Order #1020' }
+        ];
+        
+        activeDeliveries.forEach((delivery, index) => {
+            new google.maps.Marker({
+                position: delivery,
+                map: map,
+                title: delivery.title,
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 6,
+                    fillColor: index === 0 ? '#4CAF50' : '#FFC107',
+                    fillOpacity: 1,
+                    strokeColor: '#FFFFFF',
+                    strokeWeight: 2
+                }
+            });
+        });
+    }
+    
+    /**
+     * Simulate courier movement from current position to pickup, then to delivery
+     */
+    function simulateCourierMovement(marker, pickup, delivery, mapType) {
+        let currentPos = { ...TRACKING_DATA[mapType === 'tracking' ? 'tracking' : 'courierLive'].courier };
+        let target = pickup;
+        let phase = 'toPickup'; // 'toPickup' or 'toDelivery'
+        let step = 0;
+        const totalSteps = 100;
+        
+        function move() {
+            if (step >= totalSteps) {
+                if (phase === 'toPickup') {
+                    // Reached pickup, now go to delivery
+                    phase = 'toDelivery';
+                    target = delivery;
+                    step = 0;
+                    currentPos = { ...pickup };
+                } else {
+                    // Reached delivery, stop or restart
+                    return;
+                }
+            }
+            
+            // Calculate next position (linear interpolation)
+            const latDiff = target.lat - currentPos.lat;
+            const lngDiff = target.lng - currentPos.lng;
+            
+            currentPos.lat += latDiff / (totalSteps - step);
+            currentPos.lng += lngDiff / (totalSteps - step);
+            
+            // Calculate bearing for arrow rotation
+            const bearing = Math.atan2(lngDiff, latDiff) * 180 / Math.PI;
+            
+            marker.setPosition(currentPos);
+            marker.setIcon({
+                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                scale: 6,
+                rotation: bearing,
+                fillColor: '#2196F3',
+                fillOpacity: 1,
+                strokeColor: '#FFFFFF',
+                strokeWeight: 2
+            });
+            
+            step++;
+        }
+        
+        // Update position every 2 seconds (simulate real-time tracking)
+        const interval = setInterval(move, 2000);
+        trackingIntervals[mapType] = interval;
+        
+        // Initial movement
+        move();
+    }
+    
+    // Initialize maps when DOM is ready
+    document.addEventListener('DOMContentLoaded', initTrackingMaps);
+    
+    // Cleanup intervals when page unloads
+    window.addEventListener('beforeunload', () => {
+        Object.values(trackingIntervals).forEach(interval => {
+            if (interval) clearInterval(interval);
+        });
+    });
+})();
