@@ -45,49 +45,21 @@
         <section class="content-section active-deliveries">
             <h2>Active Deliveries</h2>
             <div class="deliveries-grid">
-                
-                <a href="TrackOrder.html" class="order-card">
-                    <h4>Order #1021</h4>
-                    <p class="status">En route to pickup</p>
-                    <p class="eta">Arrives in 5 minutes</p>
-                </a>
-                
-                <a href="TrackOrder.html" class="order-card">
-                    <h4>Order #1022</h4>
-                    <p class="status">Waiting for courier</p>
-                    <p class="eta">Courier will be assigned shortly</p>
-                </a>
-                
+                <div class="loading-skeleton">
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                </div>
             </div>
         </section>
-        
+
         <section class="content-section past-deliveries">
             <h2>Past Deliveries</h2>
             <div class="list-container">
-                
-                <a href="#" class="past-order-item">
-                    <div class="past-order-info">
-                        <p class="item-name">Package from Simba Supermarket</p>
-                        <p class="item-date">Oct 30, 2025</p>
-                    </div>
-                    <span class="past-order-price">12,500 RWF</span>
-                </a>
-                
-                <a href="#" class="past-order-item">
-                    <div class="past-order-info">
-                        <p class="item-name">Documents to Kacyiru Sector</p>
-                        <p class="item-date">Oct 28, 2025</p>
-                    </div>
-                    <span class="past-order-price">9,000 RWF</span>
-                </a>
-
-                <a href="#" class="past-order-item">
-                    <div class="past-order-info">
-                        <p class="item-name">Groceries from Kigali City Market</p>
-                        <p class="item-date">Oct 27, 2025</p>
-                    </div>
-                    <span class="past-order-price">15,200 RWF</span>
-                </a>
+                <div class="loading-skeleton">
+                    <div class="skeleton-item"></div>
+                    <div class="skeleton-item"></div>
+                    <div class="skeleton-item"></div>
+                </div>
             </div>
         </section>
             
@@ -176,7 +148,15 @@
                     </div>
                 </div>
 
-                <button type="submit" class="modal-submit-btn">Request Booking</button>
+                <button type="submit" class="btn btn-primary" id="booking-submit-btn">
+                    <span class="btn-text">Request Booking</span>
+                    <span class="btn-loader" style="display: none;">
+                        <svg class="spinner" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="31.4" stroke-dashoffset="10"></circle>
+                        </svg>
+                        Creating...
+                    </span>
+                </button>
             </form>
         </div>
     </div>

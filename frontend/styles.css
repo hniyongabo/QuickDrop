@@ -1235,6 +1235,68 @@ nav ul li a:hover {
     line-height: 1.5;
 }
 
+/* Loading Skeleton Styles */
+.loading-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    grid-column: 1 / -1;
+}
+
+.skeleton-card, .skeleton-item {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s ease-in-out infinite;
+    border-radius: 12px;
+}
+
+.skeleton-card {
+    height: 120px;
+    width: 100%;
+}
+
+.skeleton-item {
+    height: 60px;
+    width: 100%;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.deliveries-grid .loading-skeleton {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.list-container .loading-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.list-container .skeleton-item {
+    border-radius: 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.list-container .skeleton-item:first-child {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.list-container .skeleton-item:last-child {
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom: none;
+}
+
 /* Stats Cards */
 .stats-container {
     display: grid;

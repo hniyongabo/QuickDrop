@@ -782,12 +782,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Populate sender name from user (use same user variable from above)
+    // Populate sender name, phone, and delivery address from user
     const senderNameInput = document.getElementById('senderName');
+    const senderPhoneInput = document.getElementById('senderPhone');
+    const deliveryAddressInput = document.getElementById('delivery');
+
     if (senderNameInput) {
         const fullName = user.name || (user.profile && user.profile.name) || '';
         if (fullName) {
             senderNameInput.value = fullName;
+        }
+    }
+
+    if (senderPhoneInput) {
+        const phone = user.phone || (user.profile && user.profile.phone) || '';
+        if (phone) {
+            senderPhoneInput.value = phone;
+        }
+    }
+
+    if (deliveryAddressInput) {
+        const address = user.address || (user.profile && user.profile.address) || '';
+        if (address) {
+            deliveryAddressInput.value = address;
         }
     }
 
@@ -949,6 +966,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } catch (error) {
             console.error('Failed to load orders:', error);
+
+            // Show error state
+            if (deliveriesGrid) {
+                deliveriesGrid.innerHTML = `
+                    <div class="empty-state">
+                        <p style="color: #dc2626;">Failed to load orders. Please refresh the page.</p>
+                    </div>
+                `;
+            }
         }
     }
 
@@ -972,6 +998,15 @@ document.addEventListener('DOMContentLoaded', function() {
         parcelForm.removeEventListener('submit', parcelForm._submitHandler);
         parcelForm._submitHandler = async function(e) {
             e.preventDefault();
+
+            const submitBtn = document.getElementById('booking-submit-btn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoader = submitBtn.querySelector('.btn-loader');
+
+            // Show loader
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'inline-flex';
 
             const formData = new FormData(parcelForm);
             const weight = parseFloat(formData.get('weight')) || 1;
@@ -998,11 +1033,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
             try {
                 const result = await apiCall('/orders', 'POST', orderData, true);
+
+                // Hide loader
+                submitBtn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoader.style.display = 'none';
+
                 Toast.success('Order created successfully! Order #' + result.order.order_number);
                 document.getElementById('deliveryModal').classList.remove('active');
                 parcelForm.reset();
+
+                // Reload orders to show the new one
                 loadCustomerOrders();
             } catch (error) {
+                // Hide loader on error
+                submitBtn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoader.style.display = 'none';
+
                 Toast.error('Failed to create order: ' + error.message);
             }
         };
