@@ -35,7 +35,15 @@
                     <a href="#">Forgot password?</a>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Sign In</button>
+                <button type="submit" class="btn btn-primary" id="login-submit-btn">
+                    <span class="btn-text">Sign In</span>
+                    <span class="btn-loader" style="display: none;">
+                        <svg class="spinner" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="31.4" stroke-dashoffset="10"></circle>
+                        </svg>
+                        Signing in...
+                    </span>
+                </button>
 
             </form>
 

@@ -403,6 +403,15 @@ async function handleSignup() {
     const mainForm = document.getElementById('main-signup-form');
     if (!mainForm) return;
 
+    const submitBtn = document.getElementById('signup-submit-btn');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const btnLoader = submitBtn.querySelector('.btn-loader');
+
+    // Show loader and disable button
+    submitBtn.disabled = true;
+    btnText.style.display = 'none';
+    btnLoader.style.display = 'inline-flex';
+
     const formData = new FormData(mainForm);
     const role = formData.get('role');
 
@@ -428,21 +437,34 @@ async function handleSignup() {
     try {
         const result = await apiCall('/signup', 'POST', signupData);
 
+        // Hide loader and re-enable button
+        submitBtn.disabled = false;
+        btnText.style.display = 'inline';
+        btnLoader.style.display = 'none';
+
         // Store the access token
         localStorage.setItem('access_token', result.access_token);
         localStorage.setItem('user', JSON.stringify(result.user));
 
-        Toast.success('Account created successfully!');
+        Toast.success('Account created successfully! Redirecting...');
 
-        // Redirect based on role
-        if (result.user.role === 'customer') {
-            window.location.href = 'CustomerDashboard.html';
-        } else if (result.user.role === 'courier') {
-            window.location.href = 'CourierDashboard.html';
-        } else if (result.user.role === 'admin') {
-            window.location.href = 'AdminDashboard.html';
-        }
+        // Wait a moment before redirecting to show the success message
+        setTimeout(() => {
+            // Redirect based on role
+            if (result.user.role === 'customer') {
+                window.location.href = 'CustomerDashboard.html';
+            } else if (result.user.role === 'courier') {
+                window.location.href = 'CourierDashboard.html';
+            } else if (result.user.role === 'admin') {
+                window.location.href = 'AdminDashboard.html';
+            }
+        }, 1000);
     } catch (error) {
+        // Hide loader and re-enable button on error
+        submitBtn.disabled = false;
+        btnText.style.display = 'inline';
+        btnLoader.style.display = 'none';
+
         Toast.error('Signup failed: ' + error.message);
     }
 }
@@ -458,6 +480,15 @@ async function handleSignup() {
         loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
 
+            const submitBtn = document.getElementById('login-submit-btn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoader = submitBtn.querySelector('.btn-loader');
+
+            // Show loader
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'inline-flex';
+
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
@@ -468,21 +499,29 @@ async function handleSignup() {
                 localStorage.setItem('access_token', result.access_token);
                 localStorage.setItem('user', JSON.stringify(result.user));
 
-                Toast.success('Login successful!');
+                Toast.success('Login successful! Redirecting...');
 
-                // Redirect based on role
-                if (result.user.role === 'customer') {
-                    window.location.href = 'CustomerDashboard.html';
-                } else if (result.user.role === 'courier') {
-                    window.location.href = 'CourierDashboard.html';
-                } else if (result.user.role === 'admin') {
-                    window.location.href = 'AdminDashboard.html';
-                }
+                // Small delay to show success message
+                setTimeout(() => {
+                    // Redirect based on role
+                    if (result.user.role === 'customer') {
+                        window.location.href = 'CustomerDashboard.html';
+                    } else if (result.user.role === 'courier') {
+                        window.location.href = 'CourierDashboard.html';
+                    } else if (result.user.role === 'admin') {
+                        window.location.href = 'AdminDashboard.html';
+                    }
+                }, 1000);
             } catch (error) {
+                // Hide loader on error
+                submitBtn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoader.style.display = 'none';
+
                 Toast.error('Login failed: ' + error.message);
             }
         });
-    
+
     }
 
 })(); 
@@ -561,6 +600,15 @@ async function handleSignup() {
             profileForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
 
+                const submitBtn = document.getElementById('profile-update-btn');
+                const btnText = submitBtn.querySelector('.btn-text');
+                const btnLoader = submitBtn.querySelector('.btn-loader');
+
+                // Show loader
+                submitBtn.disabled = true;
+                btnText.style.display = 'none';
+                btnLoader.style.display = 'inline-flex';
+
                 const updateData = {
                     name: document.getElementById('name').value,
                     email: document.getElementById('email').value,
@@ -571,11 +619,24 @@ async function handleSignup() {
                 try {
                     const result = await apiCall('/profile', 'PUT', updateData, true);
 
-                    // Update local storage
+                    // Hide loader
+                    submitBtn.disabled = false;
+                    btnText.style.display = 'inline';
+                    btnLoader.style.display = 'none';
+
+                    // Update local storage with the complete user object
                     localStorage.setItem('user', JSON.stringify(result.user));
 
                     Toast.success('Profile updated successfully!');
+
+                    // Reload profile to show updated data
+                    await loadUserProfile();
                 } catch (error) {
+                    // Hide loader on error
+                    submitBtn.disabled = false;
+                    btnText.style.display = 'inline';
+                    btnLoader.style.display = 'none';
+
                     Toast.error('Profile update failed: ' + error.message);
                 }
             });
@@ -616,13 +677,18 @@ async function loadUserProfile() {
     try {
         const result = await apiCall('/profile', 'GET', null, true);
 
-        // Populate form fields
-        document.getElementById('name').value = result.name || '';
-        document.getElementById('email').value = result.email || '';
-        document.getElementById('phone').value = result.phone || '';
-        document.getElementById('address').value = result.address || '';
+        // Populate form fields if they exist
+        const nameField = document.getElementById('name');
+        const emailField = document.getElementById('email');
+        const phoneField = document.getElementById('phone');
+        const addressField = document.getElementById('address');
 
-        // Update local storage
+        if (nameField) nameField.value = result.name || '';
+        if (emailField) emailField.value = result.email || '';
+        if (phoneField) phoneField.value = result.phone || '';
+        if (addressField) addressField.value = result.address || '';
+
+        // Update local storage with fresh data
         localStorage.setItem('user', JSON.stringify(result));
     } catch (error) {
         console.error('Failed to load profile:', error);
@@ -632,13 +698,28 @@ async function loadUserProfile() {
 }
 
 // =====================
-// Auth Check
+// Auth Check & Auto-Redirect
 // =====================
 function checkAuth() {
     const token = localStorage.getItem('access_token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
     const protectedPages = ['CustomerDashboard.html', 'CourierDashboard.html', 'AdminDashboard.html', 'Profile.html'];
+    const publicPages = ['landingpage.html', 'Login.html', 'SignUp.html'];
     const currentPage = window.location.pathname.split('/').pop();
 
+    // Redirect to dashboard if user is already logged in and on a public page
+    if (token && user.role && publicPages.includes(currentPage)) {
+        if (user.role === 'customer') {
+            window.location.href = 'CustomerDashboard.html';
+        } else if (user.role === 'courier') {
+            window.location.href = 'CourierDashboard.html';
+        } else if (user.role === 'admin') {
+            window.location.href = 'AdminDashboard.html';
+        }
+        return;
+    }
+
+    // Redirect to login if trying to access protected page without token
     if (protectedPages.includes(currentPage) && !token) {
         Toast.warning('Please login to access this page');
         window.location.href = 'Login.html';
@@ -647,6 +728,33 @@ function checkAuth() {
 
 // Run auth check on page load
 document.addEventListener('DOMContentLoaded', checkAuth);
+
+// =====================
+// Logout Handler
+// =====================
+document.addEventListener('DOMContentLoaded', function() {
+    const signOutLinks = document.querySelectorAll('a[href*="login.html"], a[href*="Login.html"]');
+
+    signOutLinks.forEach(link => {
+        const linkText = link.textContent.toLowerCase();
+        if (linkText.includes('sign out') || linkText.includes('logout') || linkText.includes('log out')) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // Clear authentication data
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('user');
+
+                Toast.success('Logged out successfully');
+
+                // Redirect to login page
+                setTimeout(() => {
+                    window.location.href = 'Login.html';
+                }, 500);
+            });
+        }
+    });
+});
 
 // =====================
 // Customer Dashboard Integration
@@ -663,16 +771,24 @@ document.addEventListener('DOMContentLoaded', checkAuth);
     const parcelForm = document.getElementById('parcelForm');
     const welcomeHeader = document.querySelector('.dashboard-header h1');
 
-    // Load user name
+    // Load user name - use first name only
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (welcomeHeader && user.name) {
-        welcomeHeader.textContent = `Welcome, ${user.name.split(' ')[0]}!`;
+    if (welcomeHeader) {
+        // Check both user.name and user.profile.name for backward compatibility
+        const fullName = user.name || (user.profile && user.profile.name) || '';
+        if (fullName) {
+            const firstName = fullName.trim().split(' ')[0];
+            welcomeHeader.textContent = `Welcome, ${firstName}!`;
+        }
     }
 
-    // Populate sender name from user
+    // Populate sender name from user (use same user variable from above)
     const senderNameInput = document.getElementById('senderName');
-    if (senderNameInput && user.name) {
-        senderNameInput.value = user.name;
+    if (senderNameInput) {
+        const fullName = user.name || (user.profile && user.profile.name) || '';
+        if (fullName) {
+            senderNameInput.value = fullName;
+        }
     }
 
     // Load online couriers
@@ -785,7 +901,17 @@ document.addEventListener('DOMContentLoaded', checkAuth);
             // Render active orders
             if (deliveriesGrid) {
                 if (activeOrders.length === 0) {
-                    deliveriesGrid.innerHTML = '<p class="no-orders">No active deliveries</p>';
+                    deliveriesGrid.innerHTML = `
+                        <div class="empty-state">
+                            <svg class="empty-icon" width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 8H4C2.89543 8 2 8.89543 2 10V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V10C22 8.89543 21.1046 8 20 8Z" stroke="#4a7c2a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M16 21V5C16 4.46957 15.7893 3.96086 15.4142 3.58579C15.0391 3.21071 14.5304 3 14 3H10C9.46957 3 8.96086 3.21071 8.58579 3.58579C8.21071 3.96086 8 4.46957 8 5V21" stroke="#4a7c2a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <h3>No Active Deliveries</h3>
+                            <p>You don't have any active deliveries at the moment. Start by creating a new delivery!</p>
+                            <button class="btn btn-primary" onclick="document.getElementById('openModalBtnDesktop').click()">Create New Delivery</button>
+                        </div>
+                    `;
                 } else {
                     deliveriesGrid.innerHTML = activeOrders.map(order => `
                         <a href="TrackOrder.html?order=${order.order_number}" class="order-card" data-order-id="${order.id}">
@@ -800,7 +926,15 @@ document.addEventListener('DOMContentLoaded', checkAuth);
             // Render past orders
             if (pastDeliveriesContainer) {
                 if (pastOrders.length === 0) {
-                    pastDeliveriesContainer.innerHTML = '<p class="no-orders">No past deliveries</p>';
+                    pastDeliveriesContainer.innerHTML = `
+                        <div class="empty-state-compact">
+                            <svg class="empty-icon-small" width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 8V12L15 15" stroke="#6c757d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="12" cy="12" r="9" stroke="#6c757d" stroke-width="2"/>
+                            </svg>
+                            <p>No past deliveries yet. Your completed deliveries will appear here.</p>
+                        </div>
+                    `;
                 } else {
                     pastDeliveriesContainer.innerHTML = pastOrders.map(order => `
                         <a href="#" class="past-order-item">

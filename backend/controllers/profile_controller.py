@@ -10,13 +10,20 @@ profile_bp = Blueprint('profile', __name__, url_prefix='/api')
 def get_profile():
     """Get current user profile"""
     try:
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
         user = User.query.get(current_user_id)
 
         if not user:
             return jsonify({'error': 'User not found'}), 404
 
-        return jsonify(user.to_dict()), 200
+        user_dict = user.to_dict()
+
+        # Flatten profile data for easier frontend access
+        if 'profile' in user_dict:
+            profile = user_dict.pop('profile')
+            user_dict.update(profile)
+
+        return jsonify(user_dict), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -27,7 +34,7 @@ def get_profile():
 def update_profile():
     """Update user profile"""
     try:
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
         user = User.query.get(current_user_id)
 
         if not user:
@@ -79,9 +86,15 @@ def update_profile():
 
         db.session.commit()
 
+        # Get user data and flatten profile
+        user_dict = user.to_dict()
+        if 'profile' in user_dict:
+            profile = user_dict.pop('profile')
+            user_dict.update(profile)
+
         return jsonify({
             'message': 'Profile updated successfully',
-            'user': user.to_dict()
+            'user': user_dict
         }), 200
 
     except Exception as e:
@@ -94,7 +107,7 @@ def update_profile():
 def change_password():
     """Change user password"""
     try:
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
         user = User.query.get(current_user_id)
 
         if not user:

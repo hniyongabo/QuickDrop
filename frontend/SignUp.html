@@ -66,7 +66,15 @@
                 <input type="hidden" id="hidden-experience" name="experience">
                 <input type="hidden" id="hidden-motivation" name="motivation">
 
-                <button type="submit" class="btn btn-primary">Create Account</button>
+                <button type="submit" class="btn btn-primary" id="signup-submit-btn">
+                    <span class="btn-text">Create Account</span>
+                    <span class="btn-loader" style="display: none;">
+                        <svg class="spinner" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="31.4" stroke-dashoffset="10"></circle>
+                        </svg>
+                        Creating...
+                    </span>
+                </button>
 
             </form>
 

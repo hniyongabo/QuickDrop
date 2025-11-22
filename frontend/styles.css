@@ -1168,6 +1168,73 @@ nav ul li a:hover {
     color: #6c757d;
 }
 
+/* Empty State Styles */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border: 2px dashed #e0e0e0;
+    border-radius: 16px;
+    grid-column: 1 / -1;
+}
+
+.empty-icon {
+    margin: 0 auto 1.5rem;
+    opacity: 0.9;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+.empty-state p {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+}
+
+.empty-state .btn {
+    margin-top: 0.5rem;
+}
+
+/* Empty State Compact (for Past Deliveries) */
+.empty-state-compact {
+    text-align: center;
+    padding: 3rem 2rem;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+}
+
+.empty-icon-small {
+    margin: 0 auto 1rem;
+    opacity: 0.7;
+}
+
+.empty-state-compact p {
+    font-size: 0.95rem;
+    color: #6c757d;
+    max-width: 350px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
 /* Stats Cards */
 .stats-container {
     display: grid;
@@ -1647,8 +1714,29 @@ body.full-height {
 .error-message {
     color: red;
     font-size: 12px;
-    display: block; 
+    display: block;
     margin-top: 5px;
+}
+
+/* Loading Spinner for Buttons */
+.btn-loader {
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.spinner {
+    animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 .modal {

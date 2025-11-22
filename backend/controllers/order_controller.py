@@ -11,7 +11,7 @@ order_bp = Blueprint('order', __name__, url_prefix='/api')
 def create_order():
     """Create a new delivery order"""
     try:
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
         user = User.query.get(current_user_id)
 
         if not user or user.role != 'customer':
@@ -87,7 +87,7 @@ def create_order():
 def get_orders():
     """Get orders for the current user"""
     try:
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
         user = User.query.get(current_user_id)
 
         if not user:
@@ -117,7 +117,7 @@ def get_orders():
 def get_order(order_id):
     """Get a specific order by ID"""
     try:
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
         user = User.query.get(current_user_id)
 
         if not user:
@@ -166,7 +166,7 @@ def track_order(order_number):
 def update_order_status(order_id):
     """Update order status (for couriers and admins)"""
     try:
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
         user = User.query.get(current_user_id)
 
         if not user or user.role not in ['courier', 'admin']:
@@ -220,7 +220,7 @@ def update_order_status(order_id):
 def assign_courier(order_id):
     """Assign a courier to an order (admin or auto-assignment)"""
     try:
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
         user = User.query.get(current_user_id)
 
         order = Order.query.get(order_id)
@@ -307,7 +307,7 @@ def get_courier_profile(courier_id):
 def get_pending_orders():
     """Get all pending orders (for couriers to view and accept)"""
     try:
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
         user = User.query.get(current_user_id)
 
         if not user or user.role != 'courier':
@@ -327,7 +327,7 @@ def get_pending_orders():
 def accept_order(order_id):
     """Courier accepts an order"""
     try:
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
         user = User.query.get(current_user_id)
 
         if not user or user.role != 'courier':
@@ -369,7 +369,7 @@ def accept_order(order_id):
 def rate_order(order_id):
     """Rate a completed order (customers only)"""
     try:
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
         user = User.query.get(current_user_id)
 
         if not user or user.role != 'customer':

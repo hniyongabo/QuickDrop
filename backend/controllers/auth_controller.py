@@ -78,13 +78,19 @@ def signup():
 
         db.session.commit()
 
-        # Create access token
-        access_token = create_access_token(identity=user.id)
+        # Create access token (identity must be string)
+        access_token = create_access_token(identity=str(user.id))
+
+        # Get user data and flatten profile
+        user_dict = user.to_dict()
+        if 'profile' in user_dict:
+            profile = user_dict.pop('profile')
+            user_dict.update(profile)
 
         return jsonify({
             'message': 'User created successfully',
             'access_token': access_token,
-            'user': user.to_dict()
+            'user': user_dict
         }), 201
 
     except Exception as e:
@@ -109,12 +115,19 @@ def login():
         if not user.is_active:
             return jsonify({'error': 'Account is deactivated. Please contact support.'}), 403
 
-        access_token = create_access_token(identity=user.id)
+        # Create access token (identity must be string)
+        access_token = create_access_token(identity=str(user.id))
+
+        # Get user data and flatten profile
+        user_dict = user.to_dict()
+        if 'profile' in user_dict:
+            profile = user_dict.pop('profile')
+            user_dict.update(profile)
 
         return jsonify({
             'message': 'Login successful',
             'access_token': access_token,
-            'user': user.to_dict()
+            'user': user_dict
         }), 200
 
     except Exception as e:
