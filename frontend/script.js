@@ -37,7 +37,7 @@
                 tabLinks.forEach(item => item.classList.remove('active'));
                 link.classList.add('active');
 
-                 // on small screens keep tab button visible
+                // on small screens keep tab button visible
                 const activeBtn = document.querySelector('.tab-link.active');
                 if (activeBtn && window.innerWidth < 800) activeBtn.scrollIntoView({ inline: 'center', behavior: 'smooth' });
             
@@ -69,7 +69,7 @@
             event.preventDefault();
         }
         if (deliveryModal) {
-            // Added check to show modal using flex for centering
+            // Show modal
             deliveryModal.style.display = 'flex';
             deliveryModal.classList.add('active');
             document.body.style.overflow = 'hidden'; // Prevent scrolling behind modal
@@ -128,23 +128,33 @@
             }
             console.log('Booking request sent successfully.');
             
-            // NOTE: Replaced 'alert' with console logging for better user experience.
-            
             closeModal();
         });
     }
 })();
 
-// --- 4. Google Maps Autocomplete Logic (NEW) ---
+// --- 4. Google Places Autocomplete Logic (UPDATED) ---
+/**
+ * Initializes Google Maps Places Autocomplete for the Pickup and Dropoff fields.
+ * Uses a retry mechanism to ensure the 'google.maps.places' object is loaded from the API script.
+ * Includes maximum retry limit to prevent infinite loops.
+ */
 (function() {
-    /**
-     * Initializes Google Maps Places Autocomplete for the Pickup and Dropoff fields.
-     * Uses a retry mechanism to ensure the 'google' object is loaded from the API script.
-     */
-    const initAutocomplete = () => {
+    let retryCount = 0;
+    const MAX_RETRIES = 20; // Maximum 10 seconds (20 * 500ms)
+    
+    function initAutocomplete() {
         // Check if the Google Maps API (and Places library) is loaded
-        if (typeof google === 'undefined' || typeof google.maps.places === 'undefined') {
-            // If not loaded, retry in 500ms. This handles the async nature of the API script.
+        if (typeof google === 'undefined' || typeof google.maps === 'undefined' || typeof google.maps.places === 'undefined') {
+            retryCount++;
+            
+            // Stop retrying after maximum attempts
+            if (retryCount >= MAX_RETRIES) {
+                console.error('Google Maps API failed to load after ' + (MAX_RETRIES * 500) + 'ms. Please check your API key and network connection.');
+                return;
+            }
+            
+            // Retry in 500ms until the script is fully loaded by the browser
             setTimeout(initAutocomplete, 500); 
             return;
         }
@@ -152,40 +162,62 @@
         const pickupInput = document.getElementById('pickup');
         const deliveryInput = document.getElementById('delivery');
         
+        // If inputs don't exist, this page doesn't need autocomplete
+        if (!pickupInput && !deliveryInput) {
+            return;
+        }
+        
         const autocompleteOptions = {
-            // Restrict results to general addresses/cities
             types: ['geocode'], 
-            // Optional: Restrict results to a specific country 
-            componentRestrictions: { country: 'us' } 
+            // Recommend using the local country code, e.g., 'rw' for Rwanda
+            componentRestrictions: { country: 'rw' } 
         };
 
         if (pickupInput) {
-            // This initializes Autocomplete on the Pickup Address field (#pickup)
-            const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, autocompleteOptions);
-            // Listener for when a place is selected
-            pickupAutocomplete.addListener('place_changed', () => {
-                const place = pickupAutocomplete.getPlace();
-                console.log('Pickup Place Selected:', place);
-            });
+            try {
+                // Initializes Autocomplete on the Pickup Address field (#pickup)
+                const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, autocompleteOptions);
+                
+                // Listener for when a place is selected
+                pickupAutocomplete.addListener('place_changed', () => {
+                    const place = pickupAutocomplete.getPlace();
+                    
+                    if (place.geometry) {
+                        console.log('Pickup Place Selected:', place.geometry.location.lat(), place.geometry.location.lng());
+                    } else {
+                        console.log('Pickup Place Selected but no geometry found.');
+                    }
+                });
+            } catch (error) {
+                console.error('Error initializing pickup autocomplete:', error);
+            }
         }
 
         if (deliveryInput) {
-            // This initializes Autocomplete on the Dropoff Address field (#delivery)
-            const deliveryAutocomplete = new google.maps.places.PlaceAutocompleteElement(deliveryInput, autocompleteOptions);
-            // Listener for when a place is selected
-            deliveryAutocomplete.addListener('place_changed', () => {
-                const place = deliveryAutocomplete.getPlace();
-                console.log('Dropoff Place Selected:', place);
-            });
+            try {
+                // Initializes Autocomplete on the Dropoff Address field (#delivery)
+                const deliveryAutocomplete = new google.maps.places.Autocomplete(deliveryInput, autocompleteOptions);
+                
+                // Listener for when a place is selected
+                deliveryAutocomplete.addListener('place_changed', () => {
+                    const place = deliveryAutocomplete.getPlace();
+                    if (place.geometry) {
+                        console.log('Dropoff Place Selected:', place.geometry.location.lat(), place.geometry.location.lng());
+                    } else {
+                        console.log('Dropoff Place Selected but no geometry found.');
+                    }
+                });
+            } catch (error) {
+                console.error('Error initializing delivery autocomplete:', error);
+            }
         }
 
         console.log("Google Places Autocomplete initialized successfully.");
-    };
+    }
 
     // Initialize Autocomplete once the DOM is loaded
     document.addEventListener('DOMContentLoaded', initAutocomplete);
 })();
-// =================================================
 
 
 // --- 5. Reveal animations for hero, track, and feature cards on scroll ---
@@ -345,80 +377,9 @@
             trackingResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
     }
-})(); // <--- This closes the Track Button Logic properly
-
-
-
-// Append this block to initialize charts (DOM-ready)
-(function initAdminCharts() {
-  function createLine(ctx, labels, data, xLabel, yLabel) {
-    return new Chart(ctx, {
-      type: 'line',
-      data: { labels, datasets: [{ label: yLabel, data, borderColor: '#4a7c2a', backgroundColor: 'rgba(74,124,42,0.12)', fill: true, tension: 0.25 }]},
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { title: { display: true, text: xLabel } },
-          y: { beginAtZero: true, title: { display: true, text: yLabel } }
-        }
-      }
-    });
-  }
-
-  function createBar(ctx, labels, data, xLabel, yLabel) {
-    const barColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#4a7c2a';
-    return new Chart(ctx, {
-      type: 'bar',
-      data: { labels, datasets: [{ label: yLabel, data, backgroundColor: barColor }]},
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { title: { display: true, text: xLabel } },
-          y: { beginAtZero: true, title: { display: true, text: yLabel } }
-        }
-      }
-    });
-  }
-
-  function createDoughnut(ctx, labels, data) {
-    return new Chart(ctx, {
-      type: 'doughnut',
-      data: { labels, datasets: [{ data, backgroundColor: ['#4a7c2a','#2196F3','#FFC107','#dc3545'] }]},
-      options: { responsive: true, plugins: { legend: { position: 'right' } } }
-    });
-  }
-
-  function onReady(fn) {
-    if (document.readyState !== 'loading') return fn();
-    document.addEventListener('DOMContentLoaded', fn);
-  }
-
-  onReady(function () {
-    const dEl = document.getElementById('deliveriesChart');
-    const uEl = document.getElementById('usersChart');
-    const sEl = document.getElementById('statusChart');
-
-    if (dEl) createLine(dEl.getContext('2d'),
-      Array.from({length:14}, (_,i)=>`Day ${i+1}`),
-      Array.from({length:14}, ()=>Math.floor(40 + Math.random()*120)),
-      'Day', 'Deliveries');
-
-    if (uEl) createBar(uEl.getContext('2d'),
-      ['Week 1','Week 2','Week 3','Week 4'],
-      [120,210,330,470],
-      'Week', 'New Users');
-
-    if (sEl) createDoughnut(sEl.getContext('2d'),
-      ['Delivered','In Transit','Pending','Failed'],
-      [420,54,24,6]);
-  });
 })();
 
-// =====================
-// Mobile Menu Toggle (CLEAN & SEPARATED)
-// =====================
+// --- 8. Mobile Menu Toggle ---
 (function() {
     const hamburger = document.getElementById('hamburger');
     const navMenu = document.getElementById('navMenu');

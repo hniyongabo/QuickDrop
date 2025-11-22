@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Dashboard - QuickDrop</title>
     <link rel="stylesheet" href="styles.css">
+
+    <!-- FIX: CSS to ensure Google Autocomplete suggestions appear above the modal -->
+    <style>
+        /* The .pac-container is the class Google uses for the suggestions dropdown */
+        .pac-container {
+            /* Set a very high z-index to guarantee visibility over modal backgrounds */
+            z-index: 100000 !important;
+        }
+    </style>
+    <!-- END FIX -->
 </head>
 <body>
 
@@ -104,15 +114,6 @@
             <form id="parcelForm" class="modal-form">
                 
                 <div class="form-group">
-                    <label for="pickup">Pickup Address</label>
-                    <input type="text" id="pickup" name="pickup" placeholder="Enter full pickup address or landmark" required>
-                </div>
-                <div class="form-group">
-                    <label for="delivery">Dropoff Address</label>
-                    <input type="text" id="delivery" name="delivery" placeholder="Enter full dropoff address or landmark" required>
-                </div>
-
-                <div class="form-group">
                     <label for="parcelType">Parcel Type</label>
                     <select id="parcelType" name="parcelType" required>
                         <option value="">Select type</option>
@@ -123,7 +124,7 @@
                         <option value="other">Other</option>
                     </select>
                 </div>
-                 <div class="form-group" id="otherDetailsGroup" style="display: none;">
+               <div class="form-group" id="otherDetailsGroup" style="display: none;">
                     <label for="otherDetails">Details of Parcel (Required for 'Other' type)</label>
                     <textarea id="otherDetails" name="otherDetails" rows="4" placeholder="e.g., Small box of customized mugs, needs careful handling."></textarea>
                 </div>
@@ -164,32 +165,29 @@
                     <small class="courier-note">Only online couriers are available for selection</small>
                 </div>
 
+                <!-- ADDRESS FIELDS MOVED HERE -->
                 <div class="form-group">
-                    <label>Pickup Location Map</label>
-                    <div id="pickupMap">
-                        <iframe 
-                            src="http://googleusercontent.com/maps/google.com/2" 
-                            width="100%" 
-                            height="200" 
-                            style="border:0;" 
-                            allowfullscreen="" 
-                            loading="lazy" 
-                            referrerpolicy="no-referrer-when-downgrade">
-                        </iframe>
-                    </div>
+                    <label for="pickup">Pickup Address</label>
+                    <input type="text" id="pickup" name="pickup" placeholder="Enter full pickup address or landmark" required>
                 </div>
+                <div class="form-group">
+                    <label for="delivery">Dropoff Address</label>
+                    <input type="text" id="delivery" name="delivery" placeholder="Enter full dropoff address or landmark" required>
+                </div>
+                <!-- END ADDRESS FIELDS -->
 
                 <button type="submit" class="modal-submit-btn">Request Booking</button>
             </form>
         </div>
     </div>
 
-   
+    
+    <!-- Google Maps API with Places library -->
     <script async
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBzP69ZzbQiVyrxDtz59s2BVUFwXXZNIVs&libraries=places">
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRPKWL5pRa0WXN7a0Fo5Y9S3ApEZgAM8o&libraries=places">
     </script>
     
-    <!-- Your custom application script (now contains Autocomplete logic) -->
+    <!-- Main script - loads after Google Maps API -->
     <script src="script.js"></script>
 </body>
 </html>

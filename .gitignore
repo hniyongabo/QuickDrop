@@ -1,1 +1,2 @@
 # this is for files which will not be pushed to github
+.env
