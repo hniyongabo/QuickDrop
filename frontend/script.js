@@ -47,9 +47,7 @@
     }
 })();
 
-// =====================
 // Modal Functionality
-// =====================
 (function() {
     const openModalBtnDesktop = document.getElementById('openModalBtnDesktop');
     const openModalBtnMobile = document.getElementById('openModalBtnMobile');
@@ -166,9 +164,7 @@
     });
 })();
 
-// =====================
 // SignUp Modal Functionality
-// =====================
 (function() {
     const roleCourier = document.getElementById('role-courier');
     const courierModal = document.getElementById('courierModal');
@@ -250,6 +246,14 @@
             if (!formIsValid) {
                 e.preventDefault(); 
             }
+
+            if (isCourier) {
+            // Optionally, redirect courier somewhere after full signup
+            window.location.href = 'CourierDashboard.html';
+            } else {
+            // Customer signup: go to login page
+            window.location.href = 'login.html';
+        }
         });
     
     }
@@ -357,9 +361,8 @@
   });
 })();
 
-// =====================
-// Mobile Menu Toggle (CLEAN & SEPARATED)
-// =====================
+// Mobile Menu Toggle
+
 (function() {
     const hamburger = document.getElementById('hamburger');
     const navMenu = document.getElementById('navMenu');
