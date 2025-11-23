@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
+<body class="admin-dashboard">
 
     <header>
         <div class="header-inner container">
@@ -79,7 +79,9 @@
                     <div class="analytics-section">
                         <h3>Delivery Status Distribution</h3>
                         <div class="chart-container">
-                        <canvas id="statusChart" class="analytics-chart"></canvas></div>
+                        <canvas class="admin-chart" id="statusChart"
+                            data-chart='{"type":"doughnut","data":{"labels":["Active","Completed"],"datasets":[{"data":[24,76],"backgroundColor":["#36A2EB","#4CAF50"],"borderColor":["#ffffff","#ffffff"],"borderWidth":2}]},"options":{"responsive":true,"maintainAspectRatio":false,"plugins":{"legend":{"position":"bottom"}}}}'>
+                        </canvas>
                     </div>
                 </section>
                 

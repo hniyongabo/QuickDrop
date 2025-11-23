@@ -318,8 +318,12 @@
     // Main Form Submission and Validation
     if (mainForm) {
         mainForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // always prevent and decide after validation
             let formIsValid = true;
-            
+
+            // Determine role early
+            const isCourier = roleCourier ? roleCourier.checked : false;
+
             // Check Password Match
             if (passwordInput && confirmPasswordInput && passwordMatchError) {
                 if (passwordInput.value !== confirmPasswordInput.value) {
@@ -331,29 +335,74 @@
             }
 
             // Check Courier Details completion
-            if (roleCourier) {
-                const isCourier = roleCourier.checked;
+            if (isCourier) {
                 const detailsComplete = mainForm.getAttribute('data-courier-details-complete') === 'true';
-
-                if (isCourier && !detailsComplete) {
+                if (!detailsComplete) {
                     console.error('Please complete the Courier Application Details pop-up first.');
-                    if (courierModal) courierModal.style.display = 'block'; 
+                    if (courierModal) courierModal.style.display = 'block';
                     formIsValid = false;
                 }
             }
 
-            // Prevent form submission if validation failed
+            // Stop here if invalid
             if (!formIsValid) {
-                e.preventDefault(); 
+                return;
             }
 
+            // Collect user info (support common input id/name variants)
+            function getInputValue(idsOrSelectors) {
+                for (const s of idsOrSelectors) {
+                    const el = document.getElementById(s) || document.querySelector(`input[name="${s}"]`);
+                    if (el && el.value) return el.value.trim();
+                }
+                return '';
+            }
+            const fullName = getInputValue(['fullName','fullname','name','firstName']);
+            const emailVal = getInputValue(['email','signup-email','userEmail']);
+
+            // Save user to localStorage (for admin listing). Minimal user model.
+            try {
+                const usersKey = 'quickdrop_users_v1';
+                const raw = localStorage.getItem(usersKey);
+                const users = raw ? JSON.parse(raw) : [];
+                // Avoid duplicate emails: update if exists
+                const existingIndex = users.findIndex(u => u.email && emailVal && u.email.toLowerCase() === emailVal.toLowerCase());
+                const newUser = {
+                    id: Date.now(),
+                    name: fullName || emailVal || 'User',
+                    email: emailVal || '',
+                    role: isCourier ? 'courier' : 'customer',
+                    createdAt: (new Date()).toISOString()
+                };
+                if (existingIndex >= 0) {
+                    users[existingIndex] = Object.assign({}, users[existingIndex], newUser);
+                } else {
+                    users.push(newUser);
+                }
+                localStorage.setItem(usersKey, JSON.stringify(users));
+            } catch (err) {
+                console.error('Failed to save user to localStorage:', err);
+            }
+
+            // If valid, either submit normally or redirect as needed
+            // Option A: actually submit the form to the server:
+            // mainForm.submit();
+
+            // Option B: redirect client-side (existing behaviour)
             if (isCourier) {
-            // Optionally, redirect courier somewhere after full signup
-            window.location.href = 'CourierDashboard.html';
+                // include name & email for welcome on courier dashboard
+                const params = new URLSearchParams();
+                if (fullName) params.set('name', fullName);
+                if (emailVal) params.set('email', emailVal);
+                params.set('role', 'courier');
+                window.location.href = `CourierDashboard.html?${params.toString()}`;
             } else {
-            // Customer signup: go to login page
-            window.location.href = 'login.html';
-        }
+                // Redirect to Login page with email and role hint
+                const params = new URLSearchParams();
+                if (emailVal) params.set('email', emailVal);
+                params.set('role', 'customer');
+                window.location.href = `Login.html?${params.toString()}`;
+            }
         });
     }
 
@@ -708,7 +757,7 @@
         });
         
         pickupMarker.addListener('click', () => pickupInfo.open(map, pickupMarker));
-        deliveryMarker.addListener('click', () => deliveryInfo.open(map, deliveryMarker));
+        deliveryMarker.addEventListener('click', () => deliveryInfo.open(map, deliveryMarker));
         
         // Simulate movement towards pickup
         simulateCourierMovement(currentPosMarker, data.pickup, data.delivery, 'courierLive');
@@ -826,3 +875,339 @@
         });
     });
 })();
+
+// Prefill Login form email if present in query string and handle login submit redirect
+(function() {
+    // Prefill Login form email if present in query string and handle login submit redirect
+    document.addEventListener('DOMContentLoaded', function() {
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const emailParam = params.get('email');
+            const roleParam = params.get('role'); // optional role hint
+
+            // only run on the login page
+            const path = window.location.pathname.split('/').pop() || '';
+            if (!path.toLowerCase().includes('login')) return;
+
+            // find email & password inputs (support several id conventions)
+            const emailInput = document.querySelector('input[type="email"]#email') || document.getElementById('email') || document.querySelector('input[type="email"]');
+            const pwdInput = document.querySelector('input[type="password"]#password') || document.getElementById('password') || document.querySelector('input[type="password"]');
+
+            if (emailParam && emailInput) {
+                emailInput.value = decodeURIComponent(emailParam);
+                if (pwdInput) pwdInput.focus();
+            }
+
+            // locate the login form (try common ids, otherwise first form)
+            const loginForm = document.getElementById('loginForm') || document.getElementById('login-form') || document.querySelector('form');
+
+            if (!loginForm) return;
+
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const email = emailInput ? emailInput.value.trim() : '';
+                const password = pwdInput ? pwdInput.value : '';
+
+                // basic client-side validation
+                if (!email || !password) {
+                    if (!email) emailInput && emailInput.focus();
+                    else pwdInput && pwdInput.focus();
+                    alert('Please enter both email and password.');
+                    return;
+                }
+
+                // lookup user in localStorage (client-side demo auth)
+                let userName = '';
+                try {
+                    const usersKey = 'quickdrop_users_v1';
+                    const raw = localStorage.getItem(usersKey);
+                    const users = raw ? JSON.parse(raw) : [];
+                    const found = users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+                    if (found) userName = found.name || '';
+                } catch (err) {
+                    console.error('Error reading users from storage:', err);
+                }
+
+                // NOTE: Replace with real server-side auth. This is a client-side fallback.
+                const isCourier = (roleParam === 'courier') || /courier/i.test(email);
+
+                const params = new URLSearchParams();
+                if (userName) params.set('name', userName);
+                params.set('email', email);
+                params.set('role', isCourier ? 'courier' : 'customer');
+
+                if (isCourier) {
+                    window.location.href = `CourierDashboard.html?${params.toString()}`;
+                } else {
+                    window.location.href = `CustomerDashboard.html?${params.toString()}`;
+                }
+            });
+        } catch (err) {
+            console.error('Login prefill/submit handler error:', err);
+        }
+    });
+})();
+
+// Admin Dashboard Enhancements (Client-side only)
+(function() {
+    function getUsers() {
+        try {
+            const raw = localStorage.getItem('quickdrop_users_v1');
+            return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    // Lookup user name by email from localStorage
+    function getUserNameFromEmail(email) {
+        if (!email) return '';
+        try {
+            const users = getUsers();
+            const found = users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+            return found ? (found.name || '') : '';
+        } catch (e) {
+            return '';
+        }
+    }
+
+    function renderAdminUsers() {
+        // Only render if an explicit admin container exists in your HTML.
+        // Do NOT create a fallback element (user requested no extra bottom content).
+        const container = document.getElementById('adminUserList') || document.getElementById('adminUsersContainer');
+        if (!container) return; // do nothing if admin list area not present
+
+        const users = getUsers();
+        container.innerHTML = ''; // clear existing content
+        const heading = document.createElement('h3');
+        heading.textContent = 'Registered Users (Client-side)';
+        heading.style.marginBottom = '8px';
+        container.appendChild(heading);
+
+        if (users.length === 0) {
+            const p = document.createElement('p');
+            p.textContent = 'No registered users (client-side).';
+            container.appendChild(p);
+            return;
+        }
+
+        const table = document.createElement('table');
+        table.style.width = '100%';
+        table.style.borderCollapse = 'collapse';
+        table.style.fontSize = '0.95rem';
+
+        const thead = document.createElement('thead');
+        thead.innerHTML = '<tr><th style="text-align:left;padding:6px;border-bottom:1px solid #ddd">Name</th><th style="text-align:left;padding:6px;border-bottom:1px solid #ddd">Email</th><th style="text-align:left;padding:6px;border-bottom:1px solid #ddd">Role</th><th style="text-align:left;padding:6px;border-bottom:1px solid #ddd">Joined</th></tr>';
+        table.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        users.forEach(u => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td style="padding:6px;border-bottom:1px solid #f2f2f2">${u.name || ''}</td>
+                            <td style="padding:6px;border-bottom:1px solid #f2f2f2">${u.email || ''}</td>
+                            <td style="padding:6px;border-bottom:1px solid #f2f2f2">${u.role || ''}</td>
+                            <td style="padding:6px;border-bottom:1px solid #f2f2f2">${u.createdAt ? new Date(u.createdAt).toLocaleString() : ''}</td>`;
+            tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        container.appendChild(table);
+    }
+
+    function showWelcomeFromQuery() {
+        const params = new URLSearchParams(window.location.search);
+        let name = params.get('name') || '';
+        const emailParam = params.get('email') || '';
+        const roleParam = params.get('role') || '';
+
+        // If no name supplied, try to resolve from stored users using email
+        if (!name && emailParam) {
+            name = getUserNameFromEmail(emailParam);
+        }
+
+        // Final fallback: show role-specific generic label (Customer / Courier)
+        if (!name) {
+            if (roleParam.toLowerCase() === 'courier') name = 'Courier';
+            else if (roleParam.toLowerCase() === 'customer') name = 'Customer';
+            else name = ''; // don't show any welcome if nothing meaningful
+        }
+
+        if (!name) return; // nothing to show
+
+        // Prefer an explicit welcome slot if present
+        const welcomeSlot = document.getElementById('welcomeName') || document.querySelector('.welcome-message') || document.getElementById('dashboardGreeting');
+        if (welcomeSlot) {
+            welcomeSlot.textContent = `Welcome, ${name}`;
+            return;
+        }
+
+        // Otherwise prepend a small unobtrusive welcome before first H1 (retain original H1 text)
+        const h1 = document.querySelector('h1');
+        if (h1) {
+            // Create a small element to avoid overwriting the H1 text (non-destructive)
+            const smallWelcome = document.createElement('div');
+            smallWelcome.textContent = `Welcome, ${name}`;
+            smallWelcome.style.fontSize = '1.05rem';
+            smallWelcome.style.fontWeight = '600';
+            smallWelcome.style.marginBottom = '8px';
+            // insert before the H1 without changing H1 content
+            h1.parentNode.insertBefore(smallWelcome, h1);
+            return;
+        }
+
+        // If no H1, insert at top of main container if present
+        const firstContainer = document.querySelector('.container') || document.body;
+        const top = document.createElement('div');
+        top.textContent = `Welcome, ${name}`;
+        top.setAttribute('aria-live','polite');
+        top.style.fontSize = '1.05rem';
+        top.style.fontWeight = '600';
+        top.style.padding = '6px 0';
+        firstContainer.insertBefore(top, firstContainer.firstChild);
+    }
+
+    // Ensure meta viewport exists to improve responsiveness without changing styles
+    (function ensureViewport() {
+        if (!document.querySelector('meta[name="viewport"]')) {
+            const m = document.createElement('meta');
+            m.name = 'viewport';
+            m.content = 'width=device-width, initial-scale=1';
+            document.head.appendChild(m);
+        }
+    })();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Show welcome on dashboards
+        const path = (window.location.pathname.split('/').pop() || '').toLowerCase();
+        if (path.includes('courierdashboard') || path.includes('customerdashboard') || path.includes('customer')) {
+            showWelcomeFromQuery();
+        }
+
+        // On Admin page render users only if admin UI provides a container
+        if (path.includes('admindashboard') || path.includes('admin')) {
+            renderAdminUsers();
+        }
+    });
+})();
+
+// Safe Chart.js initializer for admin canvases
+(function() {
+    // Safe Chart.js initializer for admin canvases
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvases = document.querySelectorAll('canvas.admin-chart, canvas[data-chart]');
+        if (!canvases || canvases.length === 0) return;
+
+        function initCanvas(canvas) {
+            if (canvas._chartInitialized) return;
+            if (typeof Chart === 'undefined') return false;
+            try {
+                const ctx = canvas.getContext('2d');
+                let config = null;
+                const raw = canvas.getAttribute('data-chart');
+                if (raw) {
+                    try { config = JSON.parse(raw); } catch (e) { console.warn('Invalid JSON in data-chart:', e); }
+                }
+                if (!config) {
+                    // non-intrusive fallback sample (won't change layout/design)
+                    config = {
+                        type: 'bar',
+                        data: {
+                            labels: ['Jan','Feb','Mar','Apr','May'],
+                            datasets: [{ label: 'Activity', data: [12,19,8,15,10], backgroundColor: 'rgba(74,124,42,0.85)' }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                    };
+                }
+                // create chart instance and mark as initialized
+                canvas._chartInstance = new Chart(ctx, config);
+                canvas._chartInitialized = true;
+                return true;
+            } catch (err) {
+                console.error('Chart init error:', err);
+                return false;
+            }
+        }
+
+        // Wait for Chart.js to load (max retries)
+        let tries = 25;
+        (function waitForChart() {
+            if (typeof Chart !== 'undefined') {
+                canvases.forEach(initCanvas);
+            } else if (tries-- > 0) {
+                setTimeout(waitForChart, 200);
+            } else {
+                console.warn('Chart.js not found; admin charts not initialized.');
+            }
+        })();
+    });
+})();
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Confirm Pickup button behaviour
+    const confirmBtn = document.getElementById('confirmPickupBtn');
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            // mark button as confirmed
+            confirmBtn.classList.add('disabled');
+            confirmBtn.setAttribute('aria-disabled', 'true');
+            confirmBtn.textContent = 'Picked up';
+
+            // Update current-task card status if present
+            const currentCard = document.querySelector('.current-task-card');
+            if (currentCard) {
+                // try to find a visible status element or create one
+                let s = currentCard.querySelector('.task-list-status') || currentCard.querySelector('.task-status');
+                if (!s) {
+                    s = document.createElement('span');
+                    s.className = 'task-status';
+                    s.style.marginTop = '8px';
+                    currentCard.appendChild(s);
+                }
+                s.textContent = 'Picked up';
+            }
+
+            // Update matching upcoming task status by searching for order id text
+            const orderId = confirmBtn.dataset.orderId;
+            if (orderId) {
+                document.querySelectorAll('.task-list-item').forEach(item => {
+                    const idEl = item.querySelector('.id');
+                    if (idEl && idEl.textContent.includes(`#${orderId}`)) {
+                        const statusEl = item.querySelector('.task-list-status');
+                        if (statusEl) statusEl.textContent = 'In Transit';
+                    }
+                });
+            }
+        });
+    }
+
+    // Admin charts diagnostic: warn if canvases exist but Chart.js is not loaded
+    const adminCanvases = document.querySelectorAll('canvas.admin-chart, canvas[data-chart]');
+    if (adminCanvases.length > 0 && typeof Chart === 'undefined') {
+        console.warn('Chart.js not found on this page. Add <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> to AdminDashboard.html (before script.js) so charts initialize.');
+    }
+});
+
+    /*quick-test: initialize any canvas.analytics-chart using Chart.js (temporary) */
+    (function(){
+      if (typeof Chart === 'undefined') return console.error('Chart.js not found on this page.');
+      const canvases = document.querySelectorAll('canvas.analytics-chart');
+      if (!canvases.length) return console.warn('No canvases found with .analytics-chart selector.');
+      canvases.forEach((c, i) => {
+        try {
+          const ctx = c.getContext('2d');
+          // small responsive fallback config
+          new Chart(ctx, {
+            type: i === 1 ? 'line' : (i === 2 ? 'doughnut' : 'bar'),
+            data: {
+              labels: ['Mon','Tue','Wed','Thu','Fri'],
+              datasets: [{ label: 'Sample', data: [12,19,8,15,10], backgroundColor: ['#4a7c2a'], borderColor:'#4a7c2a', tension:0.3 }]
+            },
+            options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:i===2}} }
+          });
+          console.log('Chart initialized on', c.id || c);
+        } catch (e) {
+          console.error('Chart init failed for', c, e);
+        }
+      });
+    })();

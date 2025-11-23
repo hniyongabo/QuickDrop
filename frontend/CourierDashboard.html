@@ -48,10 +48,13 @@
 
     <main class="container">
 
+        <!-- Dashboard greeting placeholder (consistent welcome slot) -->
+        <div id="dashboardGreeting" class="dashboard-greeting" aria-live="polite"></div>
+
         <div class="dashboard-header">
             <h1>Your Tasks</h1>
         </div>
-
+        
         <section class="content-section current-task">
             <h2>Current Task</h2>
             
@@ -68,7 +71,7 @@
 
                 <div class="task-actions">
                     <a href="CourierLiveTask.html" class="btn btn-primary">Navigate to Pickup</a>
-                    <a href="#" class="btn btn-secondary">Confirm Pickup</a>
+                    <a href="#" class="btn btn-secondary" id="confirmPickupBtn" data-order-id="1023" aria-label="Confirm pickup for order 1023">Confirm Pickup</a>
                 </div>
             </div>
             
