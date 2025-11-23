@@ -105,7 +105,7 @@ def get_orders():
             return jsonify({'error': 'No profile found'}), 404
 
         return jsonify({
-            'orders': [order.to_dict(include_details=False) for order in orders]
+            'orders': [order.to_dict(include_details=True) for order in orders]
         }), 200
 
     except Exception as e:
@@ -240,16 +240,12 @@ def assign_courier(order_id):
             if not courier:
                 return jsonify({'error': 'Courier not found'}), 404
 
-            if not courier.is_verified:
-                return jsonify({'error': 'Courier is not verified'}), 400
-
             if not courier.is_available:
                 return jsonify({'error': 'Courier is not available'}), 400
 
         else:
             # Auto-assignment: find available courier
             courier = Courier.query.filter_by(
-                is_verified=True,
                 is_available=True
             ).order_by(Courier.rating.desc()).first()
 
@@ -336,9 +332,6 @@ def accept_order(order_id):
         if not user.courier:
             return jsonify({'error': 'Courier profile not found'}), 404
 
-        if not user.courier.is_verified:
-            return jsonify({'error': 'Courier is not verified'}), 400
-
         order = Order.query.get(order_id)
 
         if not order:
@@ -357,6 +350,49 @@ def accept_order(order_id):
 
         return jsonify({
             'message': 'Order accepted successfully',
+            'order': order.to_dict()
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@order_bp.route('/orders/<int:order_id>/blocker', methods=['POST'])
+@jwt_required()
+def report_blocker(order_id):
+    """Courier reports a blocker for an order"""
+    try:
+        current_user_id = int(get_jwt_identity())
+        user = User.query.get(current_user_id)
+
+        if not user or user.role != 'courier':
+            return jsonify({'error': 'Only couriers can report blockers'}), 403
+
+        if not user.courier:
+            return jsonify({'error': 'Courier profile not found'}), 404
+
+        order = Order.query.get(order_id)
+
+        if not order:
+            return jsonify({'error': 'Order not found'}), 404
+
+        # Verify this courier is assigned to this order
+        if order.courier_id != user.courier.id:
+            return jsonify({'error': 'You are not assigned to this order'}), 403
+
+        data = request.get_json()
+
+        if 'blocker_title' not in data or 'blocker_notes' not in data:
+            return jsonify({'error': 'Blocker title and notes are required'}), 400
+
+        order.blocker_title = data['blocker_title']
+        order.blocker_notes = data['blocker_notes']
+        order.blocker_reported_at = datetime.utcnow()
+
+        db.session.commit()
+
+        return jsonify({
+            'message': 'Blocker reported successfully',
             'order': order.to_dict()
         }), 200
     except Exception as e:

@@ -931,10 +931,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     `;
                 } else {
                     deliveriesGrid.innerHTML = activeOrders.map(order => `
-                        <a href="TrackOrder.html?order=${order.order_number}" class="order-card" data-order-id="${order.id}">
+                        <a href="TrackOrder.html?order=${order.order_number}" class="order-card" data-order-id="${order.id}" style="position: relative;">
+                            ${order.blocker_title ? `
+                                <div style="background-color: #ffc107; color: #000; padding: 0.5rem; margin: -1rem -1rem 0.5rem -1rem; border-radius: 8px 8px 0 0; font-weight: bold;">
+                                    ⚠️ Issue: ${order.blocker_title}
+                                </div>
+                            ` : ''}
                             <h4>Order #${order.order_number}</h4>
                             <p class="status">${formatStatus(order.status)}</p>
                             <p class="eta">${order.courier ? `Courier: ${order.courier?.name || 'Assigned'}` : 'Waiting for courier'}</p>
+                            ${order.blocker_notes ? `<p style="color: #d32f2f; font-size: 0.9rem; margin-top: 0.5rem;">${order.blocker_notes}</p>` : ''}
                         </a>
                     `).join('');
                 }
@@ -1072,7 +1078,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const isCourierDashboard = document.title.includes('My Tasks');
     if (!isCourierDashboard) return;
 
-    const currentTaskCard = document.querySelector('.current-task-card');
     const currentTaskSection = document.querySelector('.current-task');
     const upcomingTasksContainer = document.querySelector('.upcoming-tasks .list-container');
 
@@ -1107,7 +1112,16 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                             <div class="task-actions">
                                 <a href="CourierLiveTask.html?order=${task.order_number}" class="btn btn-primary">Navigate</a>
-                                <button class="btn btn-secondary" onclick="updateOrderStatus(${task.id}, '${getNextStatus(task.status)}')">${getNextAction(task.status)}</button>
+                                <button id="statusBtn-${task.id}" class="btn btn-secondary" onclick="updateOrderStatus(${task.id}, '${getNextStatus(task.status)}')">
+                                    <span class="btn-text">${getNextAction(task.status)}</span>
+                                    <span class="btn-loader" style="display: none;">
+                                        <svg class="spinner" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="31.4" stroke-dashoffset="10"></circle>
+                                        </svg>
+                                        Updating...
+                                    </span>
+                                </button>
+                                <button class="btn btn-warning" onclick="openBlockerModal(${task.id}, '${task.order_number}')" style="background-color: #ffc107; color: #000;">Report Issue</button>
                             </div>
                         </div>
                     `;
@@ -1129,7 +1143,15 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <p class="id">Order: #${order.order_number} | ${order.parcel_type} | ${order.parcel_weight}kg</p>
                                 <p class="fee">Fee: ${order.delivery_fee} RWF</p>
                             </div>
-                            <button class="btn btn-primary" onclick="acceptOrder(${order.id})">Accept</button>
+                            <button id="acceptBtn-${order.id}" class="btn btn-primary" onclick="acceptOrder(${order.id})">
+                                <span class="btn-text">Accept</span>
+                                <span class="btn-loader" style="display: none;">
+                                    <svg class="spinner" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="31.4" stroke-dashoffset="10"></circle>
+                                    </svg>
+                                    Accepting...
+                                </span>
+                            </button>
                         </div>
                     `).join('')
                     : '<p class="no-orders">No pending orders available</p>';
@@ -1163,23 +1185,126 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Global functions for button clicks
     window.acceptOrder = async function(orderId) {
+        const btn = document.getElementById(`acceptBtn-${orderId}`);
+        if (!btn) return;
+
+        const btnText = btn.querySelector('.btn-text');
+        const btnLoader = btn.querySelector('.btn-loader');
+
+        // Show loader
+        btn.disabled = true;
+        btnText.style.display = 'none';
+        btnLoader.style.display = 'inline-flex';
+
         try {
             await apiCall(`/orders/${orderId}/accept`, 'POST', {}, true);
             Toast.success('Order accepted!');
             loadCourierTasks();
         } catch (error) {
+            // Hide loader on error
+            btn.disabled = false;
+            btnText.style.display = 'inline';
+            btnLoader.style.display = 'none';
             Toast.error('Failed to accept order: ' + error.message);
         }
     };
 
     window.updateOrderStatus = async function(orderId, newStatus) {
+        const btn = document.getElementById(`statusBtn-${orderId}`);
+        if (!btn) return;
+
+        const btnText = btn.querySelector('.btn-text');
+        const btnLoader = btn.querySelector('.btn-loader');
+
+        // Show loader
+        btn.disabled = true;
+        btnText.style.display = 'none';
+        btnLoader.style.display = 'inline-flex';
+
         try {
             await apiCall(`/orders/${orderId}/status`, 'PUT', { status: newStatus }, true);
             Toast.success('Status updated!');
             loadCourierTasks();
         } catch (error) {
+            // Hide loader on error
+            btn.disabled = false;
+            btnText.style.display = 'inline';
+            btnLoader.style.display = 'none';
             Toast.error('Failed to update status: ' + error.message);
         }
+    };
+
+    // Blocker reporting functionality
+    window.openBlockerModal = function(orderId, orderNumber) {
+        const existingModal = document.getElementById('blockerModal');
+        if (existingModal) existingModal.remove();
+
+        const modal = document.createElement('div');
+        modal.id = 'blockerModal';
+        modal.className = 'modal-overlay active';
+        modal.innerHTML = `
+            <div class="modal-content" style="max-width: 500px;">
+                <div class="modal-header">
+                    <h2>Report Issue - Order #${orderNumber}</h2>
+                    <button class="modal-close" onclick="document.getElementById('blockerModal').remove()">×</button>
+                </div>
+                <form id="blockerForm" class="modal-form" style="padding: 1rem;">
+                    <div class="form-group">
+                        <label for="blockerTitle">Issue Title</label>
+                        <input type="text" id="blockerTitle" placeholder="e.g., Customer not available" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="blockerNotes">Notes</label>
+                        <textarea id="blockerNotes" rows="4" placeholder="Describe the issue..." required></textarea>
+                    </div>
+                    <button type="submit" id="blockerSubmitBtn" class="btn btn-primary">
+                        <span class="btn-text">Submit Report</span>
+                        <span class="btn-loader" style="display: none;">
+                            <svg class="spinner" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="31.4" stroke-dashoffset="10"></circle>
+                            </svg>
+                            Submitting...
+                        </span>
+                    </button>
+                </form>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.remove();
+        });
+
+        document.getElementById('blockerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const blockerTitle = document.getElementById('blockerTitle').value;
+            const blockerNotes = document.getElementById('blockerNotes').value;
+
+            const submitBtn = document.getElementById('blockerSubmitBtn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoader = submitBtn.querySelector('.btn-loader');
+
+            // Show loader
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'inline-flex';
+
+            try {
+                await apiCall(`/orders/${orderId}/blocker`, 'POST', {
+                    blocker_title: blockerTitle,
+                    blocker_notes: blockerNotes
+                }, true);
+                Toast.success('Issue reported successfully');
+                modal.remove();
+                loadCourierTasks();
+            } catch (error) {
+                // Hide loader on error
+                submitBtn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoader.style.display = 'none';
+                Toast.error('Failed to report issue: ' + error.message);
+            }
+        });
     };
 
     // Initialize
@@ -1187,4 +1312,167 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Poll for updates every 15 seconds
     setInterval(loadCourierTasks, 15000);
+})();
+
+// =====================
+// Track Order Page Integration
+// =====================
+(function() {
+    const isTrackOrderPage = document.title.includes('Track Order');
+    if (!isTrackOrderPage) return;
+
+    // Get order number from URL query parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderNumber = urlParams.get('order');
+
+    if (!orderNumber) {
+        Toast.error('No order number provided');
+        setTimeout(() => window.location.href = 'CustomerDashboard.html', 2000);
+        return;
+    }
+
+    // Helper function to format status
+    function formatStatus(status) {
+        const statusMap = {
+            'pending': 'Waiting for courier',
+            'courier_assigned': 'Courier assigned',
+            'en_route_to_pickup': 'En route to pickup',
+            'picked_up': 'Package picked up',
+            'in_transit': 'In transit',
+            'delivered': 'Delivered',
+            'completed': 'Completed',
+            'cancelled': 'Cancelled',
+            'failed': 'Failed'
+        };
+        return statusMap[status] || status;
+    }
+
+    // Helper function to format time
+    function formatTime(dateString) {
+        if (!dateString) return 'Pending';
+        const date = new Date(dateString);
+        return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Load and display order tracking data
+    async function loadOrderTracking() {
+        try {
+            const order = await apiCall(`/orders/track/${orderNumber}`, 'GET', null, false);
+
+            // Update page title and header
+            const pageHeader = document.querySelector('.page-header h1');
+            if (pageHeader) {
+                pageHeader.textContent = `Track Your Order (#${order.order_number})`;
+            }
+
+            // Update status sidebar
+            const statusSidebar = document.querySelector('.status-sidebar');
+            if (statusSidebar) {
+                const currentStatus = formatStatus(order.status);
+
+                // Build timeline based on order status
+                const timeline = [];
+
+                // Order Placed
+                timeline.push({
+                    label: 'Order Placed',
+                    time: formatTime(order.created_at),
+                    completed: true
+                });
+
+                // Courier Assigned
+                if (['courier_assigned', 'en_route_to_pickup', 'picked_up', 'in_transit', 'delivered', 'completed'].includes(order.status)) {
+                    timeline.push({
+                        label: 'Courier Assigned',
+                        time: formatTime(order.updated_at),
+                        completed: true
+                    });
+                } else {
+                    timeline.push({
+                        label: 'Courier Assigned',
+                        time: 'Pending',
+                        completed: false
+                    });
+                }
+
+                // At Pickup Location
+                if (['picked_up', 'in_transit', 'delivered', 'completed'].includes(order.status)) {
+                    timeline.push({
+                        label: 'At Pickup Location',
+                        time: formatTime(order.actual_pickup_time),
+                        completed: true
+                    });
+                } else {
+                    timeline.push({
+                        label: 'At Pickup Location',
+                        time: 'Pending',
+                        completed: false
+                    });
+                }
+
+                // Delivered
+                if (['delivered', 'completed'].includes(order.status)) {
+                    timeline.push({
+                        label: 'Delivered',
+                        time: formatTime(order.actual_delivery_time),
+                        completed: true
+                    });
+                } else {
+                    timeline.push({
+                        label: 'Delivered',
+                        time: 'Pending',
+                        completed: false
+                    });
+                }
+
+                statusSidebar.innerHTML = `
+                    <h2>Status: ${currentStatus}</h2>
+                    <p class="eta">${order.courier ? `Courier: ${order.courier.name}` : 'Waiting for courier assignment'}</p>
+
+                    ${order.courier ? `
+                        <div class="info-group">
+                            <h3>Courier</h3>
+                            <p>${order.courier.name}</p>
+                            <p>${order.courier.phone || ''}</p>
+                        </div>
+                    ` : ''}
+
+                    <div class="info-group">
+                        <h3>From (Pickup)</h3>
+                        <p>${order.pickup_address}</p>
+                        ${order.pickup_contact_name ? `<p>${order.pickup_contact_name} - ${order.pickup_contact_phone}</p>` : ''}
+                    </div>
+
+                    <div class="info-group">
+                        <h3>To (Delivery)</h3>
+                        <p>${order.delivery_address}</p>
+                        ${order.delivery_contact_name ? `<p>${order.delivery_contact_name} - ${order.delivery_contact_phone}</p>` : ''}
+                    </div>
+
+                    <div class="info-group">
+                        <h3>Delivery Timeline</h3>
+                        <ul class="status-timeline">
+                            ${timeline.map(step => `
+                                <li class="status-step ${step.completed ? 'completed' : ''}">
+                                    <p>${step.label}</p>
+                                    <span>${step.time}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+        } catch (error) {
+            console.error('Failed to load order tracking:', error);
+            Toast.error('Failed to load order details');
+            setTimeout(() => window.location.href = 'CustomerDashboard.html', 2000);
+        }
+    }
+
+    // Initialize
+    loadOrderTracking();
+
+    // Poll for updates every 10 seconds
+    setInterval(loadOrderTracking, 10000);
 })();

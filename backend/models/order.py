@@ -54,6 +54,11 @@ class Order(db.Model):
     special_instructions = db.Column(db.Text)
     courier_notes = db.Column(db.Text)
 
+    # Blocker information
+    blocker_title = db.Column(db.String(200))
+    blocker_notes = db.Column(db.Text)
+    blocker_reported_at = db.Column(db.DateTime)
+
     # Rating and feedback
     customer_rating = db.Column(db.Integer)  # 1-5 stars
     customer_feedback = db.Column(db.Text)
@@ -102,6 +107,9 @@ class Order(db.Model):
                 'payment_method': self.payment_method,
                 'special_instructions': self.special_instructions,
                 'courier_notes': self.courier_notes,
+                'blocker_title': self.blocker_title,
+                'blocker_notes': self.blocker_notes,
+                'blocker_reported_at': self.blocker_reported_at.isoformat() if self.blocker_reported_at else None,
                 'customer_rating': self.customer_rating,
                 'customer_feedback': self.customer_feedback,
                 'updated_at': self.updated_at.isoformat()
