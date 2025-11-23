@@ -1989,7 +1989,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 })();
 
+// COMMENTED OUT - CONFLICTING WITH API-BASED LOGIN
+// This old client-side login handler was interfering with the real API authentication
 // Prefill Login form email if present in query string and handle login submit redirect
+/*
 (function() {
     // Prefill Login form email if present in query string and handle login submit redirect
     document.addEventListener('DOMContentLoaded', function() {
@@ -2061,6 +2064,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 })();
+*/
 
 // Admin Dashboard Enhancements (Client-side only)
 (function() {
