@@ -3,23 +3,23 @@
 -- Drop objects in dependency order for repeatable dev runs
 DO $$
 BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='payment') THEN
-        DROP TABLE payment CASCADE;
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='payments') THEN
+        DROP TABLE payments CASCADE;
     END IF;
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='shipment') THEN
-        DROP TABLE shipment CASCADE;
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='shipments') THEN
+        DROP TABLE shipments CASCADE;
     END IF;
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='courier') THEN
-        DROP TABLE courier CASCADE;
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='couriers') THEN
+        DROP TABLE couriers CASCADE;
     END IF;
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='address') THEN
-        DROP TABLE address CASCADE;
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='addresses') THEN
+        DROP TABLE addresses CASCADE;
     END IF;
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='customer') THEN
-        DROP TABLE customer CASCADE;
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='customers') THEN
+        DROP TABLE customers CASCADE;
     END IF;
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='admin') THEN
-        DROP TABLE admin CASCADE;
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='admins') THEN
+        DROP TABLE admins CASCADE;
     END IF;
     IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='users') THEN
         DROP TABLE "users" CASCADE;
@@ -39,13 +39,13 @@ CREATE TABLE "users" (
 );
 
 -- CUSTOMER (one-to-one with user)
-CREATE TABLE customer (
+CREATE TABLE customers (
     customer_id     SERIAL PRIMARY KEY,
     user_id         INTEGER NOT NULL UNIQUE REFERENCES "users"(user_id) ON DELETE CASCADE
 );
 
 -- ADMIN (one-to-one with user)
-CREATE TABLE admin (
+CREATE TABLE admins (
     admin_id        SERIAL PRIMARY KEY,
     user_id         INTEGER NOT NULL UNIQUE REFERENCES "users"(user_id) ON DELETE CASCADE,
     created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
@@ -53,7 +53,7 @@ CREATE TABLE admin (
 );
 
 -- ADDRESS (owned by user)
-CREATE TABLE address (
+CREATE TABLE addresses (
     address_id      SERIAL PRIMARY KEY,
     user_id         INTEGER REFERENCES "users"(user_id) ON DELETE CASCADE,
     district        VARCHAR(100),
@@ -64,7 +64,7 @@ CREATE TABLE address (
 );
 
 -- COURIER (one-to-one with user) + live location (PostGIS)
-CREATE TABLE courier (
+CREATE TABLE couriers (
     courier_id      SERIAL PRIMARY KEY,
     user_id         INTEGER NOT NULL UNIQUE REFERENCES "users"(user_id) ON DELETE CASCADE,
     vehicle_plate   VARCHAR(10),
@@ -78,13 +78,13 @@ CREATE TABLE courier (
 );
 
 -- SHIPMENT (links customer and optionally assigned courier)
-CREATE TABLE shipment (
+CREATE TABLE shipments (
     shipment_id     SERIAL PRIMARY KEY,
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     assigned_at     TIMESTAMPTZ,
     picked_at       TIMESTAMPTZ,
-    courier_id      INTEGER REFERENCES courier(courier_id) ON DELETE SET NULL,
-    customer_id     INTEGER REFERENCES customer(customer_id) ON DELETE SET NULL,
+    courier_id      INTEGER REFERENCES couriers(courier_id) ON DELETE SET NULL,
+    customer_id     INTEGER REFERENCES customers(customer_id) ON DELETE SET NULL,
     delivered_at    TIMESTAMPTZ,
     pickup_latitude     DECIMAL(9,6),
     pickup_longitude    DECIMAL(9,6),
@@ -97,9 +97,9 @@ CREATE TABLE shipment (
 );
 
 -- PAYMENT (per shipment)
-CREATE TABLE payment (
+CREATE TABLE payments (
     payment_id      SERIAL PRIMARY KEY,
-    shipment_id     INTEGER NOT NULL REFERENCES shipment(shipment_id) ON DELETE CASCADE,
+    shipment_id     INTEGER NOT NULL REFERENCES shipments(shipment_id) ON DELETE CASCADE,
     method          VARCHAR(150) NOT NULL,
     status          VARCHAR(50) NOT NULL DEFAULT 'pending',
     paid_at         TIMESTAMPTZ,
@@ -109,9 +109,9 @@ CREATE TABLE payment (
 
 -- INDEXES
 CREATE INDEX IF NOT EXISTS idx_user_role ON "users"(role);
-CREATE INDEX IF NOT EXISTS idx_address_user ON address(user_id);
-CREATE INDEX IF NOT EXISTS idx_shipment_courier ON shipment(courier_id);
-CREATE INDEX IF NOT EXISTS idx_shipment_customer ON shipment(customer_id);
-CREATE INDEX IF NOT EXISTS idx_payment_shipment ON payment(shipment_id);
+CREATE INDEX IF NOT EXISTS idx_address_user ON addresses(user_id);
+CREATE INDEX IF NOT EXISTS idx_shipment_courier ON shipments(courier_id);
+CREATE INDEX IF NOT EXISTS idx_shipment_customer ON shipments(customer_id);
+CREATE INDEX IF NOT EXISTS idx_payment_shipment ON payments(shipment_id);
 
 
