@@ -1486,7 +1486,8 @@ nav ul li a:hover {
     background-color: #e9ecef;
     border-radius: 12px;
     overflow: hidden;
-    height: 0 !important
+    min-height: 500px;
+    height: 600px;
 }
 
 .map-wrapper iframe {
@@ -2336,6 +2337,16 @@ canvas {
     display: inline-flex !important; /* act like a button, not a block */
     margin-left: auto !important;    /* Push to the right */
 }
+
+    /* Make tracking page responsive on mobile */
+    .tracking-layout {
+        flex-direction: column;
+    }
+
+    .map-wrapper {
+        height: 400px;
+        min-height: 300px;
+    }
 }
 
 /* Responsive utilities for dashboard & admin pages (non-destructive) */
